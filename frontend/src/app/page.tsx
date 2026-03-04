@@ -30,12 +30,12 @@ export default function Home() {
           />
         </div>
         <div className="relative z-20 max-w-2xl">
-          <span className="inline-block py-1 px-3 rounded-full bg-[#86a373]/10 text-[#86a373] text-xs font-bold uppercase tracking-widest mb-4">Premium Home Care</span>
+          <span className="inline-block py-1 px-3 rounded-full bg-[#86a373]/10 text-[#86a373] text-xs font-bold uppercase tracking-widest mb-4">Premium Cleaning Services</span>
           <h1 className="text-5xl lg:text-7xl text-slate-900 leading-[1.1] mb-6" style={{ fontFamily: "'Playfair Display', serif" }}>
-            Your Home, <br /><span className="text-[#d46b4e] italic">Beautifully</span> Cared For
+            Your Space, <br /><span className="text-[#d46b4e] italic">Beautifully</span> Cared For
           </h1>
           <p className="text-lg text-slate-600 mb-8 max-w-lg leading-relaxed">
-            La-Minks Cleaning Services offers a new standard of professional cleaning tailored for modern South African living. From home care to gardening, we bring pristine spaces to your doorstep.
+            La-Minks Cleaning Services offers a new standard of professional cleaning tailored for modern South African living. From homes and offices to gardening, we bring pristine spaces to your doorstep.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
             <Link href="/quote" className="bg-[#d46b4e] hover:bg-[#d46b4e]/90 text-white px-8 py-4 rounded-xl text-base font-bold shadow-xl shadow-[#d46b4e]/30 transition-all">
@@ -97,7 +97,7 @@ export default function Home() {
               </div>
               <h3 className="text-xl font-bold mb-3">Transparent Pricing</h3>
               <p className="text-slate-600 leading-relaxed">
-                No hidden fees or surprise costs. We provide clear, upfront quotes based on your specific home size and needs.
+                No hidden fees or surprise costs. We provide clear, upfront quotes based on your specific property size and needs.
               </p>
             </div>
             <div className="bg-[#fafcf8] p-10 rounded-2xl shadow-sm border border-[#86a373]/5 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
@@ -121,9 +121,9 @@ export default function Home() {
             <img alt="Cleaning details" className="w-full h-full object-cover opacity-50" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBrvnF0Z8WDeiXhqAPU5yIC8CbyKUM-JMQOVBVBcWBnJEbipI8uKlWrztnqHCFDN72-LJ0ZSwOGG_iEEh-sxiqFEzurue3juqS9HlJBAragNKGh83tlK00g-NhznCQJIpTzWUUILE5kV3VvlAE4IDYY6Gq-vKih-KTUuEcfVIlcAZPN-W0D8TD60pQU0tGnLJIxsZ9yFWLQOZX3K9uu1jB_pn48esqAsKDOU1kz5hr7rV5lOiKrfGu1nz8-DUspHPODHliE-EZmu1Mt" />
           </div>
           <div className="relative z-10 p-12 lg:p-20 lg:w-3/5 text-white">
-            <h2 className="text-4xl mb-6" style={{ fontFamily: "'Playfair Display', serif" }}>Ready for a cleaner, happier home?</h2>
+            <h2 className="text-4xl mb-6" style={{ fontFamily: "'Playfair Display', serif" }}>Ready for a cleaner, happier space?</h2>
             <p className="text-slate-300 text-lg mb-10 leading-relaxed">
-              Join hundreds of satisfied homeowners across the country who have rediscovered their free time.
+              Join hundreds of satisfied property owners across the country who have rediscovered their free time.
             </p>
             <div className="flex flex-wrap gap-4">
               <Link href="/quote" className="bg-[#d46b4e] hover:bg-[#d46b4e]/90 text-white px-8 py-4 rounded-xl text-base font-bold transition-all">
