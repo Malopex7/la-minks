@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import Image from "next/image";
 import "./globals.css";
 import Link from "next/link";
+import AuthNav from "@/components/AuthNav";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -36,7 +37,8 @@ export default function RootLayout({
                 <Link className="text-sm font-medium hover:text-[#d46b4e] transition-colors" href="/">Home</Link>
                 <Link className="text-sm font-medium hover:text-[#d46b4e] transition-colors" href="/services">Services</Link>
               </nav>
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-6">
+                <AuthNav />
                 <Link href="/quote" className="bg-[#d46b4e] hover:bg-[#d46b4e]/90 text-white px-6 py-2.5 rounded-full text-sm font-bold shadow-lg shadow-[#d46b4e]/20 transition-all">
                   Get a Quote
                 </Link>

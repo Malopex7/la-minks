@@ -4,14 +4,17 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import { GridFSBucket } from 'mongodb';
 import cookieParser from 'cookie-parser';
+import cors from 'cors';
 import authRoutes from './routes/authRoutes.js';
 import serviceRoutes from './routes/serviceRoutes.js';
 import pricingRuleRoutes from './routes/pricingRuleRoutes.js';
 import quoteRoutes from './routes/quoteRoutes.js';
+import bookingRoutes from './routes/bookingRoutes.js';
 import { protect, authorize } from './middleware/authMiddleware.js';
 
 dotenv.config();
 const app = express();
+app.use(cors({ origin: process.env.FRONTEND_URL || 'http://localhost:3000', credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
 
@@ -45,7 +48,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/services', serviceRoutes);
 app.use('/api/pricing-rules', pricingRuleRoutes);
 app.use('/api/quote', quoteRoutes);
+app.use('/api/bookings', bookingRoutes);
 
-// Start server
+// Start server on new port (5001)
 const port = process.env.PORT || 5000;
 app.listen(port, () => console.log(`Server running on port ${port}`));

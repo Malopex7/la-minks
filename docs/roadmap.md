@@ -19,7 +19,7 @@
 ## Phase 4: Customer Portal & Quotes 🚧 (In Progress)
 - [x] Public Home & Services pages
 - [ ] Quote Wizard (6 steps including server-side pricing)
-- [ ] Customer Dashboard (Booking history)
+- [x] Customer Dashboard (Booking history)
 
 ## Phase 5: Booking & Payments ⏳ (Pending)
 - [ ] Create Booking API

@@ -21,7 +21,7 @@ export default function ServiceSelection() {
     useEffect(() => {
         const fetchServices = async () => {
             try {
-                const res = await fetch('/api/services');
+                const res = await fetch('http://localhost:5001/api/services');
                 if (!res.ok) throw new Error('Failed to fetch services');
                 const json = await res.json();
                 setServices(json);

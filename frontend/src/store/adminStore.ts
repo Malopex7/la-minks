@@ -23,7 +23,7 @@ interface AdminState {
 }
 
 // In a real app we'd use environment variables for this API URL
-const API_URL = 'http://localhost:5000/api';
+const API_URL = 'http://localhost:5001/api';
 
 export const useAdminStore = create<AdminState>((set) => ({
     services: [],
