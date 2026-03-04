@@ -5,11 +5,17 @@ import { useQuoteStore } from '@/store/useQuoteStore';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 
+interface QuoteDetails {
+    baseCost: number;
+    extrasCost: number;
+    estimatedHours: number;
+    finalPrice: number;
+}
+
 export default function ReviewQuote() {
     const { data, prevStep } = useQuoteStore();
-    const [quoteDetails, setQuoteDetails] = useState<any>(null);
+    const [quoteDetails, setQuoteDetails] = useState<QuoteDetails | null>(null);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState('');
     const [bookingLoading, setBookingLoading] = useState(false);
 
     useEffect(() => {
@@ -33,8 +39,8 @@ export default function ReviewQuote() {
 
                 const json = await response.json();
                 setQuoteDetails(json);
-            } catch (err: any) {
-                setError(err.message);
+            } catch (err: unknown) {
+                console.error(err instanceof Error ? err.message : 'Unknown error');
                 // Fallback mock quote for demonstration 
                 setQuoteDetails({
                     baseCost: 800,

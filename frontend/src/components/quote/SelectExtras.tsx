@@ -1,6 +1,5 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { useQuoteStore } from '@/store/useQuoteStore';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
@@ -43,8 +42,8 @@ export default function SelectExtras() {
                     <div
                         key={extra.id}
                         className={`flex items-center p-4 border rounded-lg cursor-pointer transition-colors ${data.extrasSelected.includes(extra.id)
-                                ? 'border-blue-500 bg-blue-50'
-                                : 'border-slate-200 hover:border-blue-300'
+                            ? 'border-blue-500 bg-blue-50'
+                            : 'border-slate-200 hover:border-blue-300'
                             }`}
                         onClick={() => handleToggle(extra.id)}
                     >

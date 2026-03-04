@@ -5,11 +5,17 @@ import { useQuoteStore } from '@/store/useQuoteStore';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
+interface Service {
+    _id: string;
+    name: string;
+    description: string;
+    basePrice: number;
+}
+
 export default function ServiceSelection() {
     const { data, updateData, nextStep } = useQuoteStore();
-    const [services, setServices] = useState<any[]>([]);
+    const [services, setServices] = useState<Service[]>([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState('');
 
     // Fetch from the backend API, or mock if we don't have it running
     useEffect(() => {
@@ -19,8 +25,8 @@ export default function ServiceSelection() {
                 if (!res.ok) throw new Error('Failed to fetch services');
                 const json = await res.json();
                 setServices(json);
-            } catch (err: any) {
-                setError(err.message);
+            } catch (err: unknown) {
+                console.error(err instanceof Error ? err.message : 'Unknown error');
                 // Fallback for demonstration since we are not integrated fully
                 setServices([
                     { _id: '1', name: 'Home Cleaning', description: 'Standard whole-home cleaning', basePrice: 400 },
