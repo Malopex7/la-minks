@@ -37,6 +37,6 @@
 - [ ] Audit Log Viewer in Admin Dashboard
 
 ## Phase 8: Deployment & Seeding ⏳ (Pending)
-- [ ] Develop Seed Script (Admin, Services, Pricing)
+- [x] Develop Seed Script (Admin, Services, Pricing)
 - [ ] Final README instructions
 - [ ] End-to-end testing
