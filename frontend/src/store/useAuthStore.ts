@@ -102,7 +102,6 @@ export const useAuthStore = create<AuthState>((set) => ({
             const newToken = data.accessToken;
 
             // Need to get current state manually since set() updater doesn't return value easily
-            let updatedToken = newToken;
             set(state => {
                 if (state.user) {
                     const updatedUser = { ...state.user, accessToken: newToken };

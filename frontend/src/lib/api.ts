@@ -4,7 +4,7 @@ import { useAuthStore } from '@/store/useAuthStore';
 export async function fetchWithAuth(url: string, options: RequestInit = {}) {
     const { user, refreshAuthToken } = useAuthStore.getState();
 
-    let currentToken = user?.accessToken;
+    const currentToken = user?.accessToken;
 
     if (currentToken) {
         options.headers = {
@@ -33,6 +33,7 @@ export async function fetchWithAuth(url: string, options: RequestInit = {}) {
                 res = await fetch(url, options);
             }
         } catch (err) {
+            console.error('Refresh token failed', err);
             // refresh failed, user is logged out (handled inside refreshAuthToken)
         }
     }

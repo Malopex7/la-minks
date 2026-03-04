@@ -1,16 +1,13 @@
 'use client';
 
 import { Suspense, useEffect, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useAuthStore } from '@/store/useAuthStore';
+import { useSearchParams } from 'next/navigation';
 import { CheckCircle, XCircle, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 
 function CallbackContent() {
     const searchParams = useSearchParams();
     const reference = searchParams.get('reference');
-    const { user } = useAuthStore();
-    const router = useRouter();
 
     const [status, setStatus] = useState<'verifying' | 'success' | 'error'>('verifying');
     const [message, setMessage] = useState('Verifying your payment...');
@@ -35,6 +32,7 @@ function CallbackContent() {
                     setMessage(data.message || 'Payment verification failed.');
                 }
             } catch (err) {
+                console.error('Payment verification error', err);
                 setStatus('error');
                 setMessage('An error occurred during verification.');
             }
