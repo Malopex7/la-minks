@@ -31,8 +31,8 @@ export const usePublicStore = create<PublicState>((set) => ({
 
             const data = await res.json();
             set({ services: data, isLoading: false });
-        } catch (err: any) {
-            set({ error: err.message || 'Error fetching services', isLoading: false });
+        } catch (err) {
+            set({ error: err instanceof Error ? err.message : 'Error fetching services', isLoading: false });
         }
     },
 }));

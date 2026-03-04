@@ -25,7 +25,7 @@ interface AdminState {
 // In a real app we'd use environment variables for this API URL
 const API_URL = 'http://localhost:5000/api';
 
-export const useAdminStore = create<AdminState>((set, get) => ({
+export const useAdminStore = create<AdminState>((set) => ({
     services: [],
     isLoading: false,
     error: null,
@@ -55,8 +55,8 @@ export const useAdminStore = create<AdminState>((set, get) => ({
 
             const data = await res.json();
             set({ services: data, isLoading: false });
-        } catch (err: any) {
-            set({ error: err.message || 'Error fetching services', isLoading: false });
+        } catch (err) {
+            set({ error: err instanceof Error ? err.message : 'Error fetching services', isLoading: false });
         }
     },
 
@@ -79,8 +79,8 @@ export const useAdminStore = create<AdminState>((set, get) => ({
                 services: [...state.services, newService],
                 isLoading: false
             }));
-        } catch (err: any) {
-            set({ error: err.message, isLoading: false });
+        } catch (err) {
+            set({ error: err instanceof Error ? err.message : String(err), isLoading: false });
         }
     },
 
@@ -103,8 +103,8 @@ export const useAdminStore = create<AdminState>((set, get) => ({
                 services: state.services.map((s) => (s._id === id ? updatedService : s)),
                 isLoading: false
             }));
-        } catch (err: any) {
-            set({ error: err.message, isLoading: false });
+        } catch (err) {
+            set({ error: err instanceof Error ? err.message : String(err), isLoading: false });
         }
     },
 
@@ -122,8 +122,8 @@ export const useAdminStore = create<AdminState>((set, get) => ({
                 services: state.services.filter((s) => s._id !== id),
                 isLoading: false
             }));
-        } catch (err: any) {
-            set({ error: err.message, isLoading: false });
+        } catch (err) {
+            set({ error: err instanceof Error ? err.message : String(err), isLoading: false });
         }
     },
 }));
