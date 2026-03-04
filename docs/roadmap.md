@@ -1,28 +1,28 @@
 # Development Roadmap
 
-## Phase 1: Project Initialization 🚧 (In Progress)
+## Phase 1: Project Initialization ✅ (Completed)
 - [x] Initialize frontend (Next.js) and backend (Express)
 - [x] Setup MongoDB Atlas connection
 - [x] Configure Tailwind v4 and shadcn/ui
 - [x] Setup environment variables & `.env.example`
 
-## Phase 2: Database & Auth 🚧 (In Progress)
+## Phase 2: Database & Auth ✅ (Completed)
 - [x] Define Mongoose Models (User, Service, PricingRule, Booking, AuditLog)
 - [x] Implement JWT Auth routes (Register, Login, Refresh, Logout)
 - [x] Implement role-based middleware (Admin, Staff, Customer)
 
-## Phase 3: Core API & Admin Foundation 🚧 (In Progress)
+## Phase 3: Core API & Admin Foundation ✅ (Completed)
 - [x] Services CRUD API
 - [x] Pricing Rules CRUD API
 - [x] Admin Dashboard UI (Overview & Service Management)
 
-## Phase 4: Customer Portal & Quotes 🚧 (In Progress)
+## Phase 4: Customer Portal & Quotes ✅ (Completed)
 - [x] Public Home & Services pages
-- [ ] Quote Wizard (6 steps including server-side pricing)
+- [x] Quote Wizard (6 steps including server-side pricing)
 - [x] Customer Dashboard (Booking history)
 
-## Phase 5: Booking & Payments ⏳ (Pending)
-- [ ] Create Booking API
+## Phase 5: Booking & Payments 🚧 (In Progress)
+- [x] Create Booking API
 - [ ] Paystack Integration (`/initialize` and `/verify/:reference`)
 - [ ] Payment Webhook/Callback handling
 
