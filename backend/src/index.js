@@ -7,6 +7,7 @@ import cookieParser from 'cookie-parser';
 import authRoutes from './routes/authRoutes.js';
 import serviceRoutes from './routes/serviceRoutes.js';
 import pricingRuleRoutes from './routes/pricingRuleRoutes.js';
+import quoteRoutes from './routes/quoteRoutes.js';
 import { protect, authorize } from './middleware/authMiddleware.js';
 
 dotenv.config();
@@ -43,6 +44,7 @@ app.get('/api/test/admin', protect, authorize('admin'), (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/services', serviceRoutes);
 app.use('/api/pricing-rules', pricingRuleRoutes);
+app.use('/api/quote', quoteRoutes);
 
 // Start server
 const port = process.env.PORT || 5000;

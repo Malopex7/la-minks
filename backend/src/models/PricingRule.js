@@ -6,30 +6,31 @@ const pricingRuleSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Service',
             required: true,
+            unique: true, // Typically one pricing rule per service
         },
-        name: {
-            type: String,
-            required: true,
-            trim: true,
+        propertySizeBands: [
+            {
+                minSqm: Number,
+                maxSqm: Number,
+                multiplier: Number, // Multiplier applied to baseRate for this size band
+            }
+        ],
+        roomRates: {
+            bedroomRate: { type: Number, default: 0 },
+            bathroomRate: { type: Number, default: 0 },
         },
-        type: {
-            type: String,
-            enum: ['multiplier', 'flat_fee'],
-            required: true,
+        conditionMultipliers: {
+            standard: { type: Number, default: 1 },
+            deep: { type: Number, default: 1.5 },
+            heavy_duty: { type: Number, default: 2.0 },
         },
-        value: {
-            type: Number,
-            required: true,
-            min: 0,
-        },
-        description: {
-            type: String,
-            trim: true,
-        },
-        isActive: {
-            type: Boolean,
-            default: true,
-        },
+        extras: [
+            {
+                name: String,
+                price: Number,
+                estimatedAdditionalHours: { type: Number, default: 0 },
+            }
+        ],
     },
     {
         timestamps: true,
