@@ -1,4 +1,6 @@
 import Booking from '../models/Booking.js';
+import Service from '../models/Service.js';
+import PricingRule from '../models/PricingRule.js';
 
 // @desc    Get logged in user's bookings
 // @route   GET /api/bookings/my
@@ -44,8 +46,46 @@ export const getBookingById = async (req, res) => {
 // @access  Private
 export const createBooking = async (req, res) => {
     try {
-        // Implementation will depend on Quote-to-Booking flow details
         const { serviceId, address, property, extrasSelected, schedule } = req.body;
+
+        // Fetch service and pricing rules to calculate amount
+        const service = await Service.findById(serviceId);
+        if (!service) return res.status(404).json({ message: 'Service not found' });
+
+        const pricingRule = await PricingRule.findOne({ serviceId });
+        if (!pricingRule) return res.status(404).json({ message: 'Pricing rules not found' });
+
+        // Base Price Calculation
+        let baseCost = service.basePrice || 0;
+        if (property?.sqm && pricingRule.propertySizeBands?.length > 0) {
+            const band = pricingRule.propertySizeBands.find(
+                (b) => property.sqm >= b.minSqm && property.sqm <= b.maxSqm
+            );
+            if (band) baseCost *= band.multiplier;
+        }
+
+        if (property?.bedrooms && pricingRule.roomRates?.bedroomRate) {
+            baseCost += property.bedrooms * pricingRule.roomRates.bedroomRate;
+        }
+        if (property?.bathrooms && pricingRule.roomRates?.bathroomRate) {
+            baseCost += property.bathrooms * pricingRule.roomRates.bathroomRate;
+        }
+
+        if (property?.conditionLevel && pricingRule.conditionMultipliers) {
+            const conditionMultiplier = pricingRule.conditionMultipliers[property.conditionLevel] || 1;
+            baseCost *= conditionMultiplier;
+        }
+
+        // Extras Cost Calculation
+        let extrasCost = 0;
+        if (extrasSelected && extrasSelected.length > 0 && pricingRule.extras?.length > 0) {
+            extrasSelected.forEach((extraName) => {
+                const extraRule = pricingRule.extras.find((e) => e.name === extraName);
+                if (extraRule) extrasCost += extraRule.price || 0;
+            });
+        }
+
+        const finalPrice = baseCost + extrasCost;
 
         const booking = new Booking({
             customerId: req.user._id,
@@ -57,7 +97,9 @@ export const createBooking = async (req, res) => {
             status: 'BOOKED',
             payment: {
                 status: 'UNPAID',
-                provider: 'PAYSTACK'
+                provider: 'PAYSTACK',
+                amount: finalPrice,
+                currency: 'ZAR'
             }
         });
 

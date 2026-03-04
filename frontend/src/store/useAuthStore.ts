@@ -18,6 +18,7 @@ interface AuthState {
     register: (userData: Record<string, string>) => Promise<void>;
     logout: () => Promise<void>;
     checkAuth: () => void; // Checks local storage for token on mount
+    refreshAuthToken: () => Promise<string | null>;
 }
 
 const API_URL = 'http://localhost:5001/api/auth';
@@ -76,13 +77,50 @@ export const useAuthStore = create<AuthState>((set) => ({
     logout: async () => {
         set({ isLoading: true, error: null });
         try {
-            await fetch(`${API_URL}/logout`, { method: 'POST' });
+            await fetch(`${API_URL}/logout`, { method: 'POST', credentials: 'include' });
             localStorage.removeItem('user');
             set({ user: null, isLoading: false });
+            window.location.href = '/login';
         } catch (err) {
             console.error('Logout error:', err);
             localStorage.removeItem('user');
             set({ user: null, isLoading: false });
+            window.location.href = '/login';
+        }
+    },
+
+    refreshAuthToken: async () => {
+        try {
+            const res = await fetch(`${API_URL}/refresh`, {
+                method: 'POST',
+                credentials: 'include'
+            });
+
+            if (!res.ok) throw new Error('Refresh failed');
+
+            const data = await res.json();
+            const newToken = data.accessToken;
+
+            // Need to get current state manually since set() updater doesn't return value easily
+            let updatedToken = newToken;
+            set(state => {
+                if (state.user) {
+                    const updatedUser = { ...state.user, accessToken: newToken };
+                    localStorage.setItem('user', JSON.stringify(updatedUser));
+                    return { user: updatedUser };
+                }
+                return state;
+            });
+
+            return newToken;
+        } catch (err) {
+            console.error('Failed to refresh token:', err);
+            // Don't call get().logout() here directly if we want to avoid circular dep or loop,
+            // but since we redirect in logout, it's fine. Let's just remove local storage.
+            localStorage.removeItem('user');
+            set({ user: null });
+            window.location.href = '/login';
+            return null;
         }
     },
 

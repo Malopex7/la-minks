@@ -1,7 +1,9 @@
 // src/index.js
+import dotenv from 'dotenv';
+dotenv.config();
+
 import express from 'express';
 import mongoose from 'mongoose';
-import dotenv from 'dotenv';
 import { GridFSBucket } from 'mongodb';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
@@ -10,9 +12,8 @@ import serviceRoutes from './routes/serviceRoutes.js';
 import pricingRuleRoutes from './routes/pricingRuleRoutes.js';
 import quoteRoutes from './routes/quoteRoutes.js';
 import bookingRoutes from './routes/bookingRoutes.js';
+import paymentRoutes from './routes/paymentRoutes.js';
 import { protect, authorize } from './middleware/authMiddleware.js';
-
-dotenv.config();
 const app = express();
 app.use(cors({ origin: process.env.FRONTEND_URL || 'http://localhost:3000', credentials: true }));
 app.use(express.json());
@@ -49,6 +50,7 @@ app.use('/api/services', serviceRoutes);
 app.use('/api/pricing-rules', pricingRuleRoutes);
 app.use('/api/quote', quoteRoutes);
 app.use('/api/bookings', bookingRoutes);
+app.use('/api/payments', paymentRoutes);
 
 // Start server on new port (5001)
 const port = process.env.PORT || 5000;

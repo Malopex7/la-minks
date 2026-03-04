@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { useAuthStore } from '@/store/useAuthStore';
+import { fetchWithAuth } from '@/lib/api';
 import {
     ArrowLeft, Loader2, CalendarDays, MapPin,
     Home, CheckCircle2, Circle, CreditCard, FileText,
@@ -64,17 +65,38 @@ export default function BookingDetailsPage() {
     const { user } = useAuthStore();
     const [booking, setBooking] = useState<BookingDetail | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [isPaying, setIsPaying] = useState(false);
     const [error, setError] = useState('');
+
+    const handlePayment = async () => {
+        if (!user || !booking) return;
+        setIsPaying(true);
+        setError('');
+        try {
+            const res = await fetchWithAuth(`http://localhost:5001/api/payments/paystack/initialize`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ bookingId: booking._id })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || 'Failed to initialize payment');
+
+            if (data.authorization_url) {
+                window.location.href = data.authorization_url;
+            }
+        } catch (err) {
+            setError((err as Error).message);
+            setIsPaying(false);
+        }
+    };
 
     useEffect(() => {
         const fetchBooking = async () => {
             if (!user || !params.id) return;
             try {
-                const res = await fetch(`http://localhost:5001/api/bookings/${params.id}`, {
-                    headers: {
-                        'Authorization': `Bearer ${user.accessToken}`
-                    }
-                });
+                const res = await fetchWithAuth(`http://localhost:5001/api/bookings/${params.id}`);
                 if (!res.ok) {
                     if (res.status === 404) throw new Error('Booking not found');
                     if (res.status === 403) throw new Error('Not authorized to view this booking');
@@ -316,8 +338,13 @@ export default function BookingDetailsPage() {
                             <p className="text-sm text-blue-700 dark:text-blue-300 mb-4">
                                 Secure your booking by completing your payment securely via Paystack.
                             </p>
-                            <button className="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors">
-                                Pay R {(booking.payment.amount / 100).toFixed(2)} Now
+                            <button
+                                onClick={handlePayment}
+                                disabled={isPaying}
+                                className="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                            >
+                                {isPaying ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+                                {isPaying ? 'Processing...' : `Pay R ${(booking.payment.amount / 100).toFixed(2)} Now`}
                             </button>
                         </div>
                     )}

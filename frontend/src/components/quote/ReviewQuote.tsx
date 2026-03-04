@@ -1,7 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useQuoteStore } from '@/store/useQuoteStore';
+import { useAuthStore } from '@/store/useAuthStore';
+import { fetchWithAuth } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 
@@ -13,10 +16,13 @@ interface QuoteDetails {
 }
 
 export default function ReviewQuote() {
+    const router = useRouter();
+    const { user } = useAuthStore();
     const { data, prevStep } = useQuoteStore();
     const [quoteDetails, setQuoteDetails] = useState<QuoteDetails | null>(null);
     const [loading, setLoading] = useState(true);
     const [bookingLoading, setBookingLoading] = useState(false);
+    const [errorMsg, setErrorMsg] = useState('');
 
     useEffect(() => {
         const fetchQuote = async () => {
@@ -27,7 +33,7 @@ export default function ReviewQuote() {
                     extrasSelected: data.extrasSelected,
                 };
 
-                const response = await fetch('/api/quote', {
+                const response = await fetch('http://localhost:5001/api/quote', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload),
@@ -59,13 +65,60 @@ export default function ReviewQuote() {
     }, [data]);
 
     const handleBook = async () => {
+        if (!user) {
+            router.push('/login');
+            return;
+        }
+
         setBookingLoading(true);
-        // In a real scenario, we'd send data to POST /api/bookings here
-        // And handle payment redirection
-        setTimeout(() => {
+        setErrorMsg('');
+
+        try {
+            // 1. Create the booking
+            const bookingPayload = {
+                serviceId: data.serviceId,
+                address: data.address,
+                property: data.property,
+                extrasSelected: data.extrasSelected,
+                schedule: data.schedule,
+            };
+
+            const bookingRes = await fetchWithAuth('http://localhost:5001/api/bookings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(bookingPayload),
+            });
+
+            if (!bookingRes.ok) {
+                const errData = await bookingRes.json();
+                throw new Error(errData.message || 'Failed to create booking');
+            }
+
+            const newBooking = await bookingRes.json();
+
+            // 2. Initialize Paystack transaction
+            const paystackRes = await fetchWithAuth('http://localhost:5001/api/payments/paystack/initialize', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ bookingId: newBooking._id }),
+            });
+
+            if (!paystackRes.ok) {
+                const errData = await paystackRes.json();
+                throw new Error(errData.message || 'Failed to initialize payment');
+            }
+
+            const paymentData = await paystackRes.json();
+
+            // 3. Redirect to Paystack checkout
+            if (paymentData.authorization_url) {
+                window.location.href = paymentData.authorization_url;
+            }
+        } catch (err: unknown) {
+            console.error('Booking error:', err);
+            setErrorMsg(err instanceof Error ? err.message : 'An error occurred during booking');
             setBookingLoading(false);
-            alert('Booking Confirmed! You would normally be redirected to Paystack here.');
-        }, 1500);
+        }
     };
 
     if (loading) {
@@ -137,6 +190,11 @@ export default function ReviewQuote() {
                                             R{quoteDetails.finalPrice.toFixed(2)}
                                         </span>
                                     </div>
+                                    {errorMsg && (
+                                        <div className="mt-4 p-3 bg-red-50 text-red-600 text-sm rounded border border-red-200">
+                                            {errorMsg}
+                                        </div>
+                                    )}
                                 </>
                             )}
                         </CardContent>
