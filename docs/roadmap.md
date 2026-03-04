@@ -1,14 +1,14 @@
 # Development Roadmap
 
-## Phase 1: Project Initialization ⏳ (Pending)
-- [ ] Initialize frontend (Next.js) and backend (Express)
-- [ ] Setup MongoDB Atlas connection
-- [ ] Configure Tailwind v4 and shadcn/ui
-- [ ] Setup environment variables & `.env.example`
+## Phase 1: Project Initialization 🚧 (In Progress)
+- [x] Initialize frontend (Next.js) and backend (Express)
+- [x] Setup MongoDB Atlas connection
+- [x] Configure Tailwind v4 and shadcn/ui
+- [x] Setup environment variables & `.env.example`
 
-## Phase 2: Database & Auth ⏳ (Pending)
-- [ ] Define Mongoose Models (User, Service, PricingRule, Booking, AuditLog)
-- [ ] Implement JWT Auth routes (Register, Login, Refresh, Logout)
+## Phase 2: Database & Auth 🚧 (In Progress)
+- [x] Define Mongoose Models (User, Service, PricingRule, Booking, AuditLog)
+- [x] Implement JWT Auth routes (Register, Login, Refresh, Logout)
 - [ ] Implement role-based middleware (Admin, Staff, Customer)
 
 ## Phase 3: Core API & Admin Foundation ⏳ (Pending)
