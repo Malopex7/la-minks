@@ -41,6 +41,15 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+
+  /* Stitch MCP Design Tokens */
+  --color-stitch-primary: #d46b4e;
+  --color-stitch-sage: #86a373;
+  --color-stitch-sand: #f4f1ea;
+  --color-stitch-bg-light: #fafcf8;
+  --color-stitch-neutral-warm: #f3eae7;
+  --font-display: "Inter", sans-serif;
+  --font-serif: "Playfair Display", serif;
 }
 
 :root {

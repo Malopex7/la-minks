@@ -24,6 +24,8 @@ This skill outlines the enforced rules and standards for the La-Minks project to
 - Implement a clean, modern UI utilizing shadcn components (e.g., Button, Card, Table).
 - Provide loading skeletons during data fetching processes.
 - Actively utilize Toast notifications to alert users of errors and success states.
+- **CRITICAL**: The Stitch MCP Server MUST be heavily utilized for all UI/UX design and code generation. It carries significant weight in ensuring a premium, modern aesthetic, particularly for public-facing customer portal pages. When building new Next.js screens, prompt Stitch to generate the designs and components.
+- **Image Generation**: When using `generate_image` (Nano Banana) for placeholder/stock images, all generated images MUST always maintain a **South African aesthetic**. Nano Banana is strictly an image generation tool — it has zero influence on site theme or colors.
 
 ## 4. State Management
 - **Server State**: Managed via TanStack Query.

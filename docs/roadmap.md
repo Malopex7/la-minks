@@ -13,11 +13,11 @@
 
 ## Phase 3: Core API & Admin Foundation 🚧 (In Progress)
 - [x] Services CRUD API
-- [ ] Pricing Rules CRUD API
-- [ ] Admin Dashboard UI (Overview & Service Management)
+- [x] Pricing Rules CRUD API
+- [x] Admin Dashboard UI (Overview & Service Management)
 
-## Phase 4: Customer Portal & Quotes ⏳ (Pending)
-- [ ] Public Home & Services pages
+## Phase 4: Customer Portal & Quotes 🚧 (In Progress)
+- [x] Public Home & Services pages
 - [ ] Quote Wizard (6 steps including server-side pricing)
 - [ ] Customer Dashboard (Booking history)
 
