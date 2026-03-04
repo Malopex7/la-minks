@@ -1,3 +1,4 @@
+import crypto from 'crypto';
 import Booking from '../models/Booking.js';
 import User from '../models/User.js';
 import { initializeTransaction, verifyTransaction } from '../utils/paystack.js';
@@ -118,5 +119,53 @@ export const verifyPayment = async (req, res) => {
         // If it's a known booking, we might want to mark it as FAILED if verification errors out,
         // but usually we rely on Paystack webhooks to eventually sort it out, or the user can retry.
         res.status(500).json({ message: error.message || 'Server error verifying payment' });
+    }
+};
+
+// @desc    Handle Paystack Webhook
+// @route   POST /api/payments/paystack/webhook
+// @access  Public
+export const handlePaystackWebhook = async (req, res) => {
+    try {
+        const secret = process.env.PAYSTACK_SECRET_KEY;
+        const hash = crypto.createHmac('sha512', secret).update(JSON.stringify(req.body)).digest('hex');
+
+        if (hash === req.headers['x-paystack-signature']) {
+            const event = req.body;
+
+            if (event.event === 'charge.success') {
+                const data = event.data;
+                const bookingId = data.metadata?.bookingId;
+
+                if (bookingId) {
+                    // Check if it's a valid ObjectId
+                    if (!bookingId.match(/^[0-9a-fA-F]{24}$/)) {
+                        console.warn(`Webhook: Invalid bookingId format: ${bookingId}`);
+                        return res.sendStatus(200); // We still ACK Paystack
+                    }
+
+                    const booking = await Booking.findById(bookingId);
+                    if (booking) {
+                        booking.payment.status = 'PAID';
+                        booking.payment.paidAt = new Date(data.paid_at || Date.now());
+                        booking.payment.channel = data.channel;
+                        booking.status = 'CONFIRMED';
+                        await booking.save();
+                        console.log(`Webhook: Booking ${bookingId} confirmed and paid.`);
+                    } else {
+                        console.warn(`Webhook: Booking ${bookingId} not found.`);
+                    }
+                }
+            }
+
+            // Always return 200 OK to Paystack
+            res.sendStatus(200);
+        } else {
+            console.warn('Webhook: Invalid signature');
+            res.status(400).send('Invalid signature');
+        }
+    } catch (error) {
+        console.error('Webhook Error:', error);
+        res.status(500).send('Webhook Error');
     }
 };

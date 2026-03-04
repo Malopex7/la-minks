@@ -23,8 +23,8 @@
 
 ## Phase 5: Booking & Payments 🚧 (In Progress)
 - [x] Create Booking API
-- [ ] Paystack Integration (`/initialize` and `/verify/:reference`)
-- [ ] Payment Webhook/Callback handling
+- [x] Paystack Integration (`/initialize` and `/verify/:reference`)
+- [x] Payment Webhook/Callback handling
 
 ## Phase 6: Staff Portal & File Storage ⏳ (Pending)
 - [ ] GridFS Upload API (`/before` & `/after` photos)
