@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import { GridFSBucket } from 'mongodb';
 import cookieParser from 'cookie-parser';
 import authRoutes from './routes/authRoutes.js';
+import serviceRoutes from './routes/serviceRoutes.js';
 import { protect, authorize } from './middleware/authMiddleware.js';
 
 dotenv.config();
@@ -39,6 +40,7 @@ app.get('/api/test/admin', protect, authorize('admin'), (req, res) => {
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/services', serviceRoutes);
 
 // Start server
 const port = process.env.PORT || 5000;

@@ -11,8 +11,8 @@
 - [x] Implement JWT Auth routes (Register, Login, Refresh, Logout)
 - [x] Implement role-based middleware (Admin, Staff, Customer)
 
-## Phase 3: Core API & Admin Foundation ⏳ (Pending)
-- [ ] Services CRUD API
+## Phase 3: Core API & Admin Foundation 🚧 (In Progress)
+- [x] Services CRUD API
 - [ ] Pricing Rules CRUD API
 - [ ] Admin Dashboard UI (Overview & Service Management)
 
