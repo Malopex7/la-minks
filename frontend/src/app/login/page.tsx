@@ -17,7 +17,7 @@ const loginSchema = z.object({
 type LoginValues = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
-    const { login, isLoading, error } = useAuthStore();
+    const { login, isLoading } = useAuthStore();
     const router = useRouter();
     const [loginError, setLoginError] = useState('');
 
@@ -105,7 +105,7 @@ export default function LoginPage() {
                     </form>
 
                     <p className="mt-8 text-center text-sm text-zinc-600 dark:text-zinc-400">
-                        Don't have an account?{' '}
+                        Don&apos;t have an account?{' '}
                         <Link href="/register" className="font-semibold text-blue-600 hover:text-blue-500 transition-colors">
                             Sign up here
                         </Link>

@@ -19,7 +19,7 @@ const registerSchema = z.object({
 type RegisterValues = z.infer<typeof registerSchema>;
 
 export default function RegisterPage() {
-    const { register, isLoading, error } = useAuthStore();
+    const { register, isLoading } = useAuthStore();
     const router = useRouter();
     const [registerError, setRegisterError] = useState('');
 

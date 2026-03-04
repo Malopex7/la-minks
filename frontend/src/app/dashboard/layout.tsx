@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { useAuthStore } from '@/store/useAuthStore';
-import { LayoutDashboard, LogOut, Loader2, Sparkles, CalendarDays } from 'lucide-react';
+import { LayoutDashboard, LogOut, Loader2, Sparkles } from 'lucide-react';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
     const { user, checkAuth, logout } = useAuthStore();
@@ -54,8 +54,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                             <Link
                                 href="/dashboard"
                                 className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors ${pathname === '/dashboard' || pathname.startsWith('/dashboard/bookings')
-                                        ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 font-medium'
-                                        : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800'
+                                    ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 font-medium'
+                                    : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800'
                                     }`}
                             >
                                 <LayoutDashboard className="w-4 h-4" />

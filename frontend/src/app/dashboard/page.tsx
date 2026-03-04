@@ -104,7 +104,7 @@ export default function DashboardPage() {
                     </div>
                     <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-2">No bookings found</h3>
                     <p className="text-zinc-500 dark:text-zinc-400 mb-6 max-w-sm mx-auto">
-                        You haven't made any cleaning reservations yet. Start by getting a tailored quote for your space.
+                        You haven&apos;t made any cleaning reservations yet. Start by getting a tailored quote for your space.
                     </p>
                     <Link
                         href="/quote"

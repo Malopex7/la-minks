@@ -1,11 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { useAuthStore } from '@/store/useAuthStore';
 import {
-    ArrowLeft, Loader2, CalendarDays, Clock, MapPin,
+    ArrowLeft, Loader2, CalendarDays, MapPin,
     Home, CheckCircle2, Circle, CreditCard, FileText,
     Camera
 } from 'lucide-react';
@@ -61,7 +61,6 @@ interface BookingDetail {
 
 export default function BookingDetailsPage() {
     const params = useParams();
-    const router = useRouter();
     const { user } = useAuthStore();
     const [booking, setBooking] = useState<BookingDetail | null>(null);
     const [isLoading, setIsLoading] = useState(true);
