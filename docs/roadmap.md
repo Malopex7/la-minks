@@ -9,7 +9,7 @@
 ## Phase 2: Database & Auth 🚧 (In Progress)
 - [x] Define Mongoose Models (User, Service, PricingRule, Booking, AuditLog)
 - [x] Implement JWT Auth routes (Register, Login, Refresh, Logout)
-- [ ] Implement role-based middleware (Admin, Staff, Customer)
+- [x] Implement role-based middleware (Admin, Staff, Customer)
 
 ## Phase 3: Core API & Admin Foundation ⏳ (Pending)
 - [ ] Services CRUD API

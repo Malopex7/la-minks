@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import { GridFSBucket } from 'mongodb';
 import cookieParser from 'cookie-parser';
 import authRoutes from './routes/authRoutes.js';
+import { protect, authorize } from './middleware/authMiddleware.js';
 
 dotenv.config();
 const app = express();
@@ -24,6 +25,16 @@ mongoose.connect(process.env.MONGO_URI)
 // Test route
 app.get('/api/test', (req, res) => {
   res.json({ message: 'Backend is working' });
+});
+
+// Protected test route (Any authenticated user)
+app.get('/api/test/protected', protect, (req, res) => {
+  res.json({ message: 'You have generated a valid token!', user: req.user });
+});
+
+// Admin-only test route
+app.get('/api/test/admin', protect, authorize('admin'), (req, res) => {
+  res.json({ message: 'Welcome Admin!', user: req.user });
 });
 
 // Routes
