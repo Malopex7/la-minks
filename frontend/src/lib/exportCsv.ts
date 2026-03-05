@@ -65,7 +65,7 @@ export function bookingsToCsv(bookings: Booking[]): string {
 
         const amountRaw = b.payment?.amount;
         const amount = amountRaw !== undefined
-            ? (amountRaw / 100).toFixed(2)   // stored in cents (Paystack)
+            ? Number(amountRaw).toFixed(2)   // stored in rands
             : (b.totalPrice ?? '');
 
         return [

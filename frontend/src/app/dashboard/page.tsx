@@ -155,7 +155,7 @@ export default function DashboardPage() {
                                 <div className="space-y-1">
                                     <p className="text-xs text-zinc-500 uppercase font-semibold tracking-wider">Amount</p>
                                     <div className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
-                                        R {booking.payment?.amount ? (booking.payment.amount / 100).toFixed(2) : '0.00'}
+                                        R {booking.payment?.amount ? Number(booking.payment.amount).toFixed(2) : '0.00'}
                                     </div>
                                     <div className="text-xs text-zinc-500">
                                         {booking.payment?.status}

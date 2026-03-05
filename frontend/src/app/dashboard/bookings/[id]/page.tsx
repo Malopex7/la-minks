@@ -211,7 +211,7 @@ export default function BookingDetailsPage() {
                         <CreditCard className="w-5 h-5 text-zinc-400 shrink-0 mt-0.5" />
                         <div>
                             <p className="text-xs text-zinc-500 uppercase font-bold tracking-wider mb-1">Payment</p>
-                            <p className="text-xl font-bold text-zinc-900 dark:text-zinc-100">R {(booking.payment.amount / 100).toFixed(2)}</p>
+                            <p className="text-xl font-bold text-zinc-900 dark:text-zinc-100">R {Number(booking.payment.amount).toFixed(2)}</p>
                             <p className="text-sm mt-1">
                                 <span className={`inline-flex px-2 py-0.5 rounded text-xs font-medium uppercase
                                     ${booking.payment.status === 'PAID' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400'
@@ -363,7 +363,7 @@ export default function BookingDetailsPage() {
                                 className="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                             >
                                 {isPaying ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
-                                {isPaying ? 'Processing...' : `Pay R ${(booking.payment.amount / 100).toFixed(2)} Now`}
+                                {isPaying ? 'Processing...' : `Pay R ${Number(booking.payment.amount).toFixed(2)} Now`}
                             </button>
                         </div>
                     )}
