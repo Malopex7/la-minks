@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/useAuthStore';
-import { LogOut, Loader2 } from 'lucide-react';
+import { LogOut, Loader2, ShieldAlert } from 'lucide-react';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
     const { user, checkAuth, logout } = useAuthStore();
@@ -57,6 +57,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                                 className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
                             >
                                 <span className="flex-1 ms-3 whitespace-nowrap">Bookings</span>
+                            </Link>
+                        </li>
+                        <li>
+                            <Link
+                                href="/admin/audit"
+                                className="flex items-center gap-2 p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                            >
+                                <ShieldAlert className="w-4 h-4 text-zinc-400" />
+                                <span className="flex-1 whitespace-nowrap">Audit Log</span>
                             </Link>
                         </li>
                     </ul>

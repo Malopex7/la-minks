@@ -1,6 +1,7 @@
 import Booking from '../models/Booking.js';
 import Service from '../models/Service.js';
 import PricingRule from '../models/PricingRule.js';
+import AuditLog from '../models/AuditLog.js';
 import { sendBookingCreatedEmail, sendStaffAssignmentEmail, sendJobCompletionEmail, sendJobCheckInEmail } from '../utils/email.js';
 
 // @desc    Get logged in user's bookings
@@ -106,6 +107,9 @@ export const createBooking = async (req, res) => {
 
         const createdBooking = await booking.save();
 
+        // Audit log
+        AuditLog.create({ userId: req.user._id, action: 'CREATE', entityType: 'Booking', entityId: createdBooking._id, details: { status: createdBooking.status, totalPrice: finalPrice } }).catch(() => { });
+
         // Send Email Notification async
         sendBookingCreatedEmail(createdBooking, req.user.email, req.user.firstName).catch(err => console.error('Email failed:', err));
 
@@ -151,6 +155,7 @@ export const updateBookingStatus = async (req, res) => {
 
         booking.status = status;
         const updatedBooking = await booking.save();
+        AuditLog.create({ userId: req.user._id, action: 'STATUS_CHANGE', entityType: 'Booking', entityId: updatedBooking._id, details: { status } }).catch(() => { });
         res.json(updatedBooking);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -189,6 +194,7 @@ export const assignStaffToBooking = async (req, res) => {
             });
         }
 
+        AuditLog.create({ userId: req.user._id, action: 'STAFF_ASSIGNED', entityType: 'Booking', entityId: populatedBooking._id, details: { staffIds } }).catch(() => { });
         res.json(populatedBooking);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -257,6 +263,10 @@ export const updateStaffBooking = async (req, res) => {
                         .catch(err => console.error('Completion Email failed:', err));
                 }
             }
+        }
+
+        if (status) {
+            AuditLog.create({ userId: req.user._id, action: 'STATUS_CHANGE', entityType: 'Booking', entityId: updatedBooking._id, details: { status, updatedBy: 'staff' } }).catch(() => { });
         }
 
         res.json(updatedBooking);

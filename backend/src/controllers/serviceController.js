@@ -1,4 +1,5 @@
 import Service from '../models/Service.js';
+import AuditLog from '../models/AuditLog.js';
 
 // @desc    Get all active services
 // @route   GET /api/services
@@ -57,6 +58,7 @@ export const createService = async (req, res) => {
         });
 
         const createdService = await service.save();
+        await AuditLog.create({ userId: req.user._id, action: 'CREATE', entityType: 'Service', entityId: createdService._id, details: { name: createdService.name } });
         res.status(201).json(createdService);
     } catch (error) {
         res.status(400).json({ message: error.message });
@@ -80,6 +82,7 @@ export const updateService = async (req, res) => {
             service.imageUrl = imageUrl || service.imageUrl;
 
             const updatedService = await service.save();
+            await AuditLog.create({ userId: req.user._id, action: 'UPDATE', entityType: 'Service', entityId: updatedService._id, details: { name: updatedService.name } });
             res.json(updatedService);
         } else {
             res.status(404).json({ message: 'Service not found' });
@@ -100,6 +103,7 @@ export const deleteService = async (req, res) => {
             // Opting for document removal instead of soft delete initially. 
             // Replace with `service.isActive = false; await service.save();` for soft deletes if needed.
             await Service.deleteOne({ _id: service._id });
+            await AuditLog.create({ userId: req.user._id, action: 'DELETE', entityType: 'Service', entityId: service._id, details: { name: service.name } });
             res.json({ message: 'Service removed' });
         } else {
             res.status(404).json({ message: 'Service not found' });

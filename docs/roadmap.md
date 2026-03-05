@@ -21,22 +21,29 @@
 - [x] Quote Wizard (6 steps including server-side pricing)
 - [x] Customer Dashboard (Booking history)
 
-## Phase 5: Booking & Payments 🚧 (In Progress)
+## Phase 5: Booking & Payments ✅ (Completed)
 - [x] Create Booking API
 - [x] Paystack Integration (`/initialize` and `/verify/:reference`)
 - [x] Payment Webhook/Callback handling
 
-## Phase 6: Staff Portal & File Storage ⏳ (Pending)
+## Phase 6: Staff Portal & File Storage ✅ (Completed)
 - [x] GridFS Upload API (`/before` & `/after` photos)
 - [x] Staff Dashboard (Today's jobs, Check-in, Checklists)
 - [x] Mark jobs as completed
 
-## Phase 7: Notifications & Polish ⏳ (In Progress)
+## Phase 7: Notifications, Photo Viewing & Reports ✅ (Completed)
 - [x] Nodemailer Integration (Booking, Payment, Assignment, Completion emails)
-- [ ] Export Reports (CSV)
-- [ ] Audit Log Viewer in Admin Dashboard
+- [x] Job Check-in email notification (staff arrival → customer email)
+- [x] Photo serving route made public (GridFS streaming for `<img>` tags)
+- [x] Before/After photo lightbox viewer (Admin, Customer & Staff portals)
+- [x] Reusable `PhotoLightbox` component + `useLightbox` hook
+- [x] Export Reports (CSV) — 27-column admin bookings export
+- [x] Admin Bookings: expandable photo gallery row, status dropdown, photo count column
+- [x] Admin Dashboard: booking count on overview
+- [x] Frontend lint: 0 errors
 
-## Phase 8: Deployment & Seeding ⏳ (Pending)
+## Phase 8: Deployment & Seeding ✅ (Completed)
 - [x] Develop Seed Script (Admin, Services, Pricing)
+- [x] Audit Log Viewer in Admin Dashboard
 - [ ] Final README instructions
 - [ ] End-to-end testing
