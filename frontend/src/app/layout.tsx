@@ -4,6 +4,7 @@ import Image from "next/image";
 import "./globals.css";
 import Link from "next/link";
 import AuthNav from "@/components/AuthNav";
+import TopNav from "@/components/TopNav";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -33,10 +34,7 @@ export default function RootLayout({
               <Link href="/" className="flex items-center gap-2">
                 <Image src="/images/logo.png" alt="La-Minks Cleaning Services" width={200} height={200} className="h-20 w-auto" style={{ mixBlendMode: 'multiply' }} />
               </Link>
-              <nav className="hidden md:flex items-center gap-10">
-                <Link className="text-sm font-medium hover:text-[#d46b4e] transition-colors" href="/">Home</Link>
-                <Link className="text-sm font-medium hover:text-[#d46b4e] transition-colors" href="/services">Services</Link>
-              </nav>
+              <TopNav />
               <div className="flex items-center gap-6">
                 <AuthNav />
                 <Link href="/quote" className="bg-[#d46b4e] hover:bg-[#d46b4e]/90 text-white px-6 py-2.5 rounded-full text-sm font-bold shadow-lg shadow-[#d46b4e]/20 transition-all">

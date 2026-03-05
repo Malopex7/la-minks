@@ -25,9 +25,11 @@ export interface Booking {
     _id: string;
     customerId: User & Record<string, unknown>;
     serviceId: Service & Record<string, unknown>;
-    date: string;
-    time: string;
-    status: 'PENDING' | 'CONFIRMED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED';
+    schedule?: { date?: string; timeSlot?: string; estimatedHours?: number };
+    address?: { line1?: string; suburb?: string; city?: string; province?: string; postalCode?: string };
+    date?: string;
+    time?: string;
+    status: 'QUOTE' | 'BOOKED' | 'CONFIRMED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED';
     totalPrice: number;
     staffAssignedIds: User[];
     photos?: { before: string[]; after: string[] };

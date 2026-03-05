@@ -146,9 +146,15 @@ export default function AdminBookingsPage() {
                                                     <td className="px-6 py-4">
                                                         <div className="flex items-center space-x-2 text-zinc-700 dark:text-zinc-300">
                                                             <Calendar className="w-4 h-4 text-zinc-400" />
-                                                            <span>{new Date(booking.date).toLocaleDateString()}</span>
+                                                            <span>{
+                                                                (booking.schedule?.date || booking.date)
+                                                                    ? new Date(booking.schedule?.date || booking.date || '').toLocaleDateString()
+                                                                    : 'No Date'
+                                                            }</span>
                                                         </div>
-                                                        <div className="text-xs text-zinc-500 mt-1">{booking.time}</div>
+                                                        <div className="text-xs text-zinc-500 mt-1">
+                                                            {booking.schedule?.timeSlot || booking.time || 'No Time'}
+                                                        </div>
                                                     </td>
                                                     <td className="px-6 py-4">
                                                         <select
