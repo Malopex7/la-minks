@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { useAuthStore } from '@/store/useAuthStore';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import {
     Loader2, ArrowLeft, Calendar, Clock, MapPin,
     CheckCircle2, Circle, Camera, Save, House
@@ -49,7 +49,6 @@ const defaultChecklistTasks = [
 
 export default function StaffJobDetailsPage() {
     const params = useParams();
-    const router = useRouter();
     const id = params.id as string;
 
     const { user } = useAuthStore();
@@ -85,8 +84,8 @@ export default function StaffJobDetailsPage() {
             setBooking(data);
             setLocalChecklist(data.checklist || []);
             setNotes(data.notesStaff || '');
-        } catch (err: any) {
-            setError(err.message);
+        } catch (err) {
+            setError((err as Error).message);
         } finally {
             setIsLoading(false);
         }
@@ -94,6 +93,7 @@ export default function StaffJobDetailsPage() {
 
     useEffect(() => {
         if (user) fetchBooking();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id, user]);
 
     const handleStatusUpdate = async (newStatus: 'IN_PROGRESS' | 'COMPLETED') => {
@@ -111,8 +111,8 @@ export default function StaffJobDetailsPage() {
             if (!res.ok) throw new Error('Failed to update status');
             const updated = await res.json();
             setBooking(updated);
-        } catch (err: any) {
-            alert(err.message);
+        } catch (err) {
+            alert((err as Error).message);
         } finally {
             setIsUpdatingStatus(false);
         }
@@ -136,8 +136,8 @@ export default function StaffJobDetailsPage() {
             const updated = await res.json();
             setBooking(updated);
             alert('Updates saved successfully!');
-        } catch (err: any) {
-            alert(err.message);
+        } catch (err) {
+            alert((err as Error).message);
         } finally {
             setIsSavingChecklist(false);
         }
@@ -180,8 +180,8 @@ export default function StaffJobDetailsPage() {
 
             // Refresh booking to get new photos array
             await fetchBooking();
-        } catch (err: any) {
-            alert(err.message);
+        } catch (err) {
+            alert((err as Error).message);
         } finally {
             setUploadingType(null);
             if (e.target) e.target.value = ''; // Reset input

@@ -11,7 +11,7 @@ function VerifyEmailContent() {
     const router = useRouter();
     const token = searchParams.get('token');
 
-    const { verifyEmail, isLoading } = useAuthStore();
+    const { verifyEmail } = useAuthStore();
     const [status, setStatus] = useState<'verifying' | 'success' | 'error'>('verifying');
     const [errorMessage, setErrorMessage] = useState('');
 
@@ -36,9 +36,9 @@ function VerifyEmailContent() {
                 setTimeout(() => {
                     router.push('/dashboard');
                 }, 3000);
-            } catch (err: any) {
+            } catch (err) {
                 setStatus('error');
-                setErrorMessage(err.message || 'Failed to verify email. The link may be expired.');
+                setErrorMessage((err as Error).message || 'Failed to verify email. The link may be expired.');
             }
         };
 

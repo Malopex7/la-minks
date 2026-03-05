@@ -5,7 +5,6 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useAuthStore } from '@/store/useAuthStore';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, Loader2, UserPlus, MailCheck } from 'lucide-react';
 
@@ -20,7 +19,6 @@ type RegisterValues = z.infer<typeof registerSchema>;
 
 export default function RegisterPage() {
     const { register, isLoading } = useAuthStore();
-    const router = useRouter();
     const [registerError, setRegisterError] = useState('');
     const [isSuccess, setIsSuccess] = useState(false);
 
@@ -55,7 +53,7 @@ export default function RegisterPage() {
                             </div>
                             <h2 className="text-2xl font-bold text-zinc-900 dark:text-white mb-2">Check your email</h2>
                             <p className="text-zinc-500 dark:text-zinc-400 mb-8 mx-auto max-w-[300px]">
-                                We've sent a verification link to your email address. Please click it to activate your account.
+                                We&apos;ve sent a verification link to your email address. Please click it to activate your account.
                             </p>
                             <Link href="/">
                                 <button className="w-full py-2.5 px-4 rounded-lg bg-zinc-100 hover:bg-zinc-200 text-zinc-900 font-medium transition-colors focus:outline-none dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700">

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { useAuthStore } from '@/store/useAuthStore';
-import { Briefcase, LogOut, Loader2, Sparkles, CheckSquare } from 'lucide-react';
+import { Briefcase, LogOut, Loader2, Sparkles } from 'lucide-react';
 
 export default function StaffLayout({ children }: { children: React.ReactNode }) {
     const { user, checkAuth, logout } = useAuthStore();

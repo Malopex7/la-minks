@@ -23,13 +23,14 @@ export interface User {
 
 export interface Booking {
     _id: string;
-    customerId: User | any;
-    serviceId: Service | any;
+    customerId: User & Record<string, unknown>;
+    serviceId: Service & Record<string, unknown>;
     date: string;
     time: string;
     status: 'PENDING' | 'CONFIRMED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED';
     totalPrice: number;
-    staffAssignedIds: User[] | any[];
+    staffAssignedIds: User[];
+    photos?: { before: string[]; after: string[] };
     createdAt?: string;
 }
 
@@ -53,7 +54,7 @@ interface AdminState {
 // In a real app we'd use environment variables for this API URL
 const API_URL = 'http://localhost:5001/api';
 
-export const useAdminStore = create<AdminState>((set, get) => ({
+export const useAdminStore = create<AdminState>((set) => ({
     services: [],
     bookings: [],
     staffMembers: [],

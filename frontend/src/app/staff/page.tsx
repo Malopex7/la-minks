@@ -47,8 +47,8 @@ export default function StaffDashboardPage() {
                 if (!res.ok) throw new Error('Failed to fetch jobs');
                 const data = await res.json();
                 setBookings(data);
-            } catch (err: any) {
-                setError(err.message);
+            } catch (err) {
+                setError((err as Error).message);
             } finally {
                 setIsLoading(false);
             }

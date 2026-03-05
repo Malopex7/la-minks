@@ -111,8 +111,8 @@ export default function AdminBookingsPage() {
                                     </tr>
                                 ) : (
                                     bookings.map((booking) => {
-                                        const assignedStaff = (booking.staffAssignedIds as any[])?.[0];
-                                        const photos = (booking as any).photos;
+                                        const assignedStaff = booking.staffAssignedIds?.[0];
+                                        const photos = booking.photos;
                                         const beforeCount = photos?.before?.length ?? 0;
                                         const afterCount = photos?.after?.length ?? 0;
                                         const hasPhotos = beforeCount + afterCount > 0;
@@ -204,13 +204,13 @@ export default function AdminBookingsPage() {
                                                                         Before ({beforeCount})
                                                                     </p>
                                                                     <div className="flex flex-wrap gap-2">
-                                                                        {photos.before.map((fileId: string, i: number) => (
+                                                                        {photos!.before.map((fileId: string, i: number) => (
                                                                             <img
                                                                                 key={i}
                                                                                 src={`${API_URL}/photos/${fileId}`}
                                                                                 alt={`Before ${i + 1}`}
                                                                                 onClick={() => setLightbox({
-                                                                                    photos: photos.before.map((f: string) => `${API_URL}/photos/${f}`),
+                                                                                    photos: photos!.before.map((f: string) => `${API_URL}/photos/${f}`),
                                                                                     index: i
                                                                                 })}
                                                                                 className="h-24 w-24 object-cover rounded-lg border border-zinc-200 dark:border-zinc-700 hover:opacity-80 transition-opacity cursor-pointer"
@@ -224,13 +224,13 @@ export default function AdminBookingsPage() {
                                                                         After ({afterCount})
                                                                     </p>
                                                                     <div className="flex flex-wrap gap-2">
-                                                                        {photos.after.map((fileId: string, i: number) => (
+                                                                        {photos!.after.map((fileId: string, i: number) => (
                                                                             <img
                                                                                 key={i}
                                                                                 src={`${API_URL}/photos/${fileId}`}
                                                                                 alt={`After ${i + 1}`}
                                                                                 onClick={() => setLightbox({
-                                                                                    photos: photos.after.map((f: string) => `${API_URL}/photos/${f}`),
+                                                                                    photos: photos!.after.map((f: string) => `${API_URL}/photos/${f}`),
                                                                                     index: i
                                                                                 })}
                                                                                 className="h-24 w-24 object-cover rounded-lg border border-zinc-200 dark:border-zinc-700 hover:opacity-80 transition-opacity cursor-pointer"
