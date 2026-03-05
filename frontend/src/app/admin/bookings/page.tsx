@@ -2,8 +2,9 @@
 
 import React, { useEffect, useState } from 'react';
 import { useAdminStore } from '@/store/adminStore';
-import { Loader2, Users, Calendar, Banknote, Camera, ChevronDown, ChevronUp } from 'lucide-react';
+import { Loader2, Users, Calendar, Banknote, Camera, ChevronDown, ChevronUp, Download } from 'lucide-react';
 import PhotoLightbox from '@/components/PhotoLightbox';
+import { bookingsToCsv, downloadCsv } from '@/lib/exportCsv';
 
 const API_URL = 'http://localhost:5001/api';
 const VALID_STATUSES = ['QUOTE', 'BOOKED', 'CONFIRMED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED'];
@@ -81,6 +82,18 @@ export default function AdminBookingsPage() {
                     <h1 className="text-3xl font-bold tracking-tight">Bookings</h1>
                     <p className="text-sm text-zinc-500 mt-1">Manage customer bookings and assign staff members to jobs.</p>
                 </div>
+                <button
+                    onClick={() => {
+                        const csv = bookingsToCsv(bookings);
+                        const date = new Date().toISOString().slice(0, 10);
+                        downloadCsv(csv, `laminks-bookings-${date}.csv`);
+                    }}
+                    disabled={bookings.length === 0}
+                    className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-medium rounded-lg transition-colors"
+                >
+                    <Download className="w-4 h-4" />
+                    Export CSV
+                </button>
             </div>
 
             {isLoading && !bookings.length ? (
