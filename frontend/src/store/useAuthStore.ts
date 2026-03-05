@@ -14,8 +14,9 @@ interface AuthState {
     user: User | null;
     isLoading: boolean;
     error: string | null;
-    login: (credentials: Record<string, string>) => Promise<void>;
+    login: (credentials: Record<string, string>) => Promise<User>;
     register: (userData: Record<string, string>) => Promise<void>;
+    verifyEmail: (token: string) => Promise<void>;
     logout: () => Promise<void>;
     checkAuth: () => void; // Checks local storage for token on mount
     refreshAuthToken: () => Promise<string | null>;
@@ -45,6 +46,7 @@ export const useAuthStore = create<AuthState>((set) => ({
             const userData: User = await res.json();
             localStorage.setItem('user', JSON.stringify(userData));
             set({ user: userData, isLoading: false });
+            return userData;
         } catch (err) {
             set({ error: err instanceof Error ? err.message : String(err), isLoading: false });
             throw err;
@@ -65,9 +67,31 @@ export const useAuthStore = create<AuthState>((set) => ({
                 throw new Error(errData.message || 'Failed to register');
             }
 
-            const newUserData: User = await res.json();
-            localStorage.setItem('user', JSON.stringify(newUserData));
-            set({ user: newUserData, isLoading: false });
+            // Do NOT log the user in immediately. They must verify email.
+            set({ isLoading: false });
+        } catch (err) {
+            set({ error: err instanceof Error ? err.message : String(err), isLoading: false });
+            throw err;
+        }
+    },
+
+    verifyEmail: async (token: string) => {
+        set({ isLoading: true, error: null });
+        try {
+            const res = await fetch(`${API_URL}/verify-email`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ token }),
+            });
+
+            if (!res.ok) {
+                const errData = await res.json();
+                throw new Error(errData.message || 'Verification failed');
+            }
+
+            const userData: User = await res.json();
+            localStorage.setItem('user', JSON.stringify(userData));
+            set({ user: userData, isLoading: false });
         } catch (err) {
             set({ error: err instanceof Error ? err.message : String(err), isLoading: false });
             throw err;

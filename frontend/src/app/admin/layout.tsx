@@ -1,11 +1,39 @@
+'use client';
+
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useAuthStore } from '@/store/useAuthStore';
+import { LogOut, Loader2 } from 'lucide-react';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
+    const { user, checkAuth, logout } = useAuthStore();
+    const router = useRouter();
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+        checkAuth();
+    }, [checkAuth]);
+
+    const handleLogout = async () => {
+        await logout();
+        router.push('/login');
+    };
+
+    if (!mounted || !user) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-zinc-950">
+                <Loader2 className="w-8 h-8 animate-spin text-zinc-400" />
+            </div>
+        );
+    }
+
     return (
         <div className="min-h-screen bg-gray-50 flex">
             {/* Sidebar */}
-            <aside className="w-64 bg-white border-r">
-                <div className="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
+            <aside className="w-64 bg-white border-r flex flex-col h-screen sticky top-0">
+                <div className="flex-1 px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
                     <ul className="space-y-2 font-medium">
                         <li>
                             <Link
@@ -23,7 +51,34 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                                 <span className="flex-1 ms-3 whitespace-nowrap">Services</span>
                             </Link>
                         </li>
+                        <li>
+                            <Link
+                                href="/admin/bookings"
+                                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                            >
+                                <span className="flex-1 ms-3 whitespace-nowrap">Bookings</span>
+                            </Link>
+                        </li>
                     </ul>
+                </div>
+
+                <div className="p-4 border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-gray-800">
+                    <div className="flex items-center gap-3 px-3 py-2 mb-2">
+                        <div className="w-8 h-8 rounded-full bg-zinc-100 dark:bg-zinc-700 flex items-center justify-center text-zinc-700 dark:text-zinc-300 font-semibold">
+                            {user.firstName?.charAt(0) || 'A'}
+                        </div>
+                        <div className="flex-1 overflow-hidden">
+                            <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate">{user.firstName} {user.lastName}</p>
+                            <p className="text-xs text-zinc-500 truncate">{user.email}</p>
+                        </div>
+                    </div>
+                    <button
+                        onClick={handleLogout}
+                        className="w-full flex items-center gap-3 px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                    >
+                        <LogOut className="w-4 h-4" />
+                        Sign Out
+                    </button>
                 </div>
             </aside>
 

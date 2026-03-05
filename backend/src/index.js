@@ -4,7 +4,6 @@ dotenv.config();
 
 import express from 'express';
 import mongoose from 'mongoose';
-import { GridFSBucket } from 'mongodb';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import authRoutes from './routes/authRoutes.js';
@@ -13,7 +12,11 @@ import pricingRuleRoutes from './routes/pricingRuleRoutes.js';
 import quoteRoutes from './routes/quoteRoutes.js';
 import bookingRoutes from './routes/bookingRoutes.js';
 import paymentRoutes from './routes/paymentRoutes.js';
+import userRoutes from './routes/userRoutes.js';
+import photoRoutes from './routes/photoRoutes.js';
+import mediaRoutes from './routes/mediaRoutes.js';
 import { protect, authorize } from './middleware/authMiddleware.js';
+import { initBucket } from './utils/gridfs.js';
 const app = express();
 app.use(cors({ origin: process.env.FRONTEND_URL || 'http://localhost:3000', credentials: true }));
 app.use(express.json());
@@ -22,10 +25,8 @@ app.use(cookieParser());
 // Connect to MongoDB (use MONGO_URI from .env)
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
-    console.log("MongoDB connected");
-    // Set up GridFS bucket
-    const bucket = new GridFSBucket(mongoose.connection.db, { bucketName: 'media' });
-    console.log('GridFS bucket ready');
+    console.log('MongoDB connected');
+    initBucket(mongoose.connection.db);
   })
   .catch(err => console.error(err));
 
@@ -51,6 +52,11 @@ app.use('/api/pricing-rules', pricingRuleRoutes);
 app.use('/api/quote', quoteRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/payments', paymentRoutes);
+app.use('/api/users', userRoutes);
+// Photo upload routes: POST /api/bookings/:id/photos/before|after
+app.use('/api/bookings', photoRoutes);
+// Photo serve/delete: GET|DELETE /api/photos/:fileId
+app.use('/api/photos', mediaRoutes);
 
 // Start server on new port (5001)
 const port = process.env.PORT || 5000;

@@ -29,8 +29,14 @@ export default function LoginPage() {
     const onSubmit = async (data: LoginValues) => {
         setLoginError('');
         try {
-            await login(data);
-            router.push('/dashboard');
+            const user = await login(data);
+            if (user.role === 'admin') {
+                router.push('/admin');
+            } else if (user.role === 'staff') {
+                router.push('/staff');
+            } else {
+                router.push('/dashboard');
+            }
         } catch (err) {
             setLoginError((err as Error).message);
         }

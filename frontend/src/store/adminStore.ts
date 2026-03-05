@@ -12,6 +12,27 @@ export interface Service {
     updatedAt?: string;
 }
 
+export interface User {
+    _id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    role: string;
+    phone?: string;
+}
+
+export interface Booking {
+    _id: string;
+    customerId: User | any;
+    serviceId: Service | any;
+    date: string;
+    time: string;
+    status: 'PENDING' | 'CONFIRMED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED';
+    totalPrice: number;
+    staffAssignedIds: User[] | any[];
+    createdAt?: string;
+}
+
 interface AdminState {
     services: Service[];
     isLoading: boolean;
@@ -20,24 +41,33 @@ interface AdminState {
     createService: (serviceData: Partial<Service>) => Promise<void>;
     updateService: (id: string, serviceData: Partial<Service>) => Promise<void>;
     deleteService: (id: string) => Promise<void>;
+
+    // Bookings & Staff
+    bookings: Booking[];
+    staffMembers: User[];
+    fetchAllBookings: () => Promise<void>;
+    fetchStaffMembers: () => Promise<void>;
+    assignStaffToBooking: (bookingId: string, staffIds: string[]) => Promise<void>;
 }
 
 // In a real app we'd use environment variables for this API URL
 const API_URL = 'http://localhost:5001/api';
 
-export const useAdminStore = create<AdminState>((set) => ({
+export const useAdminStore = create<AdminState>((set, get) => ({
     services: [],
+    bookings: [],
+    staffMembers: [],
     isLoading: false,
     error: null,
 
     fetchServices: async () => {
         set({ isLoading: true, error: null });
         try {
-            // NOTE: For Admin view, we fetch from /admin/all to get inactive ones too if needed,
-            // but requires auth token. Using public one for now to ensure it works without auth wiring first
-            // Assuming we need token for actual Admin, we'd pull from localStorage/cookies.
+            const userStr = localStorage.getItem('user');
+            const token = userStr ? JSON.parse(userStr).accessToken : null;
+
             const res = await fetch(`${API_URL}/services/admin/all`, {
-                // headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+                headers: { Authorization: `Bearer ${token}` }
             });
 
             // Fallback if not authorized (since we may not have auth wired on frontend yet)
@@ -63,11 +93,14 @@ export const useAdminStore = create<AdminState>((set) => ({
     createService: async (serviceData) => {
         set({ isLoading: true, error: null });
         try {
+            const userStr = localStorage.getItem('user');
+            const token = userStr ? JSON.parse(userStr).accessToken : null;
+
             const res = await fetch(`${API_URL}/services`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    // 'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify(serviceData),
             });
@@ -87,11 +120,14 @@ export const useAdminStore = create<AdminState>((set) => ({
     updateService: async (id, serviceData) => {
         set({ isLoading: true, error: null });
         try {
+            const userStr = localStorage.getItem('user');
+            const token = userStr ? JSON.parse(userStr).accessToken : null;
+
             const res = await fetch(`${API_URL}/services/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    // 'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify(serviceData),
             });
@@ -111,9 +147,12 @@ export const useAdminStore = create<AdminState>((set) => ({
     deleteService: async (id) => {
         set({ isLoading: true, error: null });
         try {
+            const userStr = localStorage.getItem('user');
+            const token = userStr ? JSON.parse(userStr).accessToken : null;
+
             const res = await fetch(`${API_URL}/services/${id}`, {
                 method: 'DELETE',
-                // headers: { 'Authorization': `Bearer ${token}` }
+                headers: { 'Authorization': `Bearer ${token}` }
             });
 
             if (!res.ok) throw new Error('Failed to delete service');
@@ -126,4 +165,61 @@ export const useAdminStore = create<AdminState>((set) => ({
             set({ error: err instanceof Error ? err.message : String(err), isLoading: false });
         }
     },
+
+    fetchAllBookings: async () => {
+        set({ isLoading: true, error: null });
+        try {
+            const userStr = localStorage.getItem('user');
+            const token = userStr ? JSON.parse(userStr).accessToken : null;
+            const res = await fetch(`${API_URL}/bookings`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            if (!res.ok) throw new Error('Failed to fetch bookings');
+            const data = await res.json();
+            set({ bookings: data, isLoading: false });
+        } catch (err) {
+            set({ error: err instanceof Error ? err.message : 'Error fetching bookings', isLoading: false });
+        }
+    },
+
+    fetchStaffMembers: async () => {
+        set({ isLoading: true, error: null });
+        try {
+            const userStr = localStorage.getItem('user');
+            const token = userStr ? JSON.parse(userStr).accessToken : null;
+            const res = await fetch(`${API_URL}/users/staff`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            if (!res.ok) throw new Error('Failed to fetch staff members');
+            const data = await res.json();
+            set({ staffMembers: data, isLoading: false });
+        } catch (err) {
+            set({ error: err instanceof Error ? err.message : 'Error fetching staff', isLoading: false });
+        }
+    },
+
+    assignStaffToBooking: async (bookingId: string, staffIds: string[]) => {
+        set({ isLoading: true, error: null });
+        try {
+            const userStr = localStorage.getItem('user');
+            const token = userStr ? JSON.parse(userStr).accessToken : null;
+            const res = await fetch(`${API_URL}/bookings/${bookingId}/assign-staff`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({ staffIds })
+            });
+            if (!res.ok) throw new Error('Failed to assign staff');
+
+            const updatedBooking = await res.json();
+            set(state => ({
+                bookings: state.bookings.map(b => b._id === bookingId ? updatedBooking : b),
+                isLoading: false
+            }));
+        } catch (err) {
+            set({ error: err instanceof Error ? err.message : 'Error assigning staff', isLoading: false });
+        }
+    }
 }));

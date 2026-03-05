@@ -31,7 +31,7 @@ export default function RootLayout({
           <header className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-[#86a373]/10 px-6 lg:px-20 py-4">
             <div className="max-w-7xl mx-auto flex items-center justify-between">
               <Link href="/" className="flex items-center gap-2">
-                <Image src="/images/logo.png" alt="La-Minks Cleaning Services" width={48} height={48} className="h-12 w-auto" />
+                <Image src="/images/logo.png" alt="La-Minks Cleaning Services" width={200} height={200} className="h-20 w-auto" style={{ mixBlendMode: 'multiply' }} />
               </Link>
               <nav className="hidden md:flex items-center gap-10">
                 <Link className="text-sm font-medium hover:text-[#d46b4e] transition-colors" href="/">Home</Link>
@@ -56,7 +56,7 @@ export default function RootLayout({
             <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12">
               <div className="col-span-1 md:col-span-2">
                 <div className="flex items-center gap-2 mb-6">
-                  <Image src="/images/logo.png" alt="La-Minks Cleaning Services" width={40} height={40} className="h-10 w-auto" />
+                  <Image src="/images/logo.png" alt="La-Minks Cleaning Services" width={160} height={160} className="h-16 w-auto" style={{ mixBlendMode: 'multiply' }} />
                 </div>
                 <p className="text-slate-600 max-w-sm mb-8 leading-relaxed">
                   Premium cleaning services for discerning homeowners. Bringing beauty and balance back to your living space.

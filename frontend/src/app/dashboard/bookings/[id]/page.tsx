@@ -10,6 +10,7 @@ import {
     Home, CheckCircle2, Circle, CreditCard, FileText,
     Camera
 } from 'lucide-react';
+import { useLightbox } from '@/components/PhotoLightbox';
 
 interface BookingDetail {
     _id: string;
@@ -67,6 +68,13 @@ export default function BookingDetailsPage() {
     const [isLoading, setIsLoading] = useState(true);
     const [isPaying, setIsPaying] = useState(false);
     const [error, setError] = useState('');
+
+    const allPhotoUrls = [
+        ...(booking?.photos?.before ?? []).map(id => `http://localhost:5001/api/photos/${id}`),
+        ...(booking?.photos?.after ?? []).map(id => `http://localhost:5001/api/photos/${id}`),
+    ];
+    const beforeCount = booking?.photos?.before?.length ?? 0;
+    const { lightbox, open } = useLightbox(allPhotoUrls);
 
     const handlePayment = async () => {
         if (!user || !booking) return;
@@ -151,6 +159,7 @@ export default function BookingDetailsPage() {
 
     return (
         <div className="max-w-4xl mx-auto space-y-6">
+            {lightbox}
             <Link href="/dashboard" className="inline-flex items-center text-sm font-medium text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors mb-2">
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Back to Bookings
@@ -295,36 +304,46 @@ export default function BookingDetailsPage() {
                         </h2>
 
                         <div className="space-y-4">
+                            {/* Before Photos */}
                             <div>
                                 <p className="text-xs text-zinc-500 font-semibold mb-2 uppercase tracking-wider">Before</p>
                                 {booking.photos?.before?.length > 0 ? (
                                     <div className="grid grid-cols-2 gap-2">
-                                        {booking.photos.before.map((url, i) => (
-                                            <div key={i} className="aspect-square rounded-lg bg-zinc-200 dark:bg-zinc-800 overflow-hidden">
-                                                <img src={url} alt={`Before ${i + 1}`} className="w-full h-full object-cover" />
+                                        {booking.photos.before.map((fileId, i) => (
+                                            <div
+                                                key={i}
+                                                onClick={() => open(i)}
+                                                className="aspect-square rounded-lg bg-zinc-200 dark:bg-zinc-800 overflow-hidden block hover:opacity-90 transition-opacity cursor-pointer"
+                                            >
+                                                <img src={`http://localhost:5001/api/photos/${fileId}`} alt={`Before ${i + 1}`} className="w-full h-full object-cover" />
                                             </div>
                                         ))}
                                     </div>
                                 ) : (
                                     <div className="bg-zinc-50 dark:bg-zinc-800/50 rounded-lg p-4 text-center text-sm text-zinc-500 border border-dashed border-zinc-200 dark:border-zinc-700">
-                                        No photos available
+                                        No photos yet
                                     </div>
                                 )}
                             </div>
 
+                            {/* After Photos */}
                             <div>
                                 <p className="text-xs text-zinc-500 font-semibold mb-2 uppercase tracking-wider">After</p>
                                 {booking.photos?.after?.length > 0 ? (
                                     <div className="grid grid-cols-2 gap-2">
-                                        {booking.photos.after.map((url, i) => (
-                                            <div key={i} className="aspect-square rounded-lg bg-zinc-200 dark:bg-zinc-800 overflow-hidden">
-                                                <img src={url} alt={`After ${i + 1}`} className="w-full h-full object-cover" />
+                                        {booking.photos.after.map((fileId, i) => (
+                                            <div
+                                                key={i}
+                                                onClick={() => open(beforeCount + i)}
+                                                className="aspect-square rounded-lg bg-zinc-200 dark:bg-zinc-800 overflow-hidden block hover:opacity-90 transition-opacity cursor-pointer"
+                                            >
+                                                <img src={`http://localhost:5001/api/photos/${fileId}`} alt={`After ${i + 1}`} className="w-full h-full object-cover" />
                                             </div>
                                         ))}
                                     </div>
                                 ) : (
                                     <div className="bg-zinc-50 dark:bg-zinc-800/50 rounded-lg p-4 text-center text-sm text-zinc-500 border border-dashed border-zinc-200 dark:border-zinc-700">
-                                        No photos available
+                                        No photos yet
                                     </div>
                                 )}
                             </div>

@@ -160,7 +160,7 @@ export default function AdminServicesPage() {
                                 <TableRow key={service._id}>
                                     <TableCell className="font-medium">{service.name}</TableCell>
                                     <TableCell className="max-w-[300px] truncate">{service.description || 'N/A'}</TableCell>
-                                    <TableCell>${service.basePrice.toFixed(2)}</TableCell>
+                                    <TableCell>R{service.basePrice.toFixed(2)}</TableCell>
                                     <TableCell>
                                         <span className={`px-2 py-1 rounded-full text-xs ${service.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
                                             {service.isActive ? 'Active' : 'Inactive'}

@@ -2,6 +2,7 @@ import crypto from 'crypto';
 import Booking from '../models/Booking.js';
 import User from '../models/User.js';
 import { initializeTransaction, verifyTransaction } from '../utils/paystack.js';
+import { sendPaymentSuccessEmail } from '../utils/email.js';
 
 // @desc    Initialize a Paystack payment for a booking
 // @route   POST /api/payments/paystack/initialize
@@ -104,6 +105,13 @@ export const verifyPayment = async (req, res) => {
                 booking.status = 'CONFIRMED';
                 await booking.save();
 
+                // Send payment success email
+                const populatedBooking = await Booking.findById(booking._id).populate('customerId', 'firstName email');
+                if (populatedBooking && populatedBooking.customerId) {
+                    sendPaymentSuccessEmail(populatedBooking, populatedBooking.customerId.email, populatedBooking.customerId.firstName)
+                        .catch(err => console.error('Payment Email failed:', err));
+                }
+
                 return res.status(200).json({ message: 'Payment verified successfully', status: 'success' });
             } else {
                 booking.payment.status = 'FAILED';
@@ -152,6 +160,13 @@ export const handlePaystackWebhook = async (req, res) => {
                         booking.status = 'CONFIRMED';
                         await booking.save();
                         console.log(`Webhook: Booking ${bookingId} confirmed and paid.`);
+
+                        // Send payment success email
+                        const populatedBooking = await Booking.findById(booking._id).populate('customerId', 'firstName email');
+                        if (populatedBooking && populatedBooking.customerId) {
+                            sendPaymentSuccessEmail(populatedBooking, populatedBooking.customerId.email, populatedBooking.customerId.firstName)
+                                .catch(err => console.error('Webhook Payment Email failed:', err));
+                        }
                     } else {
                         console.warn(`Webhook: Booking ${bookingId} not found.`);
                     }

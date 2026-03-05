@@ -27,12 +27,12 @@
 - [x] Payment Webhook/Callback handling
 
 ## Phase 6: Staff Portal & File Storage ⏳ (Pending)
-- [ ] GridFS Upload API (`/before` & `/after` photos)
-- [ ] Staff Dashboard (Today's jobs, Check-in, Checklists)
-- [ ] Mark jobs as completed
+- [x] GridFS Upload API (`/before` & `/after` photos)
+- [x] Staff Dashboard (Today's jobs, Check-in, Checklists)
+- [x] Mark jobs as completed
 
-## Phase 7: Notifications & Polish ⏳ (Pending)
-- [ ] Nodemailer Integration (Booking, Payment, Assignment, Completion emails)
+## Phase 7: Notifications & Polish ⏳ (In Progress)
+- [x] Nodemailer Integration (Booking, Payment, Assignment, Completion emails)
 - [ ] Export Reports (CSV)
 - [ ] Audit Log Viewer in Admin Dashboard
 

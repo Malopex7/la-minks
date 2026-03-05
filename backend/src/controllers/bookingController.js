@@ -1,6 +1,7 @@
 import Booking from '../models/Booking.js';
 import Service from '../models/Service.js';
 import PricingRule from '../models/PricingRule.js';
+import { sendBookingCreatedEmail, sendStaffAssignmentEmail, sendJobCompletionEmail, sendJobCheckInEmail } from '../utils/email.js';
 
 // @desc    Get logged in user's bookings
 // @route   GET /api/bookings/my
@@ -104,6 +105,10 @@ export const createBooking = async (req, res) => {
         });
 
         const createdBooking = await booking.save();
+
+        // Send Email Notification async
+        sendBookingCreatedEmail(createdBooking, req.user.email, req.user.firstName).catch(err => console.error('Email failed:', err));
+
         res.status(201).json(createdBooking);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -176,7 +181,85 @@ export const assignStaffToBooking = async (req, res) => {
         const populatedBooking = await Booking.findById(updatedBooking._id)
             .populate('staffAssignedIds', 'firstName lastName email phone');
 
+        // Send Emails to assigned staff async
+        if (populatedBooking && populatedBooking.staffAssignedIds.length > 0) {
+            populatedBooking.staffAssignedIds.forEach(staff => {
+                sendStaffAssignmentEmail(populatedBooking, staff.email, staff.firstName)
+                    .catch(err => console.error('Assignment Email failed:', err));
+            });
+        }
+
         res.json(populatedBooking);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// @desc    Get bookings assigned to logged-in staff
+// @route   GET /api/bookings/staff-assigned
+// @access  Private/Staff
+export const getStaffAssignments = async (req, res) => {
+    try {
+        const bookings = await Booking.find({ staffAssignedIds: req.user._id })
+            .populate('customerId', 'firstName lastName email phone')
+            .populate('serviceId', 'name icon baseRate description')
+            .sort({ createdAt: -1 });
+        res.json(bookings);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// @desc    Update staff-specific booking details (status, checklist, notes)
+// @route   PUT /api/bookings/:id/staff-update
+// @access  Private/Staff
+export const updateStaffBooking = async (req, res) => {
+    try {
+        const { status, checklist, notesStaff } = req.body;
+        const booking = await Booking.findById(req.params.id);
+
+        if (!booking) {
+            return res.status(404).json({ message: 'Booking not found' });
+        }
+
+        // Verify that the logged in staff member is assigned to this booking
+        if (!booking.staffAssignedIds.includes(req.user._id)) {
+            return res.status(403).json({ message: 'Not authorized to update this booking' });
+        }
+
+        if (status) {
+            const validStatuses = ['IN_PROGRESS', 'COMPLETED'];
+            if (!validStatuses.includes(status)) {
+                return res.status(400).json({ message: 'Staff can only set status to IN_PROGRESS or COMPLETED' });
+            }
+            booking.status = status;
+        }
+
+        if (checklist !== undefined) {
+            booking.checklist = checklist;
+        }
+
+        if (notesStaff !== undefined) {
+            booking.notesStaff = notesStaff;
+        }
+
+        const updatedBooking = await booking.save();
+
+        // Send notification emails based on status transition
+        if (status === 'IN_PROGRESS' || status === 'COMPLETED') {
+            const populatedBooking = await Booking.findById(updatedBooking._id).populate('customerId', 'firstName email');
+            if (populatedBooking && populatedBooking.customerId) {
+                if (status === 'IN_PROGRESS') {
+                    sendJobCheckInEmail(populatedBooking, populatedBooking.customerId.email, populatedBooking.customerId.firstName)
+                        .catch(err => console.error('Check-in Email failed:', err));
+                } else {
+                    sendJobCompletionEmail(populatedBooking, populatedBooking.customerId.email, populatedBooking.customerId.firstName)
+                        .catch(err => console.error('Completion Email failed:', err));
+                }
+            }
+        }
+
+        res.json(updatedBooking);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
