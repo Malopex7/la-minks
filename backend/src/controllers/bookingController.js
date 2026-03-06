@@ -48,7 +48,7 @@ export const getBookingById = async (req, res) => {
 // @access  Private
 export const createBooking = async (req, res) => {
     try {
-        const { serviceId, address, property, extrasSelected, schedule } = req.body;
+        const { serviceId, address, serviceDetails, extrasSelected, aiExtras, schedule } = req.body;
 
         // Fetch service and pricing rules to calculate amount
         const service = await Service.findById(serviceId);
@@ -59,30 +59,29 @@ export const createBooking = async (req, res) => {
 
         // Base Price Calculation
         let baseCost = service.basePrice || 0;
-        if (property?.sqm && pricingRule.propertySizeBands?.length > 0) {
-            const band = pricingRule.propertySizeBands.find(
-                (b) => property.sqm >= b.minSqm && property.sqm <= b.maxSqm
-            );
-            if (band) baseCost *= band.multiplier;
+
+        if (serviceDetails && pricingRule.baseCalculators?.length > 0) {
+            pricingRule.baseCalculators.forEach(calc => {
+                const inputValue = serviceDetails[calc.inputName];
+                if (inputValue && typeof inputValue === 'number') {
+                    baseCost += (inputValue * calc.multiplierRate);
+                }
+            });
         }
 
-        if (property?.bedrooms && pricingRule.roomRates?.bedroomRate) {
-            baseCost += property.bedrooms * pricingRule.roomRates.bedroomRate;
-        }
-        if (property?.bathrooms && pricingRule.roomRates?.bathroomRate) {
-            baseCost += property.bathrooms * pricingRule.roomRates.bathroomRate;
-        }
-
-        if (property?.conditionLevel && pricingRule.conditionMultipliers) {
-            const conditionMultiplier = pricingRule.conditionMultipliers[property.conditionLevel] || 1;
+        if (serviceDetails?.conditionLevel && pricingRule.conditionMultipliers) {
+            const conditionMultiplier = pricingRule.conditionMultipliers[serviceDetails.conditionLevel] || 1;
             baseCost *= conditionMultiplier;
         }
 
         // Extras Cost Calculation
         let extrasCost = 0;
-        if (extrasSelected && extrasSelected.length > 0 && pricingRule.extras?.length > 0) {
+        if (extrasSelected && extrasSelected.length > 0) {
             extrasSelected.forEach((extraName) => {
-                const extraRule = pricingRule.extras.find((e) => e.name === extraName);
+                let extraRule = pricingRule.extras?.find((e) => e.name === extraName);
+                if (!extraRule && aiExtras && aiExtras.length > 0) {
+                    extraRule = aiExtras.find((e) => e.name === extraName);
+                }
                 if (extraRule) extrasCost += extraRule.price || 0;
             });
         }
@@ -93,8 +92,9 @@ export const createBooking = async (req, res) => {
             customerId: req.user._id,
             serviceId,
             address,
-            property,
+            serviceDetails,
             extrasSelected,
+            aiExtras: aiExtras || [],
             schedule,
             status: 'BOOKED',
             payment: {
@@ -107,11 +107,14 @@ export const createBooking = async (req, res) => {
 
         const createdBooking = await booking.save();
 
+        // Populate service name for the email
+        const populatedBooking = await Booking.findById(createdBooking._id).populate('serviceId', 'name');
+
         // Audit log
         AuditLog.create({ userId: req.user._id, action: 'CREATE', entityType: 'Booking', entityId: createdBooking._id, details: { status: createdBooking.status, totalPrice: finalPrice } }).catch(() => { });
 
         // Send Email Notification async
-        sendBookingCreatedEmail(createdBooking, req.user.email, req.user.firstName).catch(err => console.error('Email failed:', err));
+        sendBookingCreatedEmail(populatedBooking, req.user.email, req.user.firstName).catch(err => console.error('Email failed:', err));
 
         res.status(201).json(createdBooking);
     } catch (error) {

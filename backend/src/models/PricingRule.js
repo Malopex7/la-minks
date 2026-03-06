@@ -8,17 +8,12 @@ const pricingRuleSchema = new mongoose.Schema(
             required: true,
             unique: true, // Typically one pricing rule per service
         },
-        propertySizeBands: [
+        baseCalculators: [
             {
-                minSqm: Number,
-                maxSqm: Number,
-                multiplier: Number, // Multiplier applied to baseRate for this size band
+                inputName: String, // e.g. 'numWindows', 'sqm', 'poolSize'
+                multiplierRate: Number, // Cost per unit over the base price
             }
         ],
-        roomRates: {
-            bedroomRate: { type: Number, default: 0 },
-            bathroomRate: { type: Number, default: 0 },
-        },
         conditionMultipliers: {
             standard: { type: Number, default: 1 },
             deep: { type: Number, default: 1.5 },

@@ -1,4 +1,5 @@
 import Service from '../models/Service.js';
+import PricingRule from '../models/PricingRule.js';
 import AuditLog from '../models/AuditLog.js';
 
 // @desc    Get all active services
@@ -6,8 +7,20 @@ import AuditLog from '../models/AuditLog.js';
 // @access  Public
 export const getServices = async (req, res) => {
     try {
-        const services = await Service.find({ isActive: true });
-        res.json(services);
+        const services = await Service.find({ isActive: true }).lean();
+
+        const serviceIds = services.map(s => s._id);
+        const pricingRules = await PricingRule.find({ serviceId: { $in: serviceIds } }).lean();
+
+        const servicesWithPricing = services.map(service => {
+            const rule = pricingRules.find(pr => pr.serviceId.toString() === service._id.toString());
+            return {
+                ...service,
+                pricingRule: rule || null
+            };
+        });
+
+        res.json(servicesWithPricing);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -30,9 +43,11 @@ export const getAdminServices = async (req, res) => {
 // @access  Public
 export const getServiceById = async (req, res) => {
     try {
-        const service = await Service.findById(req.params.id);
+        const service = await Service.findById(req.params.id).lean();
 
         if (service) {
+            const pricingRule = await PricingRule.findOne({ serviceId: service._id }).lean();
+            service.pricingRule = pricingRule || null;
             res.json(service);
         } else {
             res.status(404).json({ message: 'Service not found' });

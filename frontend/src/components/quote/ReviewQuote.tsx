@@ -29,8 +29,9 @@ export default function ReviewQuote() {
             try {
                 const payload = {
                     serviceId: data.serviceId,
-                    property: data.property,
+                    serviceDetails: data.serviceDetails,
                     extrasSelected: data.extrasSelected,
+                    aiExtras: data.aiExtras,
                 };
 
                 const response = await fetch('http://localhost:5001/api/quote', {
@@ -78,8 +79,9 @@ export default function ReviewQuote() {
             const bookingPayload = {
                 serviceId: data.serviceId,
                 address: data.address,
-                property: data.property,
+                serviceDetails: data.serviceDetails,
                 extrasSelected: data.extrasSelected,
+                aiExtras: data.aiExtras,
                 schedule: data.schedule,
             };
 
@@ -141,11 +143,21 @@ export default function ReviewQuote() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="space-y-6">
                     <div>
-                        <h3 className="text-lg font-semibold text-slate-800 mb-3 border-b pb-2">Property</h3>
+                        <h3 className="text-lg font-semibold text-slate-800 mb-3 border-b pb-2">Service Details</h3>
                         <ul className="space-y-2 text-slate-600">
-                            <li><span className="font-medium">Size:</span> {data.property.sqm} sqm</li>
-                            <li><span className="font-medium">Rooms:</span> {data.property.bedrooms} beds, {data.property.bathrooms} baths</li>
-                            <li><span className="font-medium">Condition:</span> <span className="capitalize">{data.property.conditionLevel}</span></li>
+                            {Object.entries(data.serviceDetails).map(([key, value]) => {
+                                // Find the matching input schema to get the friendly label, 
+                                // otherwise format the camelCase key decently
+                                const inputDef = data.serviceInputs.find(i => i.name === key);
+                                const label = inputDef ? inputDef.label : key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+
+                                return (
+                                    <li key={key}>
+                                        <span className="font-medium">{label}:</span>{' '}
+                                        <span className={key === 'conditionLevel' ? 'capitalize' : ''}>{String(value)}</span>
+                                    </li>
+                                );
+                            })}
                         </ul>
                     </div>
 

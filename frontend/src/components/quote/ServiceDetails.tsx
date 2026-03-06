@@ -6,79 +6,79 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
-export default function PropertyDetails() {
+export default function ServiceDetails() {
     const { data, updateData, nextStep, prevStep } = useQuoteStore();
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
+        const { name, value, type, checked } = e.target;
+
+        // Handle numbers and booleans intelligently
+        let parsedValue: string | number | boolean = value;
+        if (type === 'number') {
+            parsedValue = parseInt(value) || 0;
+        } else if (type === 'checkbox') {
+            parsedValue = checked;
+        }
+
         updateData({
-            property: {
-                ...data.property,
-                [name]: parseInt(value) || 0,
+            serviceDetails: {
+                ...data.serviceDetails,
+                [name]: parsedValue,
             },
         });
     };
 
     const handleConditionSelect = (level: 'standard' | 'deep' | 'heavy_duty') => {
         updateData({
-            property: {
-                ...data.property,
+            serviceDetails: {
+                ...data.serviceDetails,
                 conditionLevel: level,
             },
         });
     };
 
+    // If a service has no specific inputs configured, we just default to asking for condition level
+    const hasDynamicInputs = data.serviceInputs && data.serviceInputs.length > 0;
+
     return (
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div>
-                <h2 className="text-2xl font-bold text-slate-900 mb-2">Property Details</h2>
-                <p className="text-slate-500">Tell us a bit about the property.</p>
+                <h2 className="text-2xl font-bold text-slate-900 mb-2">Service Details</h2>
+                <p className="text-slate-500">Tell us a bit more about what needs cleaning.</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-4">
-                    <div className="space-y-2">
-                        <Label htmlFor="sqm">Property Size (sqm)</Label>
-                        <Input
-                            id="sqm"
-                            name="sqm"
-                            type="number"
-                            placeholder="e.g. 120"
-                            value={data.property.sqm === 0 ? '' : data.property.sqm}
-                            onChange={handleInputChange}
-                        />
-                    </div>
-
-                    <div className="space-y-2">
-                        <Label htmlFor="bedrooms">Bedrooms</Label>
-                        <Input
-                            id="bedrooms"
-                            name="bedrooms"
-                            type="number"
-                            placeholder="e.g. 3"
-                            value={data.property.bedrooms === 0 ? '' : data.property.bedrooms}
-                            onChange={handleInputChange}
-                        />
-                    </div>
-
-                    <div className="space-y-2">
-                        <Label htmlFor="bathrooms">Bathrooms</Label>
-                        <Input
-                            id="bathrooms"
-                            name="bathrooms"
-                            type="number"
-                            placeholder="e.g. 2"
-                            value={data.property.bathrooms === 0 ? '' : data.property.bathrooms}
-                            onChange={handleInputChange}
-                        />
-                    </div>
+                    {hasDynamicInputs ? (
+                        data.serviceInputs.map((inputSchema) => (
+                            <div key={inputSchema.name} className="space-y-2">
+                                <Label htmlFor={inputSchema.name}>{inputSchema.label}</Label>
+                                {inputSchema.type === 'number' && (
+                                    <Input
+                                        id={inputSchema.name}
+                                        name={inputSchema.name}
+                                        type="number"
+                                        placeholder={`e.g. 3`}
+                                        value={data.serviceDetails[inputSchema.name] || ''}
+                                        onChange={handleInputChange}
+                                        min="0"
+                                    />
+                                )}
+                                {/* You could add <select> for 'select' types or Switch/Checkbox for 'boolean' types here in the future! */}
+                            </div>
+                        ))
+                    ) : (
+                        <div className="text-sm text-slate-500 p-4 bg-slate-50 rounded-lg">
+                            No specific dimensions required for this service.
+                        </div>
+                    )}
                 </div>
 
                 <div className="space-y-4">
                     <Label className="block mb-2 text-slate-700">Condition Level</Label>
                     <div className="space-y-3">
                         <Card
-                            className={`cursor-pointer transition-all hover:border-[#d46b4e] hover:shadow-sm ${data.property.conditionLevel === 'standard' ? 'border-2 border-[#d46b4e] bg-[#d46b4e]/10' : 'border-slate-200'
+                            className={`cursor-pointer transition-all hover:border-[#d46b4e] hover:shadow-sm ${data.serviceDetails.conditionLevel === 'standard' ? 'border-2 border-[#d46b4e] bg-[#d46b4e]/10' : 'border-slate-200'
                                 }`}
                             onClick={() => handleConditionSelect('standard')}
                         >
@@ -89,7 +89,7 @@ export default function PropertyDetails() {
                         </Card>
 
                         <Card
-                            className={`cursor-pointer transition-all hover:border-[#d46b4e] hover:shadow-sm ${data.property.conditionLevel === 'deep' ? 'border-2 border-[#d46b4e] bg-[#d46b4e]/10' : 'border-slate-200'
+                            className={`cursor-pointer transition-all hover:border-[#d46b4e] hover:shadow-sm ${data.serviceDetails.conditionLevel === 'deep' ? 'border-2 border-[#d46b4e] bg-[#d46b4e]/10' : 'border-slate-200'
                                 }`}
                             onClick={() => handleConditionSelect('deep')}
                         >
@@ -100,7 +100,7 @@ export default function PropertyDetails() {
                         </Card>
 
                         <Card
-                            className={`cursor-pointer transition-all hover:border-[#d46b4e] hover:shadow-sm ${data.property.conditionLevel === 'heavy_duty' ? 'border-2 border-[#d46b4e] bg-[#d46b4e]/10' : 'border-slate-200'
+                            className={`cursor-pointer transition-all hover:border-[#d46b4e] hover:shadow-sm ${data.serviceDetails.conditionLevel === 'heavy_duty' ? 'border-2 border-[#d46b4e] bg-[#d46b4e]/10' : 'border-slate-200'
                                 }`}
                             onClick={() => handleConditionSelect('heavy_duty')}
                         >
@@ -119,7 +119,6 @@ export default function PropertyDetails() {
                 </Button>
                 <Button
                     onClick={nextStep}
-                    disabled={data.property.sqm === 0 && data.property.bedrooms === 0}
                     size="lg"
                     className="bg-[#d46b4e] hover:bg-[#b3573c] text-white"
                 >

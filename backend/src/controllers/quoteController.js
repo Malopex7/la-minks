@@ -1,12 +1,12 @@
 import Service from '../models/Service.js';
 import PricingRule from '../models/PricingRule.js';
 
-// @desc    Calculate quote based on property and service details
+// @desc    Calculate quote based on dynamic serviceDetails and extras
 // @route   POST /api/quote
 // @access  Public
 export const calculateQuote = async (req, res) => {
     try {
-        const { serviceId, property, extrasSelected } = req.body;
+        const { serviceId, serviceDetails, extrasSelected, aiExtras } = req.body;
 
         if (!serviceId) {
             return res.status(400).json({ message: 'serviceId is required' });
@@ -26,27 +26,20 @@ export const calculateQuote = async (req, res) => {
         // 2. Base Price Calculation
         let baseCost = service.basePrice || 0;
 
-        // Apply property size multiplier if sqm is provided
-        if (property?.sqm && pricingRule.propertySizeBands?.length > 0) {
-            const band = pricingRule.propertySizeBands.find(
-                (b) => property.sqm >= b.minSqm && property.sqm <= b.maxSqm
-            );
-            if (band) {
-                baseCost *= band.multiplier;
-            }
+        // Apply dynamic base calculators based on incoming serviceDetails
+        if (serviceDetails && pricingRule.baseCalculators?.length > 0) {
+            pricingRule.baseCalculators.forEach(calc => {
+                const inputValue = serviceDetails[calc.inputName];
+                if (inputValue && typeof inputValue === 'number') {
+                    // e.g. 10 windows * R25 per window
+                    baseCost += (inputValue * calc.multiplierRate);
+                }
+            });
         }
 
-        // Add room rates
-        if (property?.bedrooms && pricingRule.roomRates?.bedroomRate) {
-            baseCost += property.bedrooms * pricingRule.roomRates.bedroomRate;
-        }
-        if (property?.bathrooms && pricingRule.roomRates?.bathroomRate) {
-            baseCost += property.bathrooms * pricingRule.roomRates.bathroomRate;
-        }
-
-        // Apply condition multiplier
-        if (property?.conditionLevel && pricingRule.conditionMultipliers) {
-            const conditionMultiplier = pricingRule.conditionMultipliers[property.conditionLevel] || 1;
+        // Apply condition multiplier, if provided conceptually via serviceDetails
+        if (serviceDetails?.conditionLevel && pricingRule.conditionMultipliers) {
+            const conditionMultiplier = pricingRule.conditionMultipliers[serviceDetails.conditionLevel] || 1;
             baseCost *= conditionMultiplier;
         }
 
@@ -54,9 +47,16 @@ export const calculateQuote = async (req, res) => {
         let extrasCost = 0;
         let estimatedAdditionalHours = 0;
 
-        if (extrasSelected && extrasSelected.length > 0 && pricingRule.extras?.length > 0) {
+        if (extrasSelected && extrasSelected.length > 0) {
             extrasSelected.forEach((extraName) => {
-                const extraRule = pricingRule.extras.find((e) => e.name === extraName);
+                // First check DB rules
+                let extraRule = pricingRule.extras?.find((e) => e.name === extraName);
+
+                // If not found in DB, check dynamically passed AI extras
+                if (!extraRule && aiExtras && aiExtras.length > 0) {
+                    extraRule = aiExtras.find((e) => e.name === extraName);
+                }
+
                 if (extraRule) {
                     extrasCost += extraRule.price || 0;
                     estimatedAdditionalHours += extraRule.estimatedAdditionalHours || 0;
@@ -67,10 +67,21 @@ export const calculateQuote = async (req, res) => {
         // 4. Final Price and Hours
         const finalPrice = baseCost + extrasCost;
 
-        // Rough estimation: base 2 hours + 0.5 hours per bedroom/bathroom + extra hours
+        // Rough estimation logic:
+        // Base 2 hours + 0.5 hours for every major unit counted (+ extras)
         const baseHours = 2;
-        const roomHours = ((property?.bedrooms || 0) + (property?.bathrooms || 0)) * 0.5;
-        const totalEstimatedHours = baseHours + roomHours + estimatedAdditionalHours;
+        let dynamicHours = 0;
+
+        if (serviceDetails) {
+            // Very roughly add 30 mins for every counted unit (like bedrooms or rooms) to give a baseline
+            Object.values(serviceDetails).forEach(val => {
+                if (typeof val === 'number' && val < 50) { // e.g. 3 bedrooms = 1.5 hours
+                    dynamicHours += (val * 0.5);
+                }
+            });
+        }
+
+        const totalEstimatedHours = baseHours + dynamicHours + estimatedAdditionalHours;
 
         res.status(200).json({
             baseCost,

@@ -142,7 +142,38 @@ export default function AdminBookingsPage() {
                                                         <div className="text-xs text-zinc-500">{booking.customerId?.email}</div>
                                                     </td>
                                                     <td className="px-6 py-4 text-zinc-700 dark:text-zinc-300">
-                                                        {booking.serviceId?.name || 'Unknown Service'}
+                                                        <div className="font-medium text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
+                                                            {booking.serviceId?.name || 'Unknown Service'}
+                                                        </div>
+
+                                                        {/* Service Details (Inputs) */}
+                                                        {booking.serviceDetails && Object.keys(booking.serviceDetails).length > 0 && (
+                                                            <div className="mt-2 text-xs text-zinc-500">
+                                                                <span className="font-semibold block mb-0.5">Details:</span>
+                                                                <ul className="list-disc pl-4 space-y-0.5">
+                                                                    {Object.entries(booking.serviceDetails).map(([k, v]) => (
+                                                                        <li key={k}>
+                                                                            {k.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}: {String(v)}
+                                                                        </li>
+                                                                    ))}
+                                                                </ul>
+                                                            </div>
+                                                        )}
+
+                                                        {/* Extras */}
+                                                        {(booking.extrasSelected?.length > 0 || booking.aiExtras?.length > 0) && (
+                                                            <div className="mt-2 text-xs text-zinc-500">
+                                                                <span className="font-semibold block mb-0.5">Extras:</span>
+                                                                <ul className="list-disc pl-4 space-y-0.5">
+                                                                    {booking.extrasSelected?.map((e: string) => (
+                                                                        <li key={e}>{e}</li>
+                                                                    ))}
+                                                                    {booking.aiExtras?.map((e: any) => (
+                                                                        <li key={e.name} className="text-amber-600 dark:text-amber-500">✨ {e.name}</li>
+                                                                    ))}
+                                                                </ul>
+                                                            </div>
+                                                        )}
                                                     </td>
                                                     <td className="px-6 py-4">
                                                         <div className="flex items-center space-x-2 text-zinc-700 dark:text-zinc-300">

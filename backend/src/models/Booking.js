@@ -19,15 +19,9 @@ const bookingSchema = new mongoose.Schema(
             province: String,
             postalCode: String,
         },
-        property: {
-            sqm: Number,
-            bedrooms: Number,
-            bathrooms: Number,
-            conditionLevel: {
-                type: String,
-                enum: ['standard', 'deep', 'heavy_duty'],
-                default: 'standard',
-            },
+        serviceDetails: {
+            type: Map,
+            of: mongoose.Schema.Types.Mixed, // Allows capturing arbitrary dynamic inputs (e.g. numWindows: 12)
         },
         extrasSelected: [String],
         schedule: {
@@ -75,6 +69,11 @@ const bookingSchema = new mongoose.Schema(
             before: [String],
             after: [String],
         },
+        aiExtras: [{
+            name: String,
+            price: Number,
+            estimatedAdditionalHours: Number
+        }],
         notesCustomer: {
             type: String,
             trim: true,

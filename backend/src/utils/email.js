@@ -112,10 +112,31 @@ export const sendBookingCreatedEmail = async (booking, customerEmail, customerNa
         <p>Thank you for choosing La-Minks! We have received your booking request for our cleaning services.</p>
         
         <div class="details-box">
+            <p><strong>Service:</strong> ${booking.serviceId?.name || 'Cleaning Service'}</p>
             <p><strong>Date:</strong> ${date}</p>
             <p><strong>Time Slot:</strong> ${booking.schedule.timeSlot}</p>
             <p><strong>Address:</strong> ${booking.address.line1}, ${booking.address.suburb}</p>
-            <p><strong>Amount Due:</strong> R${booking.payment.amount.toFixed(2)}</p>
+            
+            ${Object.keys(booking.serviceDetails || {}).length > 0 ? `
+                <div style="margin-top: 12px; padding-top: 12px; border-top: 1px dashed #e4e4e7;">
+                    <p style="margin-bottom: 4px;"><strong>Service Details:</strong></p>
+                    <ul style="margin: 0; padding-left: 20px; font-size: 14px;">
+                        ${Object.entries(booking.serviceDetails).map(([k, v]) => `<li>${k.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}: ${v}</li>`).join('')}
+                    </ul>
+                </div>
+            ` : ''}
+
+            ${(booking.extrasSelected?.length > 0 || booking.aiExtras?.length > 0) ? `
+                <div style="margin-top: 12px; padding-top: 12px; border-top: 1px dashed #e4e4e7;">
+                    <p style="margin-bottom: 4px;"><strong>Requested Extras:</strong></p>
+                    <ul style="margin: 0; padding-left: 20px; font-size: 14px;">
+                        ${booking.extrasSelected?.map(e => `<li>${e}</li>`).join('') || ''}
+                        ${booking.aiExtras?.map(e => `<li>✨ ${e.name}</li>`).join('') || ''}
+                    </ul>
+                </div>
+            ` : ''}
+
+            <p style="margin-top: 16px;"><strong>Amount Due:</strong> R${booking.payment.amount.toFixed(2)}</p>
         </div>
 
         <p>You can view and manage your booking, or complete your payment via your dashboard.</p>
@@ -157,10 +178,30 @@ export const sendStaffAssignmentEmail = async (booking, staffEmail, staffName) =
         <p>You have been assigned to a new cleaning job.</p>
         
         <div class="details-box">
+            <p><strong>Job Ref:</strong> ${booking._id}</p>
+            <p><strong>Service:</strong> ${booking.serviceId?.name || 'Cleaning Service'}</p>
             <p><strong>Date:</strong> ${date}</p>
             <p><strong>Time Slot:</strong> ${booking.schedule.timeSlot}</p>
             <p><strong>Address:</strong> ${booking.address.line1}, ${booking.address.suburb}</p>
-            <p><strong>Job Ref:</strong> ${booking._id}</p>
+
+            ${Object.keys(booking.serviceDetails || {}).length > 0 ? `
+                <div style="margin-top: 12px; padding-top: 12px; border-top: 1px dashed #e4e4e7;">
+                    <p style="margin-bottom: 4px;"><strong>Service Details:</strong></p>
+                    <ul style="margin: 0; padding-left: 20px; font-size: 14px;">
+                        ${Object.entries(booking.serviceDetails).map(([k, v]) => `<li>${k.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}: ${v}</li>`).join('')}
+                    </ul>
+                </div>
+            ` : ''}
+
+            ${(booking.extrasSelected?.length > 0 || booking.aiExtras?.length > 0) ? `
+                <div style="margin-top: 12px; padding-top: 12px; border-top: 1px dashed #e4e4e7;">
+                    <p style="margin-bottom: 4px;"><strong>Requested Extras:</strong></p>
+                    <ul style="margin: 0; padding-left: 20px; font-size: 14px;">
+                        ${booking.extrasSelected?.map(e => `<li>${e}</li>`).join('') || ''}
+                        ${booking.aiExtras?.map(e => `<li>✨ ${e.name}</li>`).join('') || ''}
+                    </ul>
+                </div>
+            ` : ''}
         </div>
 
         <p>Please log into your staff portal to review the job specifications and checklists.</p>

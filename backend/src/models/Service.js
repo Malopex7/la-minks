@@ -23,6 +23,15 @@ const serviceSchema = new mongoose.Schema(
         imageUrl: {
             type: String,
         },
+        inputs: [
+            {
+                name: { type: String, required: true },
+                label: { type: String, required: true },
+                type: { type: String, enum: ['number', 'select', 'boolean'], required: true },
+                options: [String], // Only required/used if type is 'select'
+                required: { type: Boolean, default: true },
+            }
+        ],
     },
     {
         timestamps: true,

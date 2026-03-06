@@ -16,6 +16,7 @@ import userRoutes from './routes/userRoutes.js';
 import photoRoutes from './routes/photoRoutes.js';
 import mediaRoutes from './routes/mediaRoutes.js';
 import auditRoutes from './routes/auditRoutes.js';
+import aiRoutes from './routes/aiRoutes.js';
 import { protect, authorize } from './middleware/authMiddleware.js';
 import { initBucket } from './utils/gridfs.js';
 const app = express();
@@ -60,6 +61,8 @@ app.use('/api/bookings', photoRoutes);
 app.use('/api/photos', mediaRoutes);
 // Audit logs: GET /api/audit
 app.use('/api/audit', auditRoutes);
+// AI-powered extras suggestion
+app.use('/api/quote', aiRoutes);
 
 // Start server on new port (5001)
 const port = process.env.PORT || 5000;

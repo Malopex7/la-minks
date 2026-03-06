@@ -48,4 +48,13 @@
 - [x] Final README instructions
 - [x] End-to-end testing
 
+## Phase 9: Intelligent Quote Wizard 🚧 (In Progress)
+- [x] Refactor Service schema to support custom dynamic required inputs (e.g., number of windows, pool type).
+- [x] Refactor PricingRule and Quote API endpoint to calculate dynamic pricing mapped to specific service inputs.
+- [x] Update Frontend `useQuoteStore` to handle `serviceDetails` instead of generic sqm/bedrooms property data.
+- [x] Overhaul `PropertyDetails.tsx` into a dynamic `ServiceDetails.tsx` wizard step.
+- [x] Update `SelectExtras.tsx` to conditionally render only extras mapped to the selected service.
+- [x] AI-Powered Extras Chatbot: Gemini 2.0 Flash integration for service-specific extra suggestions with SA market pricing.
+- [ ] Add smart auto-inclusion logic (e.g., auto-checking "Inside Oven" for "Move Out Cleaning").
+
 🎉 **Project Complete**

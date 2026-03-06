@@ -3,7 +3,7 @@
 import { Suspense } from 'react';
 import { useQuoteStore } from '@/store/useQuoteStore';
 import ServiceSelection from '@/components/quote/ServiceSelection';
-import PropertyDetails from '@/components/quote/PropertyDetails';
+import ServiceDetails from '@/components/quote/ServiceDetails';
 import SelectExtras from '@/components/quote/SelectExtras';
 import AddressInput from '@/components/quote/AddressInput';
 import ScheduleSelection from '@/components/quote/ScheduleSelection';
@@ -33,7 +33,7 @@ export default function QuotePage() {
 
                     <Suspense fallback={<div className="animate-pulse flex space-x-4">Loading step...</div>}>
                         {step === 1 && <ServiceSelection />}
-                        {step === 2 && <PropertyDetails />}
+                        {step === 2 && <ServiceDetails />}
                         {step === 3 && <SelectExtras />}
                         {step === 4 && <AddressInput />}
                         {step === 5 && <ScheduleSelection />}

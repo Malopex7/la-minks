@@ -2,12 +2,14 @@ import { create } from 'zustand';
 
 export type QuoteData = {
     serviceId?: string;
-    property: {
-        sqm: number;
-        bedrooms: number;
-        bathrooms: number;
-        conditionLevel: 'standard' | 'deep' | 'heavy_duty';
-    };
+    // Store the selected service's required inputs schema (e.g. from the backend)
+    serviceInputs: any[];
+    // Track the available extras config for the selected service
+    serviceExtras: any[];
+    // Track AI-suggested extras that are not in the DB
+    aiExtras: any[];
+    // Dynamic mapping of input answers, e.g. { numWindows: 12, conditionLevel: 'standard' }
+    serviceDetails: Record<string, any>;
     extrasSelected: string[];
     address: {
         line1: string;
@@ -33,11 +35,11 @@ interface QuoteStore {
 }
 
 const initialData: QuoteData = {
-    property: {
-        sqm: 0,
-        bedrooms: 0,
-        bathrooms: 0,
-        conditionLevel: 'standard',
+    serviceInputs: [],
+    serviceExtras: [],
+    aiExtras: [],
+    serviceDetails: {
+        conditionLevel: 'standard', // Keeping a sensible default as many services still depend on this
     },
     extrasSelected: [],
     address: {
