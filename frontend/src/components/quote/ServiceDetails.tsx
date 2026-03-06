@@ -59,7 +59,7 @@ export default function ServiceDetails() {
                                         name={inputSchema.name}
                                         type="number"
                                         placeholder={`e.g. 3`}
-                                        value={data.serviceDetails[inputSchema.name] || ''}
+                                        value={String(data.serviceDetails[inputSchema.name] ?? '')}
                                         onChange={handleInputChange}
                                         min="0"
                                     />

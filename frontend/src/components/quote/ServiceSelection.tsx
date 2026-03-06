@@ -10,8 +10,8 @@ interface Service {
     name: string;
     description: string;
     basePrice: number;
-    inputs: any[]; // The dynamic inputs array we just added to the schema
-    pricingRule?: any; // The pricing rule containing the extras
+    inputs: { name: string; type: string; label: string }[]; // The dynamic inputs array we just added to the schema
+    pricingRule?: { extras?: { name: string; price: number; estimatedAdditionalHours?: number }[] }; // The pricing rule containing the extras
 }
 
 export default function ServiceSelection() {

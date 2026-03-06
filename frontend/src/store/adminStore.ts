@@ -33,7 +33,7 @@ export interface Booking {
     totalPrice: number;
     staffAssignedIds: User[];
     photos?: { before: string[]; after: string[] };
-    serviceDetails?: Record<string, any>;
+    serviceDetails?: Record<string, string | number | boolean>;
     extrasSelected?: string[];
     aiExtras?: { name: string; price: number; estimatedAdditionalHours: number }[];
     createdAt?: string;

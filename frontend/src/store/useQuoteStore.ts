@@ -3,13 +3,13 @@ import { create } from 'zustand';
 export type QuoteData = {
     serviceId?: string;
     // Store the selected service's required inputs schema (e.g. from the backend)
-    serviceInputs: any[];
+    serviceInputs: { name: string; type: string; label: string; placeholder?: string; required?: boolean }[];
     // Track the available extras config for the selected service
-    serviceExtras: any[];
+    serviceExtras: { name: string; price: number; estimatedAdditionalHours?: number; description?: string }[];
     // Track AI-suggested extras that are not in the DB
-    aiExtras: any[];
+    aiExtras: { name: string; price: number; estimatedAdditionalHours: number }[];
     // Dynamic mapping of input answers, e.g. { numWindows: 12, conditionLevel: 'standard' }
-    serviceDetails: Record<string, any>;
+    serviceDetails: Record<string, string | number | boolean>;
     extrasSelected: string[];
     address: {
         line1: string;

@@ -161,14 +161,14 @@ export default function AdminBookingsPage() {
                                                         )}
 
                                                         {/* Extras */}
-                                                        {(booking.extrasSelected?.length > 0 || booking.aiExtras?.length > 0) && (
+                                                        {((booking.extrasSelected?.length ?? 0) > 0 || (booking.aiExtras?.length ?? 0) > 0) && (
                                                             <div className="mt-2 text-xs text-zinc-500">
                                                                 <span className="font-semibold block mb-0.5">Extras:</span>
                                                                 <ul className="list-disc pl-4 space-y-0.5">
                                                                     {booking.extrasSelected?.map((e: string) => (
                                                                         <li key={e}>{e}</li>
                                                                     ))}
-                                                                    {booking.aiExtras?.map((e: any) => (
+                                                                    {booking.aiExtras?.map((e: { name: string }) => (
                                                                         <li key={e.name} className="text-amber-600 dark:text-amber-500">✨ {e.name}</li>
                                                                     ))}
                                                                 </ul>

@@ -11,11 +11,7 @@ interface ChatMessage {
     content: string;
 }
 
-interface AiSuggestedExtra {
-    name: string;
-    price: number;
-    estimatedAdditionalHours: number;
-}
+// Unused interface removed
 
 export default function SelectExtras() {
     const { data, updateData, nextStep, prevStep } = useQuoteStore();
@@ -74,7 +70,7 @@ export default function SelectExtras() {
             if (result.approved && result.extra) {
                 const alreadyExists =
                     data.serviceExtras.some(e => e.name.toLowerCase() === result.extra.name.toLowerCase()) ||
-                    data.aiExtras.some((e: any) => e.name.toLowerCase() === result.extra.name.toLowerCase());
+                    data.aiExtras.some((e: { name: string }) => e.name.toLowerCase() === result.extra.name.toLowerCase());
 
                 if (!alreadyExists) {
                     updateData({ aiExtras: [...data.aiExtras, result.extra] });
@@ -90,10 +86,9 @@ export default function SelectExtras() {
         }
     };
 
-    const hasExtras = data.serviceExtras && data.serviceExtras.length > 0;
     const allExtras = [
         ...(data.serviceExtras || []),
-        ...(data.aiExtras || []).map((e: any) => ({ ...e, isAiSuggested: true }))
+        ...(data.aiExtras || []).map((e: { name: string, price: number }) => ({ ...e, isAiSuggested: true }))
     ];
 
     return (
@@ -111,7 +106,7 @@ export default function SelectExtras() {
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {allExtras.map((extra: any) => (
+                        {allExtras.map((extra: { name: string, price: number, isAiSuggested?: boolean }) => (
                             <div
                                 key={extra.name}
                                 className={`flex items-center p-4 border rounded-lg cursor-pointer transition-colors ${data.extrasSelected.includes(extra.name)
