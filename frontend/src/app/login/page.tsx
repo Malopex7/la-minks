@@ -52,10 +52,10 @@ export default function LoginPage() {
 
                 <div className="bg-white dark:bg-zinc-900 p-8 rounded-2xl shadow-xl border border-zinc-200 dark:border-zinc-800">
                     <div className="mb-8 text-center">
-                        <div className="inline-flex justify-center items-center w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 mb-4">
+                        <div className="inline-flex justify-center items-center w-12 h-12 rounded-full bg-[#d46b4e]/10 text-[#d46b4e] mb-4">
                             <LogIn className="w-6 h-6" />
                         </div>
-                        <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">Welcome Back</h1>
+                        <h1 className="text-2xl font-bold text-zinc-900 dark:text-white">Welcome Back</h1>
                         <p className="text-zinc-500 dark:text-zinc-400 mt-2 text-sm">Sign in to manage your bookings and account.</p>
                     </div>
 
@@ -71,7 +71,7 @@ export default function LoginPage() {
                             <input
                                 {...form.register('email')}
                                 type="email"
-                                className="w-full px-4 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow"
+                                className="w-full px-4 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-[#d46b4e] transition-shadow"
                                 placeholder="name@example.com"
                             />
                             {form.formState.errors.email && (
@@ -86,7 +86,7 @@ export default function LoginPage() {
                             <input
                                 {...form.register('password')}
                                 type="password"
-                                className="w-full px-4 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow"
+                                className="w-full px-4 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-[#d46b4e] transition-shadow"
                                 placeholder="••••••••"
                             />
                             {form.formState.errors.password && (
@@ -97,7 +97,7 @@ export default function LoginPage() {
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className="w-full py-2.5 px-4 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                            className="w-full py-2.5 px-4 rounded-lg bg-[#d46b4e] hover:bg-[#b3573c] text-white font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-[#d46b4e] focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                         >
                             {isLoading ? (
                                 <>
@@ -112,7 +112,7 @@ export default function LoginPage() {
 
                     <p className="mt-8 text-center text-sm text-zinc-600 dark:text-zinc-400">
                         Don&apos;t have an account?{' '}
-                        <Link href="/register" className="font-semibold text-blue-600 hover:text-blue-500 transition-colors">
+                        <Link href="/register" className="font-semibold text-[#d46b4e] hover:text-[#b3573c] transition-colors">
                             Sign up here
                         </Link>
                     </p>

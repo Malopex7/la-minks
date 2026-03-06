@@ -20,7 +20,7 @@ export default function AdminOverviewPage() {
 
     const activeServices = services.filter((s) => s.isActive).length;
     const totalBookings = bookings.length;
-    const pendingBookings = bookings.filter((b) => b.status === "PENDING").length;
+    const pendingBookings = bookings.filter((b) => b.status === "QUOTE" || b.status === "BOOKED").length;
     const totalRevenue = bookings
         .filter((b) => b.status === "COMPLETED")
         .reduce((sum, b) => sum + (b.totalPrice || 0), 0);
@@ -128,7 +128,7 @@ export default function AdminOverviewPage() {
                                             {booking.serviceId?.name || "—"}
                                         </td>
                                         <td className="px-6 py-3 text-zinc-600 dark:text-zinc-400">
-                                            {new Date(booking.date).toLocaleDateString()}
+                                            {booking.schedule?.date || booking.date ? new Date(booking.schedule?.date || booking.date || '').toLocaleDateString() : 'Invalid Date'}
                                         </td>
                                         <td className="px-6 py-3">
                                             <StatusBadge status={booking.status} />
