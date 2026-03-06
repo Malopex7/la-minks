@@ -78,7 +78,7 @@ export default function PropertyDetails() {
                     <Label className="block mb-2 text-slate-700">Condition Level</Label>
                     <div className="space-y-3">
                         <Card
-                            className={`cursor-pointer transition-all hover:border-blue-500 hover:shadow-sm ${data.property.conditionLevel === 'standard' ? 'border-2 border-blue-600 bg-blue-50' : 'border-slate-200'
+                            className={`cursor-pointer transition-all hover:border-[#d46b4e] hover:shadow-sm ${data.property.conditionLevel === 'standard' ? 'border-2 border-[#d46b4e] bg-[#d46b4e]/10' : 'border-slate-200'
                                 }`}
                             onClick={() => handleConditionSelect('standard')}
                         >
@@ -89,7 +89,7 @@ export default function PropertyDetails() {
                         </Card>
 
                         <Card
-                            className={`cursor-pointer transition-all hover:border-blue-500 hover:shadow-sm ${data.property.conditionLevel === 'deep' ? 'border-2 border-blue-600 bg-blue-50' : 'border-slate-200'
+                            className={`cursor-pointer transition-all hover:border-[#d46b4e] hover:shadow-sm ${data.property.conditionLevel === 'deep' ? 'border-2 border-[#d46b4e] bg-[#d46b4e]/10' : 'border-slate-200'
                                 }`}
                             onClick={() => handleConditionSelect('deep')}
                         >
@@ -100,7 +100,7 @@ export default function PropertyDetails() {
                         </Card>
 
                         <Card
-                            className={`cursor-pointer transition-all hover:border-blue-500 hover:shadow-sm ${data.property.conditionLevel === 'heavy_duty' ? 'border-2 border-blue-600 bg-blue-50' : 'border-slate-200'
+                            className={`cursor-pointer transition-all hover:border-[#d46b4e] hover:shadow-sm ${data.property.conditionLevel === 'heavy_duty' ? 'border-2 border-[#d46b4e] bg-[#d46b4e]/10' : 'border-slate-200'
                                 }`}
                             onClick={() => handleConditionSelect('heavy_duty')}
                         >
@@ -121,7 +121,7 @@ export default function PropertyDetails() {
                     onClick={nextStep}
                     disabled={data.property.sqm === 0 && data.property.bedrooms === 0}
                     size="lg"
-                    className="bg-blue-600 hover:bg-blue-700 text-white"
+                    className="bg-[#d46b4e] hover:bg-[#b3573c] text-white"
                 >
                     Continue
                 </Button>

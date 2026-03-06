@@ -163,8 +163,8 @@ export default function ReviewQuote() {
                 </div>
 
                 <div>
-                    <Card className="border-2 border-blue-100 shadow-xl relative overflow-hidden">
-                        <div className="absolute top-0 w-full h-2 bg-blue-600"></div>
+                    <Card className="border-2 border-[#d46b4e]/20 shadow-xl relative overflow-hidden">
+                        <div className="absolute top-0 w-full h-2 bg-[#d46b4e]"></div>
                         <CardHeader className="pb-4">
                             <CardTitle className="text-xl text-center text-slate-800">Price Breakdown</CardTitle>
                         </CardHeader>
@@ -186,7 +186,7 @@ export default function ReviewQuote() {
                                             <span className="block font-bold text-slate-900 text-lg">Total Price</span>
                                             <span className="text-sm text-slate-500">Est. {quoteDetails.estimatedHours} hours</span>
                                         </div>
-                                        <span className="text-3xl font-extrabold text-blue-600">
+                                        <span className="text-3xl font-extrabold text-[#d46b4e]">
                                             R{quoteDetails.finalPrice.toFixed(2)}
                                         </span>
                                     </div>
@@ -202,7 +202,7 @@ export default function ReviewQuote() {
                             <Button
                                 onClick={handleBook}
                                 disabled={bookingLoading}
-                                className="w-full h-14 text-lg bg-blue-600 hover:bg-blue-700 shadow-md transition-all font-semibold"
+                                className="w-full h-14 text-lg bg-[#d46b4e] hover:bg-[#b3573c] shadow-md transition-all font-semibold"
                             >
                                 {bookingLoading ? 'Processing...' : 'Confirm & Book Now'}
                             </Button>

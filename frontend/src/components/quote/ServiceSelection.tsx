@@ -58,7 +58,7 @@ export default function ServiceSelection() {
                 {services.map((service) => (
                     <Card
                         key={service._id}
-                        className={`cursor-pointer transition-all hover:border-blue-500 hover:shadow-md ${data.serviceId === service._id ? 'border-2 border-blue-600 bg-blue-50' : 'border-slate-200'
+                        className={`cursor-pointer transition-all hover:border-[#d46b4e] hover:shadow-md ${data.serviceId === service._id ? 'border-2 border-[#d46b4e] bg-[#d46b4e]/10' : 'border-slate-200'
                             }`}
                         onClick={() => handleSelect(service._id)}
                     >
@@ -67,7 +67,7 @@ export default function ServiceSelection() {
                             <CardDescription className="text-sm line-clamp-2">{service.description}</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-blue-600 font-semibold mt-2">
+                            <div className="text-[#d46b4e] font-semibold mt-2">
                                 Starts at R{service.basePrice}
                             </div>
                         </CardContent>
@@ -80,7 +80,7 @@ export default function ServiceSelection() {
                     onClick={nextStep}
                     disabled={!data.serviceId}
                     size="lg"
-                    className="bg-blue-600 hover:bg-blue-700 text-white"
+                    className="bg-[#d46b4e] hover:bg-[#b3573c] text-white"
                 >
                     Continue
                 </Button>

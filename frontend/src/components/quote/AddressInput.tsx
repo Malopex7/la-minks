@@ -100,7 +100,7 @@ export default function AddressInput() {
                     onClick={nextStep}
                     disabled={!isComplete}
                     size="lg"
-                    className="bg-blue-600 hover:bg-blue-700 text-white"
+                    className="bg-[#d46b4e] hover:bg-[#b3573c] text-white"
                 >
                     Continue
                 </Button>

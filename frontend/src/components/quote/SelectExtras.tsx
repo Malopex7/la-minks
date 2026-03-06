@@ -42,8 +42,8 @@ export default function SelectExtras() {
                     <div
                         key={extra.id}
                         className={`flex items-center p-4 border rounded-lg cursor-pointer transition-colors ${data.extrasSelected.includes(extra.id)
-                            ? 'border-blue-500 bg-blue-50'
-                            : 'border-slate-200 hover:border-blue-300'
+                            ? 'border-[#d46b4e] bg-[#d46b4e]/10'
+                            : 'border-slate-200 hover:border-[#d46b4e]/50'
                             }`}
                         onClick={() => handleToggle(extra.id)}
                     >
@@ -62,7 +62,7 @@ export default function SelectExtras() {
                                 {extra.name}
                             </label>
                         </div>
-                        <div className="text-blue-600 font-semibold mb-0">
+                        <div className="text-[#d46b4e] font-semibold mb-0">
                             + R{extra.price}
                         </div>
                     </div>
@@ -76,7 +76,7 @@ export default function SelectExtras() {
                 <Button
                     onClick={nextStep}
                     size="lg"
-                    className="bg-blue-600 hover:bg-blue-700 text-white"
+                    className="bg-[#d46b4e] hover:bg-[#b3573c] text-white"
                 >
                     Continue
                 </Button>

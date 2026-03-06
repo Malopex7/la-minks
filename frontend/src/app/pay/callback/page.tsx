@@ -46,7 +46,7 @@ function CallbackContent() {
             <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-8 max-w-md w-full text-center shadow-sm">
                 {status === 'verifying' && (
                     <div className="flex flex-col items-center">
-                        <Loader2 className="w-12 h-12 animate-spin text-blue-600 mb-4" />
+                        <Loader2 className="w-12 h-12 animate-spin text-[#d46b4e] mb-4" />
                         <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">Verifying Payment</h2>
                         <p className="text-zinc-500 dark:text-zinc-400">{message}</p>
                     </div>
@@ -59,7 +59,7 @@ function CallbackContent() {
                         <p className="text-zinc-500 dark:text-zinc-400 mb-8">{message}</p>
                         <Link
                             href="/dashboard"
-                            className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition-colors w-full"
+                            className="bg-[#d46b4e] hover:bg-[#b3573c] text-white font-medium py-3 px-6 rounded-lg transition-colors w-full"
                         >
                             Back to Dashboard
                         </Link>
@@ -89,7 +89,7 @@ function CallbackContent() {
 export default function PayCallbackPage() {
     return (
         <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 py-12">
-            <Suspense fallback={<div className="flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-blue-600" /></div>}>
+            <Suspense fallback={<div className="flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-[#d46b4e]" /></div>}>
                 <CallbackContent />
             </Suspense>
         </div>

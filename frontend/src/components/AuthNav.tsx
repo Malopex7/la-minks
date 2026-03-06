@@ -21,9 +21,6 @@ export default function AuthNav() {
 
         return (
             <Link href={dashboardHref} className="text-sm font-medium hover:text-[#d46b4e] transition-colors flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-[#86a373]/20 flex items-center justify-center text-[#86a373] font-bold">
-                    {user.firstName?.charAt(0) || 'U'}
-                </div>
                 <span className="hidden sm:inline">{dashboardLabel}</span>
             </Link>
         );

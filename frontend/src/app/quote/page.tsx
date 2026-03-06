@@ -24,7 +24,7 @@ export default function QuotePage() {
                             <span>Step {step} of 6</span>
                             <div className="w-2/3 bg-slate-100 rounded-full h-2.5 ml-4">
                                 <div
-                                    className="bg-blue-600 h-2.5 rounded-full transition-all duration-300"
+                                    className="bg-[#d46b4e] h-2.5 rounded-full transition-all duration-300"
                                     style={{ width: `${(step / 6) * 100}%` }}
                                 ></div>
                             </div>
