@@ -67,7 +67,7 @@ export default function DashboardPage() {
     if (isLoading) {
         return (
             <div className="flex justify-center py-20">
-                <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+                <Loader2 className="w-8 h-8 animate-spin text-[#d46b4e]" />
             </div>
         );
     }
@@ -81,7 +81,7 @@ export default function DashboardPage() {
                 </div>
                 <Link
                     href="/quote"
-                    className="inline-flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+                    className="inline-flex items-center justify-center bg-[#d46b4e] hover:bg-[#b3573c] text-white px-4 py-2 rounded-lg font-medium transition-colors"
                 >
                     <PlusCircle className="w-4 h-4 mr-2" />
                     New Booking
@@ -118,7 +118,7 @@ export default function DashboardPage() {
                             href={`/dashboard/bookings/${booking._id}`}
                             className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 p-4 md:p-6 hover:shadow-md transition-shadow group flex flex-col md:flex-row gap-6 md:items-center"
                         >
-                            <div className="w-16 h-16 rounded-xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center flex-shrink-0 text-3xl">
+                            <div className="w-16 h-16 rounded-xl bg-[#d46b4e]/10 dark:bg-[#d46b4e]/20 flex items-center justify-center flex-shrink-0 text-3xl">
                                 {booking.serviceId?.icon || '✨'}
                             </div>
 
@@ -163,7 +163,7 @@ export default function DashboardPage() {
                                 </div>
                             </div>
 
-                            <div className="hidden md:flex items-center justify-center p-2 text-zinc-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all">
+                            <div className="hidden md:flex items-center justify-center p-2 text-zinc-400 group-hover:text-[#d46b4e] group-hover:translate-x-1 transition-all">
                                 <ArrowRight className="w-5 h-5" />
                             </div>
                         </Link>
