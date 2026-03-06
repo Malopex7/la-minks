@@ -8,6 +8,7 @@ import {
     CheckCircle2, Circle, Camera, Save, House
 } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { format } from 'date-fns';
 import { useLightbox } from '@/components/PhotoLightbox';
 
@@ -331,10 +332,12 @@ export default function StaffJobDetailsPage() {
                                 </div>
                                 <div className="flex gap-2 overflow-x-auto pb-2">
                                     {booking.photos?.before?.map((fileId, i) => (
-                                        <img
+                                        <Image
                                             key={i}
                                             src={`${API_URL}/photos/${fileId}`}
                                             alt="Before"
+                                            width={64}
+                                            height={64}
                                             onClick={() => open(i)}
                                             className="h-16 w-16 object-cover rounded-lg border border-zinc-200 cursor-pointer hover:opacity-80 transition-opacity"
                                         />
@@ -358,10 +361,12 @@ export default function StaffJobDetailsPage() {
                                 </div>
                                 <div className="flex gap-2 overflow-x-auto pb-2">
                                     {booking.photos?.after?.map((fileId, i) => (
-                                        <img
+                                        <Image
                                             key={i}
                                             src={`${API_URL}/photos/${fileId}`}
                                             alt="After"
+                                            width={64}
+                                            height={64}
                                             onClick={() => open(beforeCount + i)}
                                             className="h-16 w-16 object-cover rounded-lg border border-zinc-200 cursor-pointer hover:opacity-80 transition-opacity"
                                         />

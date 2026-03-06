@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useAuthStore } from '@/store/useAuthStore';
 import { fetchWithAuth } from '@/lib/api';
 import {
@@ -315,7 +316,7 @@ export default function BookingDetailsPage() {
                                                 onClick={() => open(i)}
                                                 className="aspect-square rounded-lg bg-zinc-200 dark:bg-zinc-800 overflow-hidden block hover:opacity-90 transition-opacity cursor-pointer"
                                             >
-                                                <img src={`http://localhost:5001/api/photos/${fileId}`} alt={`Before ${i + 1}`} className="w-full h-full object-cover" />
+                                                <Image src={`http://localhost:5001/api/photos/${fileId}`} alt={`Before ${i + 1}`} width={400} height={400} className="w-full h-full object-cover" />
                                             </div>
                                         ))}
                                     </div>
@@ -337,7 +338,7 @@ export default function BookingDetailsPage() {
                                                 onClick={() => open(beforeCount + i)}
                                                 className="aspect-square rounded-lg bg-zinc-200 dark:bg-zinc-800 overflow-hidden block hover:opacity-90 transition-opacity cursor-pointer"
                                             >
-                                                <img src={`http://localhost:5001/api/photos/${fileId}`} alt={`After ${i + 1}`} className="w-full h-full object-cover" />
+                                                <Image src={`http://localhost:5001/api/photos/${fileId}`} alt={`After ${i + 1}`} width={400} height={400} className="w-full h-full object-cover" />
                                             </div>
                                         ))}
                                     </div>

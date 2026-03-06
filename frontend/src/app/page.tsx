@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 /* Service data matching prompt.md — with Material Symbols icon names */
 const SERVICE_CATEGORIES = [
@@ -23,11 +24,11 @@ export default function Home() {
       <section className="relative min-h-[85vh] flex items-center px-6 lg:px-20 py-12">
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-gradient-to-r from-[#fafcf8] via-[#fafcf8]/80 to-transparent z-10"></div>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            alt="Modern sun-drenched living room"
-            className="w-full h-full object-cover"
+          <Image
             src="/images/hero_banner.png"
+            alt="Modern sun-drenched living room"
+            fill
+            className="object-cover"
           />
         </div>
         <div className="relative z-20 max-w-2xl">
@@ -118,8 +119,7 @@ export default function Home() {
       <section className="py-24 px-6 lg:px-20">
         <div className="max-w-5xl mx-auto bg-slate-900 rounded-3xl overflow-hidden relative">
           <div className="absolute top-0 right-0 w-1/2 h-full hidden lg:block">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img alt="Cleaning details" className="w-full h-full object-cover opacity-50" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBrvnF0Z8WDeiXhqAPU5yIC8CbyKUM-JMQOVBVBcWBnJEbipI8uKlWrztnqHCFDN72-LJ0ZSwOGG_iEEh-sxiqFEzurue3juqS9HlJBAragNKGh83tlK00g-NhznCQJIpTzWUUILE5kV3VvlAE4IDYY6Gq-vKih-KTUuEcfVIlcAZPN-W0D8TD60pQU0tGnLJIxsZ9yFWLQOZX3K9uu1jB_pn48esqAsKDOU1kz5hr7rV5lOiKrfGu1nz8-DUspHPODHliE-EZmu1Mt" />
+            <Image src="https://lh3.googleusercontent.com/aida-public/AB6AXuBrvnF0Z8WDeiXhqAPU5yIC8CbyKUM-JMQOVBVBcWBnJEbipI8uKlWrztnqHCFDN72-LJ0ZSwOGG_iEEh-sxiqFEzurue3juqS9HlJBAragNKGh83tlK00g-NhznCQJIpTzWUUILE5kV3VvlAE4IDYY6Gq-vKih-KTUuEcfVIlcAZPN-W0D8TD60pQU0tGnLJIxsZ9yFWLQOZX3K9uu1jB_pn48esqAsKDOU1kz5hr7rV5lOiKrfGu1nz8-DUspHPODHliE-EZmu1Mt" alt="Cleaning details" fill className="object-cover opacity-50" />
           </div>
           <div className="relative z-10 p-12 lg:p-20 lg:w-3/5 text-white">
             <h2 className="text-4xl mb-6" style={{ fontFamily: "'Playfair Display', serif" }}>Ready for a cleaner, happier space?</h2>

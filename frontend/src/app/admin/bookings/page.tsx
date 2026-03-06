@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAdminStore } from '@/store/adminStore';
 import { Loader2, Users, Calendar, Banknote, Camera, ChevronDown, ChevronUp, Download } from 'lucide-react';
+import Image from 'next/image';
 import PhotoLightbox from '@/components/PhotoLightbox';
 import { bookingsToCsv, downloadCsv } from '@/lib/exportCsv';
 
@@ -224,10 +225,12 @@ export default function AdminBookingsPage() {
                                                                     </p>
                                                                     <div className="flex flex-wrap gap-2">
                                                                         {photos!.before.map((fileId: string, i: number) => (
-                                                                            <img
+                                                                            <Image
                                                                                 key={i}
                                                                                 src={`${API_URL}/photos/${fileId}`}
                                                                                 alt={`Before ${i + 1}`}
+                                                                                width={96}
+                                                                                height={96}
                                                                                 onClick={() => setLightbox({
                                                                                     photos: photos!.before.map((f: string) => `${API_URL}/photos/${f}`),
                                                                                     index: i
@@ -244,10 +247,12 @@ export default function AdminBookingsPage() {
                                                                     </p>
                                                                     <div className="flex flex-wrap gap-2">
                                                                         {photos!.after.map((fileId: string, i: number) => (
-                                                                            <img
+                                                                            <Image
                                                                                 key={i}
                                                                                 src={`${API_URL}/photos/${fileId}`}
                                                                                 alt={`After ${i + 1}`}
+                                                                                width={96}
+                                                                                height={96}
                                                                                 onClick={() => setLightbox({
                                                                                     photos: photos!.after.map((f: string) => `${API_URL}/photos/${f}`),
                                                                                     index: i

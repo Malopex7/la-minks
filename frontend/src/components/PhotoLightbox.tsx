@@ -2,6 +2,7 @@
 
 import { useEffect, useCallback } from 'react';
 import { X } from 'lucide-react';
+import Image from 'next/image';
 
 interface PhotoLightboxProps {
     photos: string[];         // array of full API URLs
@@ -45,9 +46,11 @@ export default function PhotoLightbox({ photos, initialIndex, onClose }: PhotoLi
                 className="relative max-w-4xl max-h-[90vh] w-full mx-4"
                 onClick={(e) => e.stopPropagation()}
             >
-                <img
+                <Image
                     src={photos[current]}
                     alt={`Photo ${current + 1} of ${photos.length}`}
+                    width={1200}
+                    height={800}
                     className="w-full h-full object-contain rounded-lg max-h-[85vh]"
                 />
                 {photos.length > 1 && (

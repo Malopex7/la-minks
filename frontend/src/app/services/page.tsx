@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { usePublicStore } from "@/store/publicStore";
 import Link from "next/link";
+import Image from "next/image";
 
 /* Exact Stitch-generated service data for all 11 La-Minks services */
 const STITCH_SERVICES = [
@@ -127,12 +128,12 @@ export default function ServicesPage() {
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                             {displayServices.map((service) => (
                                 <div key={service.id} className="group bg-white p-5 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-[#f3eae7]">
-                                    <div className="aspect-[4/3] w-full mb-6 overflow-hidden rounded-xl">
-                                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                                        <img
-                                            alt={service.name}
-                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                    <div className="relative aspect-[4/3] w-full mb-6 overflow-hidden rounded-xl">
+                                        <Image
                                             src={service.image}
+                                            alt={service.name}
+                                            fill
+                                            className="object-cover group-hover:scale-105 transition-transform duration-500"
                                         />
                                     </div>
                                     <div className="flex flex-col h-full space-y-3">
