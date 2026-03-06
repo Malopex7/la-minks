@@ -13,6 +13,7 @@ const SERVICE_CATEGORIES = [
   { name: "Bedroom Cleaning", icon: "bed", description: "Restful spaces deserve spotless attention." },
   { name: "Painting", icon: "format_paint", description: "Interior and exterior painting by skilled professionals." },
   { name: "Gardening", icon: "yard", description: "Garden maintenance and landscaping with a green touch." },
+  { name: "Grass Cutting", icon: "grass", description: "Specialized lawn care including edging, trimming, and full lawn restoration." },
 ];
 
 export default function Home() {

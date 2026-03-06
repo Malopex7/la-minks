@@ -2,13 +2,14 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useAuthStore } from '@/store/useAuthStore';
 import { LogOut, Loader2, ShieldAlert } from 'lucide-react';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
     const { user, checkAuth, logout } = useAuthStore();
     const router = useRouter();
+    const pathname = usePathname();
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
@@ -29,6 +30,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         );
     }
 
+    const getLinkClasses = (path: string, exact = false) => {
+        const isActive = exact ? pathname === path : pathname.startsWith(path);
+        return `flex items-center p-2 rounded-lg group transition-colors ${isActive
+                ? 'bg-[#86a373]/20 text-[#d46b4e] font-bold dark:bg-gray-700 dark:text-white border-l-4 border-[#d46b4e]'
+                : 'text-gray-900 border-l-4 border-transparent dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-[#d46b4e]'
+            }`;
+    };
+
     return (
         <div className="min-h-screen bg-gray-50 flex">
             {/* Sidebar */}
@@ -36,35 +45,23 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 <div className="flex-1 px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
                     <ul className="space-y-2 font-medium">
                         <li>
-                            <Link
-                                href="/admin"
-                                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-                            >
+                            <Link href="/admin" className={getLinkClasses('/admin', true)}>
                                 <span className="ms-3">Overview</span>
                             </Link>
                         </li>
                         <li>
-                            <Link
-                                href="/admin/services"
-                                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-                            >
+                            <Link href="/admin/services" className={getLinkClasses('/admin/services')}>
                                 <span className="flex-1 ms-3 whitespace-nowrap">Services</span>
                             </Link>
                         </li>
                         <li>
-                            <Link
-                                href="/admin/bookings"
-                                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-                            >
+                            <Link href="/admin/bookings" className={getLinkClasses('/admin/bookings')}>
                                 <span className="flex-1 ms-3 whitespace-nowrap">Bookings</span>
                             </Link>
                         </li>
                         <li>
-                            <Link
-                                href="/admin/audit"
-                                className="flex items-center gap-2 p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-                            >
-                                <ShieldAlert className="w-4 h-4 text-zinc-400" />
+                            <Link href="/admin/audit" className={`${getLinkClasses('/admin/audit')} gap-2`}>
+                                <ShieldAlert className={`w-4 h-4 ${pathname.startsWith('/admin/audit') ? 'text-[#d46b4e]' : 'text-zinc-400'}`} />
                                 <span className="flex-1 whitespace-nowrap">Audit Log</span>
                             </Link>
                         </li>
