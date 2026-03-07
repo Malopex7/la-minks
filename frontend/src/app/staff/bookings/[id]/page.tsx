@@ -11,6 +11,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { format } from 'date-fns';
 import { useLightbox } from '@/components/PhotoLightbox';
+import { fetchWithAuth } from '@/lib/api';
 
 const API_URL = 'http://localhost:5001/api';
 
@@ -29,24 +30,112 @@ interface BookingDetails {
     serviceId: { name: string; description: string };
     customerId: { firstName: string; lastName: string; phone: string; email: string };
     extrasSelected: string[];
+    aiExtras?: { name: string }[];
     checklist: ChecklistItem[];
     notesStaff: string;
     photos: { before: string[]; after: string[] };
 }
 
-// A standard default checklist template if none exists
-const defaultChecklistTasks = [
-    "Dust all accessible surfaces",
-    "Wipe down exterior of kitchen appliances",
-    "Clean microwave interior and exterior",
-    "Wipe down kitchen counters and sink",
-    "Clean scrub bathroom sinks, tubs, and toilets",
-    "Empty all trash bins",
-    "Vacuum all carpets and rugs",
-    "Sweep and mop hard floors",
-    "Clean mirrors and glass fixtures",
-    "General tidying up"
-];
+// Function to generate a dynamic checklist based on the service name and extras
+const getChecklistForService = (booking: BookingDetails | null) => {
+    let baseTasks: string[] = [];
+    const serviceName = booking?.serviceId?.name || '';
+
+    if (!serviceName) {
+        baseTasks = [
+            "Dust all accessible surfaces",
+            "Wipe down exterior of kitchen appliances",
+            "Wipe down kitchen counters and sink",
+            "Clean scrub bathroom sinks, tubs, and toilets",
+            "Empty all trash bins",
+            "Vacuum all carpets and rugs",
+            "Sweep and mop hard floors",
+            "Clean mirrors and glass fixtures",
+            "General tidying up"
+        ];
+    } else {
+        const name = serviceName.toLowerCase();
+
+        if (name.includes('garden') || name.includes('landscap')) {
+            baseTasks = [
+                "Clear weeds and debris from garden beds",
+                "Mow and edge lawns",
+                "Trim hedges and overhanging branches",
+                "Sweep walkways and patios",
+                "Water plants and apply fertilizer if requested",
+                "Collect and dispose of garden waste"
+            ];
+        } else if (name.includes('pool')) {
+            baseTasks = [
+                "Skim water surface for debris",
+                "Brush pool walls and steps",
+                "Vacuum pool floor",
+                "Empty skimmer and pump baskets",
+                "Test and adjust water chemicals",
+                "Backwash filter if needed"
+            ];
+        } else if (name.includes('carpet') || name.includes('upholstery')) {
+            baseTasks = [
+                "Inspect and pre-treat prominent stains",
+                "Vacuum carpets/upholstery thoroughly",
+                "Deep clean using hot water extraction",
+                "Deodorize and sanitize all areas",
+                "Groom carpet fibers",
+                "Ensure proper ventilation for drying"
+            ];
+        } else if (name.includes('deep')) {
+            baseTasks = [
+                "Dust all surfaces, including high corners and baseboards",
+                "Clean inside and outside of all kitchen appliances",
+                "Deep scrub and descale bathroom tiles and fixtures",
+                "Wash all interior windows, sills, and mirrors",
+                "Vacuum and mop all floors, moving light furniture",
+                "Wipe down cabinet fronts, doors, and frames",
+                "Clean light fixtures and switch plates",
+                "Empty all bins and replace liners"
+            ];
+        } else if (name.includes('move') || name.includes('tenancy')) {
+            baseTasks = [
+                "Clean inside all empty cabinets, drawers, and closets",
+                "Deep clean kitchen appliances (inside/out)",
+                "Thoroughly scrub all bathrooms, toilets, and fixtures",
+                "Dust and wipe all baseboards, doors, and frames",
+                "Clean all interior windows and sills",
+                "Vacuum and mop all floors extensively",
+                "Remove any cobwebs and dust from high areas",
+                "Spot clean walls where requested"
+            ];
+        } else {
+            // Standard default
+            baseTasks = [
+                "Dust all accessible surfaces",
+                "Wipe down exterior of kitchen appliances",
+                "Clean microwave interior and exterior",
+                "Wipe down kitchen counters and sink",
+                "Clean scrub bathroom sinks, tubs, and toilets",
+                "Empty all trash bins",
+                "Vacuum all carpets and rugs",
+                "Sweep and mop hard floors",
+                "Clean mirrors and glass fixtures",
+                "General tidying up"
+            ];
+        }
+    }
+
+    // Append ALL selected extras (standard and AI)
+    if (booking?.extrasSelected && booking.extrasSelected.length > 0) {
+        booking.extrasSelected.forEach(extra => {
+            const isAiExtra = booking.aiExtras?.some(ai => ai.name === extra);
+            if (isAiExtra) {
+                baseTasks.push(`[EXTRA] ✨ ${extra}`);
+            } else {
+                baseTasks.push(`[EXTRA] ${extra}`);
+            }
+        });
+    }
+
+    return baseTasks;
+};
 
 export default function StaffJobDetailsPage() {
     const params = useParams();
@@ -77,9 +166,7 @@ export default function StaffJobDetailsPage() {
 
     const fetchBooking = async () => {
         try {
-            const res = await fetch(`${API_URL}/bookings/${id}`, {
-                headers: { Authorization: `Bearer ${user?.accessToken}` },
-            });
+            const res = await fetchWithAuth(`${API_URL}/bookings/${id}`);
             if (!res.ok) throw new Error('Failed to fetch booking');
             const data = await res.json();
             setBooking(data);
@@ -101,11 +188,10 @@ export default function StaffJobDetailsPage() {
         if (!confirm(`Are you sure you want to change status to ${newStatus}?`)) return;
         setIsUpdatingStatus(true);
         try {
-            const res = await fetch(`${API_URL}/bookings/${id}/staff-update`, {
+            const res = await fetchWithAuth(`${API_URL}/bookings/${id}/staff-update`, {
                 method: 'PUT',
                 headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${user?.accessToken}`
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({ status: newStatus }),
             });
@@ -122,11 +208,10 @@ export default function StaffJobDetailsPage() {
     const handleSaveUpdates = async () => {
         setIsSavingChecklist(true);
         try {
-            const res = await fetch(`${API_URL}/bookings/${id}/staff-update`, {
+            const res = await fetchWithAuth(`${API_URL}/bookings/${id}/staff-update`, {
                 method: 'PUT',
                 headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${user?.accessToken}`
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
                     checklist: localChecklist,
@@ -154,7 +239,8 @@ export default function StaffJobDetailsPage() {
         if (localChecklist.length > 0) {
             if (!confirm('This will replace your current checklist. Continue?')) return;
         }
-        setLocalChecklist(defaultChecklistTasks.map(t => ({ task: t, completed: false })));
+        const tasks = getChecklistForService(booking);
+        setLocalChecklist(tasks.map(t => ({ task: t, completed: false })));
     };
 
     const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: 'before' | 'after') => {
@@ -166,11 +252,8 @@ export default function StaffJobDetailsPage() {
         formData.append('file', file);
 
         try {
-            const res = await fetch(`${API_URL}/bookings/${id}/photos/${type}`, {
+            const res = await fetchWithAuth(`${API_URL}/bookings/${id}/photos/${type}`, {
                 method: 'POST',
-                headers: {
-                    Authorization: `Bearer ${user?.accessToken}`,
-                },
                 body: formData,
             });
 

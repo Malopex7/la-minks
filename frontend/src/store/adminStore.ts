@@ -217,11 +217,16 @@ export const useAdminStore = create<AdminState>((set) => ({
                 },
                 body: JSON.stringify({ staffIds })
             });
-            if (!res.ok) throw new Error('Failed to assign staff');
 
-            const updatedBooking = await res.json();
+            const data = await res.json();
+
+            if (!res.ok) {
+                // Surface the server message (e.g. double-booking conflict details)
+                throw new Error(data?.message || 'Failed to assign staff');
+            }
+
             set(state => ({
-                bookings: state.bookings.map(b => b._id === bookingId ? updatedBooking : b),
+                bookings: state.bookings.map(b => b._id === bookingId ? data : b),
                 isLoading: false
             }));
         } catch (err) {

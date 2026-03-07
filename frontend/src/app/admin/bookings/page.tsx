@@ -27,12 +27,13 @@ interface LightboxState {
 
 
 export default function AdminBookingsPage() {
-    const { bookings, staffMembers, fetchAllBookings, fetchStaffMembers, assignStaffToBooking, isLoading } = useAdminStore();
+    const { bookings, staffMembers, fetchAllBookings, fetchStaffMembers, assignStaffToBooking, isLoading, error: storeError } = useAdminStore();
     const [mounted, setMounted] = useState(false);
     const [assigningId, setAssigningId] = useState<string | null>(null);
     const [updatingStatusId, setUpdatingStatusId] = useState<string | null>(null);
     const [expandedId, setExpandedId] = useState<string | null>(null);
     const [lightbox, setLightbox] = useState<LightboxState | null>(null);
+    const [conflictError, setConflictError] = useState<string | null>(null);
 
     useEffect(() => {
         setMounted(true);
@@ -45,7 +46,11 @@ export default function AdminBookingsPage() {
     const handleAssign = async (bookingId: string, staffId: string) => {
         if (!staffId) return;
         setAssigningId(bookingId);
+        setConflictError(null);
         await assignStaffToBooking(bookingId, [staffId]);
+        // After call, check if the store has a new error (conflict blocked it)
+        const latestError = useAdminStore.getState().error;
+        if (latestError) setConflictError(latestError);
         setAssigningId(null);
     };
 
@@ -70,6 +75,14 @@ export default function AdminBookingsPage() {
 
     return (
         <div className="space-y-6">
+            {/* Conflict / error banner */}
+            {(conflictError || storeError) && (
+                <div className="flex items-start gap-3 p-4 bg-red-50 border border-red-200 rounded-xl text-red-800 text-sm">
+                    <span className="text-lg leading-none">⚠️</span>
+                    <p className="flex-1">{conflictError || storeError}</p>
+                    <button onClick={() => setConflictError(null)} className="ml-auto text-red-500 hover:text-red-700 font-bold text-base leading-none">✕</button>
+                </div>
+            )}
             {/* Lightbox */}
             {lightbox && (
                 <PhotoLightbox

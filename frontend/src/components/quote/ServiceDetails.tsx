@@ -15,7 +15,7 @@ export default function ServiceDetails() {
         // Handle numbers and booleans intelligently
         let parsedValue: string | number | boolean = value;
         if (type === 'number') {
-            parsedValue = parseInt(value) || 0;
+            parsedValue = value === '' ? '' : (parseInt(value) || 0);
         } else if (type === 'checkbox') {
             parsedValue = checked;
         }
@@ -40,6 +40,21 @@ export default function ServiceDetails() {
     // If a service has no specific inputs configured, we just default to asking for condition level
     const hasDynamicInputs = data.serviceInputs && data.serviceInputs.length > 0;
 
+    const isFormValid = () => {
+        if (!hasDynamicInputs) return true;
+        // Require all dynamic inputs to be filled
+        return data.serviceInputs.every(input => {
+            const val = data.serviceDetails[input.name];
+            if (input.type === 'number') {
+                return val !== undefined && val !== null && val !== '';
+            }
+            if (input.type === 'checkbox') {
+                return true; // Checkboxes are optional booleans
+            }
+            return !!val;
+        });
+    };
+
     return (
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div>
@@ -52,16 +67,19 @@ export default function ServiceDetails() {
                     {hasDynamicInputs ? (
                         data.serviceInputs.map((inputSchema) => (
                             <div key={inputSchema.name} className="space-y-2">
-                                <Label htmlFor={inputSchema.name}>{inputSchema.label}</Label>
+                                <Label htmlFor={inputSchema.name}>
+                                    {inputSchema.label} <span className="text-red-500">*</span>
+                                </Label>
                                 {inputSchema.type === 'number' && (
                                     <Input
                                         id={inputSchema.name}
                                         name={inputSchema.name}
                                         type="number"
                                         placeholder={`e.g. 3`}
-                                        value={String(data.serviceDetails[inputSchema.name] ?? '')}
+                                        value={data.serviceDetails[inputSchema.name] !== undefined ? String(data.serviceDetails[inputSchema.name]) : ''}
                                         onChange={handleInputChange}
                                         min="0"
+                                        className={data.serviceDetails[inputSchema.name] === undefined || data.serviceDetails[inputSchema.name] === '' ? 'border-red-200 focus-visible:ring-red-500' : ''}
                                     />
                                 )}
                                 {/* You could add <select> for 'select' types or Switch/Checkbox for 'boolean' types here in the future! */}
@@ -117,13 +135,19 @@ export default function ServiceDetails() {
                 <Button variant="outline" onClick={prevStep} size="lg">
                     Back
                 </Button>
-                <Button
-                    onClick={nextStep}
-                    size="lg"
-                    className="bg-[#d46b4e] hover:bg-[#b3573c] text-white"
-                >
-                    Continue
-                </Button>
+                <div className="flex flex-col items-end gap-2">
+                    <Button
+                        onClick={nextStep}
+                        disabled={!isFormValid()}
+                        size="lg"
+                        className="bg-[#d46b4e] hover:bg-[#b3573c] text-white"
+                    >
+                        Continue
+                    </Button>
+                    {!isFormValid() && (
+                        <span className="text-xs text-red-500">Please fill out all required property details.</span>
+                    )}
+                </div>
             </div>
         </div>
     );

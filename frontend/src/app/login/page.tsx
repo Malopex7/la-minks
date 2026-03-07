@@ -1,13 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useAuthStore } from '@/store/useAuthStore';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, Loader2, LogIn } from 'lucide-react';
+import { ArrowLeft, Loader2, LogIn, AlertCircle } from 'lucide-react';
 
 const loginSchema = z.object({
     email: z.string().email('Please enter a valid email address'),
@@ -16,10 +16,13 @@ const loginSchema = z.object({
 
 type LoginValues = z.infer<typeof loginSchema>;
 
-export default function LoginPage() {
+function LoginContent() {
     const { login, isLoading } = useAuthStore();
     const router = useRouter();
+    const searchParams = useSearchParams();
     const [loginError, setLoginError] = useState('');
+
+    const isTimeout = searchParams.get('timeout') === 'true';
 
     const form = useForm<LoginValues>({
         resolver: zodResolver(loginSchema),
@@ -58,6 +61,13 @@ export default function LoginPage() {
                         <h1 className="text-2xl font-bold text-zinc-900 dark:text-white">Welcome Back</h1>
                         <p className="text-zinc-500 dark:text-zinc-400 mt-2 text-sm">Sign in to manage your bookings and account.</p>
                     </div>
+
+                    {isTimeout && (
+                        <div className="mb-6 p-4 rounded-lg bg-yellow-50 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-400 text-sm border border-yellow-200 dark:border-yellow-800 flex items-start gap-3">
+                            <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
+                            <p><strong>Session Expired:</strong> Your session has timed out due to inactivity. Please sign in again to continue.</p>
+                        </div>
+                    )}
 
                     {loginError && (
                         <div className="mb-6 p-4 rounded-lg bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 text-sm border border-red-200 dark:border-red-800">
@@ -119,5 +129,13 @@ export default function LoginPage() {
                 </div>
             </div>
         </div>
+    );
+}
+
+export default function LoginPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-[#d46b4e]" /></div>}>
+            <LoginContent />
+        </Suspense>
     );
 }

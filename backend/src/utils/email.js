@@ -102,6 +102,14 @@ const wrapHtmlEmail = (content, title) => `
     </html>
 `;
 
+// Helper to safely parse Mongoose Map serviceDetails
+const parseServiceDetails = (details) => {
+    if (!details) return {};
+    if (typeof details.toJSON === 'function') return details.toJSON();
+    if (details instanceof Map) return Object.fromEntries(details.entries());
+    return details;
+};
+
 // 1. Booking Received (Customer)
 export const sendBookingCreatedEmail = async (booking, customerEmail, customerName) => {
     const subject = `Booking Request Received - Ref: ${booking._id.toString().slice(-6).toUpperCase()}`;
@@ -117,21 +125,23 @@ export const sendBookingCreatedEmail = async (booking, customerEmail, customerNa
             <p><strong>Time Slot:</strong> ${booking.schedule.timeSlot}</p>
             <p><strong>Address:</strong> ${booking.address.line1}, ${booking.address.suburb}</p>
             
-            ${Object.keys(booking.serviceDetails || {}).length > 0 ? `
+            ${Object.keys(parseServiceDetails(booking.serviceDetails)).length > 0 ? `
                 <div style="margin-top: 12px; padding-top: 12px; border-top: 1px dashed #e4e4e7;">
                     <p style="margin-bottom: 4px;"><strong>Service Details:</strong></p>
                     <ul style="margin: 0; padding-left: 20px; font-size: 14px;">
-                        ${Object.entries(booking.serviceDetails).map(([k, v]) => `<li>${k.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}: ${v}</li>`).join('')}
+                        ${Object.entries(parseServiceDetails(booking.serviceDetails)).map(([k, v]) => `<li>${k.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}: ${v}</li>`).join('')}
                     </ul>
                 </div>
             ` : ''}
 
-            ${(booking.extrasSelected?.length > 0 || booking.aiExtras?.length > 0) ? `
+            ${(booking.extrasSelected?.length > 0) ? `
                 <div style="margin-top: 12px; padding-top: 12px; border-top: 1px dashed #e4e4e7;">
                     <p style="margin-bottom: 4px;"><strong>Requested Extras:</strong></p>
                     <ul style="margin: 0; padding-left: 20px; font-size: 14px;">
-                        ${booking.extrasSelected?.map(e => `<li>${e}</li>`).join('') || ''}
-                        ${booking.aiExtras?.map(e => `<li>✨ ${e.name}</li>`).join('') || ''}
+                        ${booking.extrasSelected.map(e => {
+        const isAiExtra = booking.aiExtras?.some(ai => ai.name === e);
+        return `<li>${isAiExtra ? '✨ ' : ''}${e}</li>`;
+    }).join('')}
                     </ul>
                 </div>
             ` : ''}
@@ -184,21 +194,23 @@ export const sendStaffAssignmentEmail = async (booking, staffEmail, staffName) =
             <p><strong>Time Slot:</strong> ${booking.schedule.timeSlot}</p>
             <p><strong>Address:</strong> ${booking.address.line1}, ${booking.address.suburb}</p>
 
-            ${Object.keys(booking.serviceDetails || {}).length > 0 ? `
+            ${Object.keys(parseServiceDetails(booking.serviceDetails)).length > 0 ? `
                 <div style="margin-top: 12px; padding-top: 12px; border-top: 1px dashed #e4e4e7;">
                     <p style="margin-bottom: 4px;"><strong>Service Details:</strong></p>
                     <ul style="margin: 0; padding-left: 20px; font-size: 14px;">
-                        ${Object.entries(booking.serviceDetails).map(([k, v]) => `<li>${k.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}: ${v}</li>`).join('')}
+                        ${Object.entries(parseServiceDetails(booking.serviceDetails)).map(([k, v]) => `<li>${k.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}: ${v}</li>`).join('')}
                     </ul>
                 </div>
             ` : ''}
 
-            ${(booking.extrasSelected?.length > 0 || booking.aiExtras?.length > 0) ? `
+            ${(booking.extrasSelected?.length > 0) ? `
                 <div style="margin-top: 12px; padding-top: 12px; border-top: 1px dashed #e4e4e7;">
                     <p style="margin-bottom: 4px;"><strong>Requested Extras:</strong></p>
                     <ul style="margin: 0; padding-left: 20px; font-size: 14px;">
-                        ${booking.extrasSelected?.map(e => `<li>${e}</li>`).join('') || ''}
-                        ${booking.aiExtras?.map(e => `<li>✨ ${e.name}</li>`).join('') || ''}
+                        ${booking.extrasSelected.map(e => {
+        const isAiExtra = booking.aiExtras?.some(ai => ai.name === e);
+        return `<li>${isAiExtra ? '✨ ' : ''}${e}</li>`;
+    }).join('')}
                     </ul>
                 </div>
             ` : ''}

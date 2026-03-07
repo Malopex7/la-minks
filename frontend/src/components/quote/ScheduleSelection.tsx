@@ -30,13 +30,82 @@ export default function ScheduleSelection() {
         });
     };
 
-    const timeSlots = [
-        '08:00 AM - 10:00 AM',
-        '10:00 AM - 12:00 PM',
-        '12:00 PM - 02:00 PM',
-        '02:00 PM - 04:00 PM',
-        '04:00 PM - 06:00 PM',
-    ];
+    // Calculate dynamic time slots based on estimated hours locally
+    // since the final backend quote hasn't been fetched yet.
+    let estimatedHours = 2; // Base estimated hours
+
+    // Add 30 mins for every counted unit (like bedrooms or bathrooms) matches backend logic
+    if (data.serviceDetails) {
+        Object.values(data.serviceDetails).forEach(val => {
+            const numVal = Number(val);
+            if (!isNaN(numVal) && numVal > 0 && numVal < 50) {
+                estimatedHours += (numVal * 0.5);
+            }
+        });
+    }
+
+    // Add time for standard extras
+    if (data.extrasSelected && data.extrasSelected.length > 0) {
+        data.extrasSelected.forEach(extraName => {
+            const extraConfig = data.serviceExtras.find(e => e.name === extraName);
+            if (extraConfig && extraConfig.estimatedAdditionalHours) {
+                estimatedHours += extraConfig.estimatedAdditionalHours;
+            } else {
+                estimatedHours += 0.5; // Fallback 30 mins per extra
+            }
+        });
+    }
+
+    // Add time for AI extras
+    if (data.aiExtras && data.aiExtras.length > 0) {
+        data.aiExtras.forEach(extra => {
+            if (extra.estimatedAdditionalHours) {
+                estimatedHours += extra.estimatedAdditionalHours;
+            } else {
+                estimatedHours += 0.5;
+            }
+        });
+    }
+
+    // Generate slots from 8 AM to 6 PM (18:00)
+    const generateTimeSlots = () => {
+        const slots: string[] = [];
+        const startHour = 8;
+        const endHour = 18; // 6 PM
+        const maxWorkingHours = endHour - startHour;
+
+        // Cap the block size to a full working day max so we don't end up with 0 slots
+        const slotDuration = Math.min(estimatedHours, maxWorkingHours);
+
+        let currentHour = startHour;
+
+        while (currentHour + slotDuration <= endHour) {
+            const periodStart = currentHour >= 12 ? 'PM' : 'AM';
+            let displayStartHour = currentHour > 12 ? currentHour - 12 : currentHour;
+            const startString = `${displayStartHour.toString().padStart(2, '0')}:00 ${periodStart}`;
+
+            const endTime = currentHour + Math.ceil(slotDuration);
+            const periodEnd = endTime >= 12 ? 'PM' : 'AM';
+            let displayEndHour = endTime > 12 ? endTime - 12 : endTime;
+            const endString = `${displayEndHour.toString().padStart(2, '0')}:00 ${periodEnd}`;
+
+            // Add an indicator if the job is too big for one calendar day
+            const multiDayNote = estimatedHours > maxWorkingHours ? ' (Multi-day job)' : '';
+            slots.push(`${startString} - ${endString}${multiDayNote}`);
+
+            // Advance by 1 hour for maximum flexibility
+            currentHour += Math.max(1, Math.floor(slotDuration / 2));
+        }
+
+        // Failsafe: if we somehow generated 0 slots (e.g., extremely weird inputs), just give a full day slot
+        if (slots.length === 0) {
+            slots.push('08:00 AM - 06:00 PM (Full Day)');
+        }
+
+        return slots;
+    };
+
+    const timeSlots = generateTimeSlots();
 
     return (
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">

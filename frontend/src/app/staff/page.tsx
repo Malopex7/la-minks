@@ -5,6 +5,7 @@ import { useAuthStore } from '@/store/useAuthStore';
 import { Loader2, Calendar, MapPin, Clock, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { format } from 'date-fns';
+import { fetchWithAuth } from '@/lib/api';
 
 const API_URL = 'http://localhost:5001/api';
 
@@ -41,9 +42,7 @@ export default function StaffDashboardPage() {
         if (!user) return;
         const fetchJobs = async () => {
             try {
-                const res = await fetch(`${API_URL}/bookings/staff-assigned`, {
-                    headers: { Authorization: `Bearer ${user.accessToken}` },
-                });
+                const res = await fetchWithAuth(`${API_URL}/bookings/staff-assigned`);
                 if (!res.ok) throw new Error('Failed to fetch jobs');
                 const data = await res.json();
                 setBookings(data);

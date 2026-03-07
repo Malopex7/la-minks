@@ -4,6 +4,103 @@ import PricingRule from '../models/PricingRule.js';
 import AuditLog from '../models/AuditLog.js';
 import { sendBookingCreatedEmail, sendStaffAssignmentEmail, sendJobCompletionEmail, sendJobCheckInEmail } from '../utils/email.js';
 
+// ── Helpers ─────────────────────────────────────────────────────────────────
+
+/**
+ * Parse a timeSlot string like "09:00 AM - 11:00 AM" into Date objects
+ * anchored to the given booking date.
+ */
+const parseSlotTimes = (date, timeSlot) => {
+    if (!date || !timeSlot) return null;
+    const [startStr, endStr] = timeSlot.split(' - ');
+    const toMs = (str, baseDate) => {
+        const [time, meridiem] = str.trim().split(' ');
+        let [h, m] = time.split(':').map(Number);
+        if (meridiem === 'PM' && h !== 12) h += 12;
+        if (meridiem === 'AM' && h === 12) h = 0;
+        const d = new Date(baseDate);
+        d.setHours(h, m, 0, 0);
+        return d;
+    };
+    return { start: toMs(startStr, date), end: toMs(endStr, date) };
+};
+
+/**
+ * Returns true if the two time ranges overlap (exclusive on boundaries).
+ */
+const timesOverlap = (s1, e1, s2, e2) => s1 < e2 && s2 < e1;
+
+/**
+ * Check whether any of the given staffIds already have a booking on the same
+ * date whose time slot overlaps with the proposed slot.
+ * Pass excludeBookingId to skip the booking being updated (for re-assignments).
+ */
+const hasStaffConflict = async (staffIds, date, timeSlot, excludeBookingId = null) => {
+    if (!staffIds?.length || !date || !timeSlot) return [];
+
+    const proposed = parseSlotTimes(date, timeSlot);
+    if (!proposed) return [];
+
+    const dayStart = new Date(date);
+    dayStart.setHours(0, 0, 0, 0);
+    const dayEnd = new Date(date);
+    dayEnd.setHours(23, 59, 59, 999);
+
+    const query = {
+        staffAssignedIds: { $in: staffIds },
+        'schedule.date': { $gte: dayStart, $lte: dayEnd },
+        status: { $nin: ['CANCELLED', 'COMPLETED', 'QUOTE'] },
+    };
+    if (excludeBookingId) query._id = { $ne: excludeBookingId };
+
+    const existing = await Booking.find(query).lean();
+    const conflicts = [];
+
+    for (const bk of existing) {
+        const slot = parseSlotTimes(bk.schedule.date, bk.schedule.timeSlot);
+        if (!slot) continue;
+        if (timesOverlap(proposed.start, proposed.end, slot.start, slot.end)) {
+            conflicts.push(bk);
+        }
+    }
+    return conflicts;
+};
+
+/**
+ * Check whether the same customer already has a booking at the same address
+ * on the same date/time (different service or different address allowed).
+ */
+const hasCustomerAddressConflict = async (customerId, address, date, timeSlot, excludeBookingId = null) => {
+    if (!customerId || !address || !date || !timeSlot) return false;
+
+    const proposed = parseSlotTimes(date, timeSlot);
+    if (!proposed) return false;
+
+    const dayStart = new Date(date);
+    dayStart.setHours(0, 0, 0, 0);
+    const dayEnd = new Date(date);
+    dayEnd.setHours(23, 59, 59, 999);
+
+    const query = {
+        customerId,
+        'address.line1': address.line1,
+        'address.suburb': address.suburb,
+        'schedule.date': { $gte: dayStart, $lte: dayEnd },
+        status: { $nin: ['CANCELLED', 'COMPLETED', 'QUOTE'] },
+    };
+    if (excludeBookingId) query._id = { $ne: excludeBookingId };
+
+    const existing = await Booking.find(query).lean();
+    for (const bk of existing) {
+        const slot = parseSlotTimes(bk.schedule.date, bk.schedule.timeSlot);
+        if (!slot) continue;
+        if (timesOverlap(proposed.start, proposed.end, slot.start, slot.end)) return true;
+    }
+    return false;
+};
+
+// ────────────────────────────────────────────────────────────────────────────
+
 // @desc    Get logged in user's bookings
 // @route   GET /api/bookings/my
 // @access  Private
@@ -33,7 +130,10 @@ export const getBookingById = async (req, res) => {
         }
 
         // Check if the booking belongs to the logged-in user, or if staff/admin
-        if (booking.customerId.toString() !== req.user._id.toString() && req.user.role === 'customer') {
+        // Note: customerId is populated, so it's an object, not just an ID string
+        const bookingCustomerId = booking.customerId?._id ? booking.customerId._id.toString() : booking.customerId?.toString();
+
+        if (bookingCustomerId !== req.user._id.toString() && req.user.role === 'customer') {
             return res.status(403).json({ message: 'Not authorized to view this booking' });
         }
 
@@ -87,6 +187,20 @@ export const createBooking = async (req, res) => {
         }
 
         const finalPrice = baseCost + extrasCost;
+
+        // ── Double-booking checks ──────────────────────────────────────────
+        // 1. Same customer, same address, overlapping time → block
+        if (schedule?.date && schedule?.timeSlot) {
+            const customerConflict = await hasCustomerAddressConflict(
+                req.user._id, address, schedule.date, schedule.timeSlot
+            );
+            if (customerConflict) {
+                return res.status(409).json({
+                    message: 'You already have a booking at this address during the selected time slot. Please choose a different time or address.'
+                });
+            }
+        }
+        // ─────────────────────────────────────────────────────────────────────
 
         const booking = new Booking({
             customerId: req.user._id,
@@ -181,6 +295,26 @@ export const assignStaffToBooking = async (req, res) => {
         if (!booking) {
             return res.status(404).json({ message: 'Booking not found' });
         }
+
+        // ── Staff conflict check ───────────────────────────────────────────
+        if (booking.schedule?.date && booking.schedule?.timeSlot && staffIds.length > 0) {
+            const conflicts = await hasStaffConflict(
+                staffIds,
+                booking.schedule.date,
+                booking.schedule.timeSlot,
+                booking._id  // exclude the current booking itself
+            );
+            if (conflicts.length > 0) {
+                const conflictDates = [...new Set(conflicts.map(c => {
+                    const d = new Date(c.schedule.date);
+                    return `${d.toLocaleDateString('en-ZA')} ${c.schedule.timeSlot}`;
+                }))];
+                return res.status(409).json({
+                    message: `One or more selected staff members already have a booking during this time slot (${conflictDates.join(', ')}). Please reassign or choose a different time.`
+                });
+            }
+        }
+        // ─────────────────────────────────────────────────────────────────────
 
         booking.staffAssignedIds = staffIds;
         const updatedBooking = await booking.save();

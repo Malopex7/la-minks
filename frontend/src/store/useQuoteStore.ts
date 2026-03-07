@@ -22,6 +22,13 @@ export type QuoteData = {
         date?: Date;
         timeSlot?: string;
     };
+    pricing?: {
+        baseAmount: number;
+        extrasAmount: number;
+        aiExtrasAmount: number;
+        totalAmount: number;
+        estimatedHours: number;
+    };
 };
 
 interface QuoteStore {

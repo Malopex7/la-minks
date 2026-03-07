@@ -142,7 +142,7 @@ export const useAuthStore = create<AuthState>((set) => ({
             // but since we redirect in logout, it's fine. Let's just remove local storage.
             localStorage.removeItem('user');
             set({ user: null });
-            window.location.href = '/login';
+            window.location.href = '/login?timeout=true';
             return null;
         }
     },

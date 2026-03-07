@@ -36,12 +36,7 @@ interface BookingDetail {
         province: string;
         postalCode: string;
     };
-    property: {
-        sqm: number;
-        bedrooms: number;
-        bathrooms: number;
-        conditionLevel: string;
-    };
+    serviceDetails?: Record<string, string | number | boolean>;
     schedule: {
         date: string;
         timeSlot: string;
@@ -238,22 +233,18 @@ export default function BookingDetailsPage() {
                         </h2>
 
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
-                            <div>
-                                <p className="text-xs text-zinc-500 uppercase tracking-wider font-semibold mb-1">Size</p>
-                                <p className="text-zinc-900 dark:text-zinc-100 font-medium">{booking.property.sqm} sqm</p>
-                            </div>
-                            <div>
-                                <p className="text-xs text-zinc-500 uppercase tracking-wider font-semibold mb-1">Bedrooms</p>
-                                <p className="text-zinc-900 dark:text-zinc-100 font-medium">{booking.property.bedrooms}</p>
-                            </div>
-                            <div>
-                                <p className="text-xs text-zinc-500 uppercase tracking-wider font-semibold mb-1">Bathrooms</p>
-                                <p className="text-zinc-900 dark:text-zinc-100 font-medium">{booking.property.bathrooms}</p>
-                            </div>
-                            <div>
-                                <p className="text-xs text-zinc-500 uppercase tracking-wider font-semibold mb-1">Condition</p>
-                                <p className="text-zinc-900 dark:text-zinc-100 font-medium capitalize">{booking.property.conditionLevel.replace('_', ' ')}</p>
-                            </div>
+                            {booking.serviceDetails && Object.entries(booking.serviceDetails).map(([key, value]) => {
+                                // Format the key from camelCase to Title Space Case
+                                const formattedKey = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+                                return (
+                                    <div key={key}>
+                                        <p className="text-xs text-zinc-500 uppercase tracking-wider font-semibold mb-1">{formattedKey}</p>
+                                        <p className="text-zinc-900 dark:text-zinc-100 font-medium capitalize">
+                                            {String(value).replace('_', ' ')}
+                                        </p>
+                                    </div>
+                                );
+                            })}
                         </div>
 
                         {booking.extrasSelected && booking.extrasSelected.length > 0 && (
