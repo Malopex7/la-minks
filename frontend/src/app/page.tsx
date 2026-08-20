@@ -46,12 +46,15 @@ export default function Home() {
             className="object-cover"
           />
         </div>
-        <div className="relative z-20 max-w-2xl">
-          <span className="inline-block py-1 px-3 rounded-full bg-[#86a373]/10 text-[#86a373] text-xs font-bold uppercase tracking-widest mb-4">Premium Cleaning Services</span>
-          <h1 className="text-5xl lg:text-7xl text-slate-900 leading-[1.1] mb-6" style={{ fontFamily: "'Playfair Display', serif" }}>
-            Your Space, <br /><span className="text-[#d46b4e] italic">Beautifully</span> Cared For
+        <div className="relative z-20 max-w-3xl">
+          <span className="inline-block py-1.5 px-3.5 rounded-full bg-[#86a373]/15 text-[#5c7a4d] text-xs font-bold uppercase tracking-widest mb-4">
+            Premium Cleaning Services
+          </span>
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-slate-900 leading-[1.12] mb-6 [text-wrap:balance]" style={{ fontFamily: "'Playfair Display', serif" }}>
+            Your Space, <br className="hidden sm:inline" />
+            <span className="text-[#d46b4e] italic font-normal">Beautifully</span> Cared&nbsp;For
           </h1>
-          <p className="text-lg text-slate-600 mb-8 max-w-lg leading-relaxed">
+          <p className="text-lg text-slate-600 mb-8 max-w-xl leading-relaxed">
             La-Minks Cleaning Services offers a new standard of professional cleaning tailored for modern South African living. From homes and offices to gardening, we bring pristine spaces to your doorstep.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
