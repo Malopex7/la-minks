@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { useAuthStore } from '@/store/useAuthStore';
-import { Briefcase, LogOut, Loader2, Sparkles } from 'lucide-react';
+import { Briefcase, LogOut, Loader2, Sparkles, BookOpen } from 'lucide-react';
 
 export default function StaffLayout({ children }: { children: React.ReactNode }) {
     const { user, checkAuth, logout } = useAuthStore();
@@ -62,6 +62,16 @@ export default function StaffLayout({ children }: { children: React.ReactNode })
                             >
                                 <Briefcase className="w-4 h-4" />
                                 Assigned Jobs
+                            </Link>
+                            <Link
+                                href="/staff/guide"
+                                className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors ${pathname.startsWith('/staff/guide')
+                                    ? 'bg-[#86a373]/10 text-[#5c7a4d] font-medium'
+                                    : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800'
+                                    }`}
+                            >
+                                <BookOpen className="w-4 h-4" />
+                                Cleaners Guide
                             </Link>
                         </nav>
                     </div>
