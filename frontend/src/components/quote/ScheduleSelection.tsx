@@ -81,12 +81,12 @@ export default function ScheduleSelection() {
 
         while (currentHour + slotDuration <= endHour) {
             const periodStart = currentHour >= 12 ? 'PM' : 'AM';
-            let displayStartHour = currentHour > 12 ? currentHour - 12 : currentHour;
+            const displayStartHour = currentHour > 12 ? currentHour - 12 : currentHour;
             const startString = `${displayStartHour.toString().padStart(2, '0')}:00 ${periodStart}`;
 
             const endTime = currentHour + Math.ceil(slotDuration);
             const periodEnd = endTime >= 12 ? 'PM' : 'AM';
-            let displayEndHour = endTime > 12 ? endTime - 12 : endTime;
+            const displayEndHour = endTime > 12 ? endTime - 12 : endTime;
             const endString = `${displayEndHour.toString().padStart(2, '0')}:00 ${periodEnd}`;
 
             // Add an indicator if the job is too big for one calendar day

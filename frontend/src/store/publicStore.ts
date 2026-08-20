@@ -7,6 +7,7 @@ export interface Service {
     basePrice: number;
     isActive: boolean;
     imageUrl?: string;
+    icon?: string;
 }
 
 interface PublicState {

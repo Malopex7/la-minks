@@ -16,21 +16,28 @@ export const protect = async (req, res, next) => {
 
             req.user = await User.findById(decoded.id).select('-password');
 
-            next();
+            if (!req.user) {
+                return res.status(401).json({ message: 'User not found' });
+            }
+
+            return next();
         } catch (error) {
-            console.error(error);
-            res.status(401).json({ message: 'Not authorized, token failed' });
+            console.error('Auth protect error:', error.message);
+            return res.status(401).json({ message: 'Not authorized, token failed' });
         }
     }
 
-    if (!token) {
-        res.status(401).json({ message: 'Not authorized, no token' });
-    }
+    return res.status(401).json({ message: 'Not authorized, no token' });
 };
 
 export const authorize = (...roles) => {
     return (req, res, next) => {
-        if (!req.user || !roles.includes(req.user.role)) {
+        // superadmin inherits all admin access automatically
+        const effectiveRoles = roles.includes('admin') && !roles.includes('superadmin')
+            ? [...roles, 'superadmin']
+            : roles;
+
+        if (!req.user || !effectiveRoles.includes(req.user.role)) {
             return res.status(403).json({
                 message: `User role '${req.user ? req.user.role : 'none'}' is not authorized to access this route`
             });

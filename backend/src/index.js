@@ -1,4 +1,7 @@
 // src/index.js
+import dns from 'dns';
+// Override c-ares DNS servers — local router (fe80::1) refuses TCP DNS needed for SRV lookups
+dns.setServers(['8.8.8.8', '1.1.1.1', '8.8.4.4']);
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -25,12 +28,16 @@ app.use(express.json());
 app.use(cookieParser());
 
 // Connect to MongoDB (use MONGO_URI from .env)
-mongoose.connect(process.env.MONGO_URI)
+mongoose.connect(process.env.MONGO_URI, {
+  family: 4,
+  serverSelectionTimeoutMS: 10000,
+  connectTimeoutMS: 10000,
+})
   .then(() => {
     console.log('MongoDB connected');
     initBucket(mongoose.connection.db);
   })
-  .catch(err => console.error(err));
+  .catch(err => console.error('MongoDB connection error:', err.message));
 
 // Test route
 app.get('/api/test', (req, res) => {

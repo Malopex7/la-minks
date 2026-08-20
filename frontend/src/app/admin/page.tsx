@@ -23,7 +23,7 @@ export default function AdminOverviewPage() {
     const pendingBookings = bookings.filter((b) => b.status === "QUOTE" || b.status === "BOOKED").length;
     const totalRevenue = bookings
         .filter((b) => b.status === "COMPLETED")
-        .reduce((sum, b) => sum + (b.totalPrice || 0), 0);
+        .reduce((sum, b) => sum + (b.payment?.amount || b.totalPrice || 0), 0);
 
     const stats = [
         {
@@ -134,7 +134,7 @@ export default function AdminOverviewPage() {
                                             <StatusBadge status={booking.status} />
                                         </td>
                                         <td className="px-6 py-3 font-medium text-zinc-800 dark:text-zinc-200">
-                                            R {booking.totalPrice}
+                                            R {booking.payment?.amount != null ? Number(booking.payment.amount).toFixed(2) : (booking.totalPrice != null ? Number(booking.totalPrice).toFixed(2) : '0.00')}
                                         </td>
                                     </tr>
                                 ))}

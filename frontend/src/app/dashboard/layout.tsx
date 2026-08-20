@@ -37,9 +37,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     }
 
     return (
-        <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 flex">
+        <div className="min-h-[calc(100vh-120px)] bg-zinc-50 dark:bg-zinc-950 flex">
             {/* Sidebar */}
-            <aside className="w-64 bg-white dark:bg-zinc-900 border-r border-zinc-200 dark:border-zinc-800 hidden md:flex flex-col">
+            <aside className="w-64 bg-white dark:bg-zinc-900 border-r border-zinc-200 dark:border-zinc-800 hidden md:flex flex-col h-[calc(100vh-120px)] sticky top-[120px]">
                 <div className="h-16 flex items-center px-6 border-b border-zinc-200 dark:border-zinc-800">
                     <Link href="/" className="flex items-center gap-2 font-bold text-xl">
                         <Sparkles className="h-6 w-6 text-[#d46b4e]" />

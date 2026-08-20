@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { useAuthStore } from '@/store/useAuthStore';
+import { fetchWithAuth } from '@/lib/api';
 import { Loader2, ShieldAlert, ChevronLeft, ChevronRight, Filter } from 'lucide-react';
 
 const API_URL = 'http://localhost:5001/api';
@@ -51,10 +52,11 @@ export default function AuditLogPage() {
             if (entityType) params.set('entityType', entityType);
             if (actionFilter) params.set('action', actionFilter);
 
-            const res = await fetch(`${API_URL}/audit?${params}`, {
-                headers: { Authorization: `Bearer ${user.accessToken}` },
-            });
-            if (!res.ok) throw new Error('Failed to fetch audit logs');
+            const res = await fetchWithAuth(`${API_URL}/audit?${params}`);
+            if (!res.ok) {
+                const errData = await res.json().catch(() => ({}));
+                throw new Error(errData.message || 'Failed to fetch audit logs');
+            }
             const json: AuditResponse = await res.json();
             setData(json);
         } catch (err) {

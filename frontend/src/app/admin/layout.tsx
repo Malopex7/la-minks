@@ -4,7 +4,13 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuthStore } from '@/store/useAuthStore';
-import { LogOut, Loader2, ShieldAlert } from 'lucide-react';
+import { 
+    LogOut, 
+    Loader2, 
+    ShieldAlert, 
+    BookOpen, 
+    Users 
+} from 'lucide-react';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
     const { user, checkAuth, logout } = useAuthStore();
@@ -16,6 +22,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         setMounted(true);
         checkAuth();
     }, [checkAuth]);
+
+    useEffect(() => {
+        if (mounted && user && user.role !== 'admin' && user.role !== 'superadmin') {
+            router.push('/dashboard');
+        }
+    }, [user, mounted, router]);
 
     const handleLogout = async () => {
         await logout();
@@ -30,6 +42,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         );
     }
 
+    const isSuperAdmin = user.role === 'superadmin';
+
     const getLinkClasses = (path: string, exact = false) => {
         const isActive = exact ? pathname === path : pathname.startsWith(path);
         return `flex items-center p-2 rounded-lg group transition-colors ${isActive
@@ -39,10 +53,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 flex">
+        <div className="min-h-[calc(100vh-120px)] bg-gray-50 flex">
             {/* Sidebar */}
-            <aside className="w-64 bg-white border-r flex flex-col h-screen sticky top-0">
-                <div className="flex-1 px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
+            <aside className="w-64 bg-white border-r flex flex-col h-[calc(100vh-120px)] sticky top-[120px]">
+                <div className="flex-1 px-4 py-6 overflow-y-auto bg-gray-50 dark:bg-gray-800">
                     <ul className="space-y-2 font-medium">
                         <li>
                             <Link href="/admin" className={getLinkClasses('/admin', true)}>
@@ -59,23 +73,42 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                                 <span className="flex-1 ms-3 whitespace-nowrap">Bookings</span>
                             </Link>
                         </li>
+                        {isSuperAdmin && (
+                            <li>
+                                <Link href="/admin/users" className={`${getLinkClasses('/admin/users')} gap-2`}>
+                                    <Users className={`w-4 h-4 ${pathname.startsWith('/admin/users') ? 'text-[#d46b4e]' : 'text-zinc-400'}`} />
+                                    <span className="flex-1 whitespace-nowrap">Users</span>
+                                    <span className="text-[10px] px-1.5 py-0.5 font-bold uppercase tracking-wider bg-[#d46b4e]/10 text-[#d46b4e] rounded-full">Super</span>
+                                </Link>
+                            </li>
+                        )}
                         <li>
                             <Link href="/admin/audit" className={`${getLinkClasses('/admin/audit')} gap-2`}>
                                 <ShieldAlert className={`w-4 h-4 ${pathname.startsWith('/admin/audit') ? 'text-[#d46b4e]' : 'text-zinc-400'}`} />
                                 <span className="flex-1 whitespace-nowrap">Audit Log</span>
                             </Link>
                         </li>
+                        <li>
+                            <Link href="/admin/guide" className={`${getLinkClasses('/admin/guide')} gap-2`}>
+                                <BookOpen className={`w-4 h-4 ${pathname.startsWith('/admin/guide') ? 'text-[#d46b4e]' : 'text-zinc-400'}`} />
+                                <span className="flex-1 whitespace-nowrap">Admin Guide</span>
+                            </Link>
+                        </li>
                     </ul>
                 </div>
 
-                <div className="p-4 border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-gray-800">
+                <div className="p-4 pb-6 border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-gray-800">
                     <div className="flex items-center gap-3 px-3 py-2 mb-2">
                         <div className="w-8 h-8 rounded-full bg-zinc-100 dark:bg-zinc-700 flex items-center justify-center text-zinc-700 dark:text-zinc-300 font-semibold">
                             {user.firstName?.charAt(0) || 'A'}
                         </div>
                         <div className="flex-1 overflow-hidden">
-                            <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate">{user.firstName} {user.lastName}</p>
-                            <p className="text-xs text-zinc-500 truncate">{user.email}</p>
+                            <div className="flex items-center gap-1.5">
+                                <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate">{user.firstName} {user.lastName}</p>
+                            </div>
+                            <p className="text-xs text-zinc-500 truncate capitalize">
+                                {user.role === 'superadmin' ? 'Super Admin' : user.role}
+                            </p>
                         </div>
                     </div>
                     <button

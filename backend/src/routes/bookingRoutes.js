@@ -15,13 +15,13 @@ const router = express.Router();
 
 // Routes
 // Admin only
-router.route('/').get(protect, authorize('admin', 'admin'), getAllBookings);
+router.route('/').get(protect, authorize('admin'), getAllBookings);
 
 // Admin / Customer (initial creation, usually from quote)
 router.route('/').post(protect, createBooking);
 
 // Customer specific
-router.route('/my').get(protect, authorize('customer'), getMyBookings);
+router.route('/my').get(protect, authorize('customer', 'admin', 'staff'), getMyBookings);
 
 // Staff specific
 router.route('/staff-assigned').get(protect, authorize('staff', 'admin'), getStaffAssignments);

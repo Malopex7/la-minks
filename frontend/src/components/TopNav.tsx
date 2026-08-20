@@ -15,9 +15,12 @@ export default function TopNav() {
     };
 
     return (
-        <nav className="hidden md:flex items-center gap-10">
+        <nav className="hidden md:flex items-center gap-8">
             <Link className={getLinkClasses('/')} href="/">Home</Link>
             <Link className={getLinkClasses('/services')} href="/services">Services</Link>
+            <Link className={getLinkClasses('/about')} href="/about">About Us</Link>
+            <Link className={getLinkClasses('/faqs')} href="/faqs">FAQs</Link>
+            <Link className={getLinkClasses('/contact')} href="/contact">Contact</Link>
         </nav>
     );
 }

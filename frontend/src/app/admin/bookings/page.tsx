@@ -6,6 +6,7 @@ import { Loader2, Users, Calendar, Banknote, Camera, ChevronDown, ChevronUp, Dow
 import Image from 'next/image';
 import PhotoLightbox from '@/components/PhotoLightbox';
 import { bookingsToCsv, downloadCsv } from '@/lib/exportCsv';
+import { fetchWithAuth } from '@/lib/api';
 
 const API_URL = 'http://localhost:5001/api';
 const VALID_STATUSES = ['QUOTE', 'BOOKED', 'CONFIRMED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED'];
@@ -23,8 +24,6 @@ interface LightboxState {
     photos: string[];
     index: number;
 }
-
-
 
 export default function AdminBookingsPage() {
     const { bookings, staffMembers, fetchAllBookings, fetchStaffMembers, assignStaffToBooking, isLoading, error: storeError } = useAdminStore();
@@ -55,15 +54,12 @@ export default function AdminBookingsPage() {
     };
 
     const handleStatusChange = async (bookingId: string, newStatus: string) => {
-        const userStr = localStorage.getItem('user');
-        const token = userStr ? JSON.parse(userStr).accessToken : null;
         setUpdatingStatusId(bookingId);
         try {
-            const res = await fetch(`${API_URL}/bookings/${bookingId}/status`, {
+            const res = await fetchWithAuth(`${API_URL}/bookings/${bookingId}/status`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify({ status: newStatus }),
             });
@@ -214,7 +210,7 @@ export default function AdminBookingsPage() {
                                                         </select>
                                                         <div className="flex items-center space-x-1 text-zinc-700 dark:text-zinc-300 font-medium mt-1">
                                                             <Banknote className="w-4 h-4 text-emerald-500" />
-                                                            <span>R {booking.totalPrice}</span>
+                                                            <span>R {booking.payment?.amount != null ? Number(booking.payment.amount).toFixed(2) : (booking.totalPrice != null ? Number(booking.totalPrice).toFixed(2) : '0.00')}</span>
                                                         </div>
                                                     </td>
                                                     <td className="px-6 py-4">
