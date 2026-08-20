@@ -24,8 +24,20 @@ interface AuthState {
 
 const API_URL = 'http://localhost:5001/api/auth';
 
+const getInitialUser = (): User | null => {
+    if (typeof window !== 'undefined') {
+        try {
+            const stored = localStorage.getItem('user');
+            if (stored) return JSON.parse(stored);
+        } catch {
+            return null;
+        }
+    }
+    return null;
+};
+
 export const useAuthStore = create<AuthState>((set) => ({
-    user: null,
+    user: getInitialUser(),
     isLoading: false,
     error: null,
 
@@ -35,6 +47,7 @@ export const useAuthStore = create<AuthState>((set) => ({
             const res = await fetch(`${API_URL}/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
                 body: JSON.stringify(credentials),
             });
 

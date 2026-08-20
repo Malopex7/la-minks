@@ -16,11 +16,11 @@ test.describe('Home Page', () => {
         await page.goto('/');
 
         // Click on the Services link in the navigation
-        await page.getByRole('link', { name: 'Services', exact: true }).first().click();
+        await page.locator('nav a[href="/services"]').click();
 
         await expect(page).toHaveURL(/\/services/);
 
-        // The "Our Services" heading is actually an H2
-        await expect(page.locator('h2', { hasText: 'Our Services' })).toBeVisible();
+        // The "Our Services" heading
+        await expect(page.getByRole('heading', { name: 'Our Services' })).toBeVisible();
     });
 });

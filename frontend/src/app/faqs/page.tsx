@@ -56,7 +56,7 @@ const FAQS_DATA: FAQItem[] = [
 export default function FAQsPage() {
     const [search, setSearch] = useState("");
     const [activeCategory, setActiveCategory] = useState<string>("All");
-    const [openIndex, setOpenIndex] = useState<number | null>(0);
+    const [openIndex, setOpenIndex] = useState<number | null>(null);
 
     const categories = ["All", "General", "Service & Safety", "Pricing & Payment"];
 
@@ -90,7 +90,7 @@ export default function FAQsPage() {
                             type="text"
                             placeholder="Search questions or keywords..."
                             value={search}
-                            onChange={(e) => setSearch(e.target.value)}
+                            onChange={(e) => { setSearch(e.target.value); setOpenIndex(null); }}
                             className="w-full pl-12 pr-4 py-3.5 bg-white rounded-full border border-[#86a373]/20 shadow-sm text-sm focus:outline-none focus:ring-2 focus:ring-[#86a373]"
                         />
                     </div>
@@ -105,7 +105,7 @@ export default function FAQsPage() {
                         {categories.map((cat) => (
                             <button
                                 key={cat}
-                                onClick={() => setActiveCategory(cat)}
+                                onClick={() => { setActiveCategory(cat); setOpenIndex(null); }}
                                 className={`px-4 py-2 rounded-full text-xs font-semibold transition-all ${activeCategory === cat
                                     ? "bg-[#3a4f41] text-white shadow-sm"
                                     : "bg-white text-slate-600 border border-zinc-200 hover:bg-zinc-50"
@@ -127,7 +127,7 @@ export default function FAQsPage() {
                                 const isOpen = openIndex === index;
                                 return (
                                     <div
-                                        key={index}
+                                        key={faq.q}
                                         className="bg-white rounded-2xl border border-[#86a373]/15 shadow-sm overflow-hidden transition-colors"
                                     >
                                         <button

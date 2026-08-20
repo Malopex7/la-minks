@@ -33,7 +33,7 @@ function LoginContent() {
         setLoginError('');
         try {
             const user = await login(data);
-            if (user.role === 'admin') {
+            if (user.role === 'admin' || user.role === 'superadmin') {
                 router.push('/admin');
             } else if (user.role === 'staff') {
                 router.push('/staff');

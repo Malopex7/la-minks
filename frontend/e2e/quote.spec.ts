@@ -4,19 +4,19 @@ test.describe('Quote Wizard Flow', () => {
     test('should navigate through the quote wizard steps', async ({ page }) => {
         await page.goto('/quote');
 
-        // Step 1: Services 
+        // Step 1: Select Service
+        await expect(page.getByRole('heading', { name: 'What do you need cleaned?' })).toBeVisible({ timeout: 10000 });
         const serviceCard = page.locator('div.cursor-pointer').first();
         await expect(serviceCard).toBeVisible({ timeout: 10000 });
         await serviceCard.click();
         await page.locator('button', { hasText: 'Continue' }).click();
 
-        // Step 2: Property Details
-        await expect(page.locator('text=Property Details')).toBeVisible();
-        await page.fill('input[name="sqm"]', '120');
+        // Step 2: Service Details
+        await expect(page.getByRole('heading', { name: 'Service Details' })).toBeVisible();
         await page.locator('button', { hasText: 'Continue' }).click();
 
-        // Step 3: Extras
-        await expect(page.locator('text=Optional Extras')).toBeVisible();
+        // Step 3: Select Extras
+        await expect(page.getByRole('heading', { name: 'Select Extras' })).toBeVisible();
         await page.locator('button', { hasText: 'Continue' }).click();
 
         // Step 4: Address Input
@@ -34,14 +34,10 @@ test.describe('Quote Wizard Flow', () => {
         // Open date picker
         await page.locator('button', { hasText: 'Pick a date' }).click();
 
-        // Go to next month to guarantee the day is enabled
-        const nextMonthBtn = page.locator('button[name="next-month"]');
-        if (await nextMonthBtn.isVisible()) {
-            await nextMonthBtn.click();
-        }
-
-        // Click the 15th
-        await page.getByRole('gridcell', { name: '15' }).first().click();
+        // Select an active date from the calendar
+        const activeDays = page.locator('[data-slot="calendar"] button:not([disabled])');
+        await expect(activeDays.first()).toBeVisible({ timeout: 5000 });
+        await activeDays.last().click();
 
         // Wait for the combobox to become enabled
         const timeCombo = page.locator('button[role="combobox"]');
@@ -49,7 +45,6 @@ test.describe('Quote Wizard Flow', () => {
 
         // Open time select combobox
         await timeCombo.click();
-        // Click the first available option
         await page.getByRole('option').first().click();
 
         // Click to advance
@@ -60,3 +55,4 @@ test.describe('Quote Wizard Flow', () => {
         await expect(page.locator('text=Total Price')).toBeVisible();
     });
 });
+

@@ -16,6 +16,13 @@ const PASSWORD = 'L0c@l@6m1n';
 
 const usersToSeed = [
     {
+        firstName: 'Xolane',
+        lastName:  'Malope',
+        email:     'info@cryobyte.co.za',
+        role:      'superadmin',
+        phone:     '0812345678',
+    },
+    {
         firstName: 'Sarah',
         lastName:  'Dlamini',
         email:     'staff@laminks.co.za',
