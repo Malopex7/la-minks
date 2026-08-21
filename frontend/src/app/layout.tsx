@@ -10,8 +10,8 @@ import { Share2, Instagram, Mail, MapPin } from "lucide-react";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "La-Minks | Premium Home Cleaning",
-  description: "Experience a new standard of professional cleaning tailored for modern South African living.",
+  title: "La-Minks | Premium Cleaning & Property Services",
+  description: "Experience a new standard of professional cleaning, outdoor care, and property maintenance tailored for modern South African spaces.",
 };
 
 export default function RootLayout({
@@ -58,7 +58,7 @@ export default function RootLayout({
                   <Image src="/images/La-Minks-Logo.svg" alt="La-Minks Cleaning Services" width={160} height={160} className="h-16 w-auto" style={{ mixBlendMode: 'multiply' }} />
                 </div>
                 <p className="text-slate-600 max-w-sm mb-8 leading-relaxed">
-                  Premium cleaning services for discerning homeowners. Bringing beauty and balance back to your living space.
+                  Comprehensive cleaning and property maintenance services for discerning residential and commercial clients. Bringing beauty, order, and balance back to your spaces.
                 </p>
                 <div className="flex gap-4">
                   <a

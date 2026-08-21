@@ -33,7 +33,7 @@ const STITCH_SERVICES = [
     },
     {
         name: "Move Out Cleaning",
-        description: "Ensuring your deposit return with a comprehensive, top-to-bottom scrub of your former residence.",
+        description: "Ensuring smooth transitions and deposit returns with a comprehensive, top-to-bottom scrub of your property.",
         image: "/images/Services/Move Out Cleaning.jpg",
         price: "R1200",
     },
@@ -45,13 +45,13 @@ const STITCH_SERVICES = [
     },
     {
         name: "Afterparty Cleaning",
-        description: "Enjoy your celebration without the cleanup stress. We'll handle the mess while you rest.",
+        description: "Enjoy your celebration without the cleanup stress. We'll handle the venue and room mess while you rest.",
         image: "/images/Services/Afterparty Cleaning.png",
         price: "R800",
     },
     {
         name: "New House Cleaning",
-        description: "Post-construction or pre-move-in cleaning to ensure your new home is perfectly sanitized and ready.",
+        description: "Post-construction, renovation, or pre-move-in cleaning to ensure your new space is perfectly sanitized and ready.",
         image: "/images/Services/New House Cleaning.png",
         price: "R1500",
     },
@@ -111,7 +111,7 @@ export default function ServicesPage() {
                     <div className="max-w-3xl">
                         <h2 className="text-4xl lg:text-6xl font-bold text-slate-900 mb-6 leading-tight" style={{ fontFamily: "'Playfair Display', serif" }}>Our Services</h2>
                         <p className="text-lg text-slate-600 font-medium leading-relaxed">
-                            From routine maintenance to specialized care, La-Minks offers a comprehensive range of professional cleaning and home improvement services tailored to the highest South African standards.
+                            From routine maintenance and deep cleans to gardening and painting, La-Minks offers a comprehensive range of professional cleaning and property care services tailored to the highest South African standards.
                         </p>
                     </div>
                 </div>

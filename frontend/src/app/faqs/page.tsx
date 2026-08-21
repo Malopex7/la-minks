@@ -18,8 +18,8 @@ const FAQS_DATA: FAQItem[] = [
     },
     {
         category: "General",
-        q: "Do I need to be home during the cleaning?",
-        a: "Not necessarily! Many of our clients provide access instructions or leave keys with building security. Our vetted professionals ensure your space is treated with utmost care and respect."
+        q: "Do I need to be on-site during the service?",
+        a: "Not necessarily! Many of our residential and commercial clients provide access instructions or leave keys with building security. Our vetted professionals ensure your space is treated with utmost care and respect."
     },
     {
         category: "Service & Safety",
@@ -29,7 +29,7 @@ const FAQS_DATA: FAQItem[] = [
     {
         category: "Service & Safety",
         q: "Are the cleaning specialists background checked?",
-        a: "Yes, 100%. Every La-Minks specialist undergoes strict criminal background vetting, reference checks, identity verification, and multi-week hospitality training before entering any client home."
+        a: "Yes, 100%. Every La-Minks specialist undergoes strict criminal background vetting, reference checks, identity verification, and multi-week hospitality training before entering any client home, office, or property."
     },
     {
         category: "Pricing & Payment",

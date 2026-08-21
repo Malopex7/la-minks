@@ -33,7 +33,7 @@ export default function ServiceSelection() {
                 console.error(err instanceof Error ? err.message : 'Unknown error');
                 // Fallback for demonstration since we are not integrated fully
                 setServices([
-                    { _id: '1', name: 'Home Cleaning', description: 'Standard whole-home cleaning', basePrice: 400, inputs: [], pricingRule: { extras: [{ name: 'Inside Fridge', price: 150 }, { name: 'Inside Oven', price: 150 }] } },
+                    { _id: '1', name: 'Home Cleaning', description: 'Standard residential & space cleaning', basePrice: 400, inputs: [], pricingRule: { extras: [{ name: 'Inside Fridge', price: 150 }, { name: 'Inside Oven', price: 150 }] } },
                     { _id: '2', name: 'Deep Cleaning', description: 'Intensive deep clean for every nook', basePrice: 800, inputs: [], pricingRule: { extras: [{ name: 'Inside Cabinets', price: 200 }] } },
                     { _id: '3', name: 'Move Out Cleaning', description: 'Detailed cleaning before you move out', basePrice: 1000, inputs: [], pricingRule: { extras: [{ name: 'Wall Washing', price: 300 }] } },
                     { _id: '4', name: 'Gardening', description: 'Professional landscaping', basePrice: 600, inputs: [], pricingRule: { extras: [{ name: 'Weed Removal', price: 250 }, { name: 'Green Waste Removal', price: 400 }] } },

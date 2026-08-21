@@ -18,15 +18,18 @@ const generateTokens = (userId) => {
 
 export const register = async (req, res) => {
     try {
-        const { firstName, lastName, email, password } = req.body;
+        const { firstName, lastName, email, password, firebaseUid } = req.body;
 
         const userExists = await User.findOne({ email });
         if (userExists) {
             return res.status(400).json({ message: 'User already exists' });
         }
 
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
+        let hashedPassword = undefined;
+        if (password) {
+            const salt = await bcrypt.genSalt(10);
+            hashedPassword = await bcrypt.hash(password, salt);
+        }
 
         // Generate verification token
         const verificationToken = crypto.randomBytes(32).toString('hex');
@@ -36,26 +39,132 @@ export const register = async (req, res) => {
             lastName,
             email,
             password: hashedPassword,
+            firebaseUid,
             isEmailVerified: false,
+            role: 'customer',
             verificationToken,
         });
 
         if (user) {
-            // Send Verification Email Async
+            // Send Verification Email Async (fallback)
             sendVerificationEmail(user.email, user.firstName, verificationToken).catch(err => {
                 console.error('Failed to send verification email:', err);
             });
 
-            // Do NOT generate JWTs yet. Return instruction to verify email.
             res.status(201).json({
                 message: 'Registration successful. Please check your email to verify your account.',
                 _id: user._id,
                 email: user.email,
+                role: user.role,
             });
         } else {
             res.status(400).json({ message: 'Invalid user data' });
         }
     } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+export const googleAuth = async (req, res) => {
+    try {
+        const { email, firstName, lastName, firebaseUid } = req.body;
+
+        if (!email) {
+            return res.status(400).json({ message: 'Email is required for Google authentication' });
+        }
+
+        let user = await User.findOne({ email });
+
+        if (user) {
+            if (firebaseUid && !user.firebaseUid) {
+                user.firebaseUid = firebaseUid;
+            }
+            // Google OAuth guarantees verified email
+            user.isEmailVerified = true;
+            await user.save();
+        } else {
+            // New Google accounts are strictly created as customers
+            user = await User.create({
+                firstName: firstName || 'Google',
+                lastName: lastName || 'User',
+                email,
+                firebaseUid,
+                isEmailVerified: true,
+                role: 'customer',
+            });
+        }
+
+        const { accessToken, refreshToken } = generateTokens(user._id);
+
+        res.cookie('jwt', refreshToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV !== 'development',
+            sameSite: 'strict',
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+        });
+
+        res.status(200).json({
+            _id: user._id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            role: user.role,
+            accessToken,
+        });
+    } catch (error) {
+        console.error('Google Auth Error:', error);
+        res.status(500).json({ message: error.message });
+    }
+};
+
+export const firebaseSync = async (req, res) => {
+    try {
+        const { email, firebaseUid, isEmailVerified, firstName, lastName } = req.body;
+
+        if (!email) {
+            return res.status(400).json({ message: 'Email is required' });
+        }
+
+        let user = await User.findOne({ email });
+
+        if (user) {
+            if (firebaseUid && !user.firebaseUid) {
+                user.firebaseUid = firebaseUid;
+            }
+            if (isEmailVerified !== undefined) {
+                user.isEmailVerified = isEmailVerified || user.isEmailVerified;
+            }
+            await user.save();
+        } else {
+            user = await User.create({
+                firstName: firstName || 'Customer',
+                lastName: lastName || 'User',
+                email,
+                firebaseUid,
+                isEmailVerified: isEmailVerified || false,
+                role: 'customer',
+            });
+        }
+
+        const { accessToken, refreshToken } = generateTokens(user._id);
+
+        res.cookie('jwt', refreshToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV !== 'development',
+            sameSite: 'strict',
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+        });
+
+        res.status(200).json({
+            _id: user._id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            role: user.role,
+            accessToken,
+        });
+    } catch (error) {
+        console.error('Firebase Sync Error:', error);
         res.status(500).json({ message: error.message });
     }
 };

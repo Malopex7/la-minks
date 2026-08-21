@@ -14,10 +14,10 @@ export default function AboutPage() {
                         Our Story & Promise
                     </span>
                     <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6" style={{ fontFamily: "'Playfair Display', serif" }}>
-                        Elevating the Standard of Home Care in South Africa
+                        Elevating the Standard of Property & Space Care in South Africa
                     </h1>
                     <p className="text-lg md:text-xl text-slate-600 leading-relaxed max-w-2xl mx-auto">
-                        We believe a clean home is the foundation for a productive, balanced, and serene lifestyle.
+                        We believe a clean, well-maintained space is the foundation for a productive, balanced, and serene lifestyle.
                     </p>
                 </div>
             </section>
@@ -32,10 +32,10 @@ export default function AboutPage() {
                                 Crafting Pristine Spaces with Care & Precision
                             </h2>
                             <p className="text-slate-600 leading-relaxed">
-                                Founded with a dedication to meticulous hospitality, <strong className="text-slate-800">La-Minks Cleaning Services</strong> delivers premium residential and commercial cleaning across the greater Johannesburg region.
+                                Founded with a dedication to meticulous hospitality and craftsmanship, <strong className="text-slate-800">La-Minks Cleaning Services</strong> delivers premium residential, commercial, and specialized property care across South Africa.
                             </p>
                             <p className="text-slate-600 leading-relaxed">
-                                We combine rigorous hospitality standards, background-checked and trained cleaners, and eco-conscious products to ensure every room is revitalized.
+                                From routine cleans and deep sanitation to gardening, window care, and painting, we combine rigorous hospitality standards, background-checked professionals, and eco-conscious products to ensure every space is revitalized.
                             </p>
                         </div>
 
@@ -51,7 +51,7 @@ export default function AboutPage() {
                             </div>
                             <div className="p-4 bg-[#fafcf8] rounded-2xl border border-[#86a373]/10 text-center">
                                 <p className="text-3xl font-extrabold text-[#86a373]">1,500+</p>
-                                <p className="text-xs font-medium text-slate-600 mt-1">Homes Cleaned</p>
+                                <p className="text-xs font-medium text-slate-600 mt-1">Spaces Transformed</p>
                             </div>
                             <div className="p-4 bg-[#fafcf8] rounded-2xl border border-[#86a373]/10 text-center">
                                 <p className="text-3xl font-extrabold text-[#d46b4e]">24/7</p>
@@ -63,7 +63,7 @@ export default function AboutPage() {
                     {/* Core Pillars */}
                     <div>
                         <h3 className="text-2xl font-bold text-slate-900 text-center mb-10" style={{ fontFamily: "'Playfair Display', serif" }}>
-                            Why Homeowners Choose La-Minks
+                            Why Clients & Property Owners Choose La-Minks
                         </h3>
                         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
                             <div className="bg-white p-6 rounded-2xl border border-[#86a373]/15 shadow-sm">
@@ -111,10 +111,10 @@ export default function AboutPage() {
                     {/* CTA Banner */}
                     <div className="bg-[#3a4f41] text-white rounded-3xl p-10 md:p-14 text-center space-y-6">
                         <h3 className="text-3xl md:text-4xl font-bold" style={{ fontFamily: "'Playfair Display', serif" }}>
-                            Experience Pristine Living Today
+                            Experience Pristine Spaces Today
                         </h3>
                         <p className="text-zinc-200 max-w-xl mx-auto text-base md:text-lg">
-                            Get an instant, customized quote for your space in less than 2 minutes.
+                            Get an instant, customized quote for your home, office, or property in less than 2 minutes.
                         </p>
                         <div className="flex flex-wrap justify-center gap-4 pt-2">
                             <Link

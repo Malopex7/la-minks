@@ -523,7 +523,7 @@ export default function StaffJobDetailsPage() {
                             <textarea
                                 value={notes}
                                 onChange={(e) => setNotes(e.target.value)}
-                                placeholder="Any issues encountered? Extra tasks done? Client not home? Add notes here..."
+                                placeholder="Any issues encountered? Extra tasks done? Client not on-site? Add notes here..."
                                 className="w-full h-32 px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                             />
                         </div>

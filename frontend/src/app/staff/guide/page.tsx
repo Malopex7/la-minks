@@ -209,7 +209,7 @@ export default function StaffGuidePage() {
 
                     <div className="p-4 bg-zinc-50 dark:bg-zinc-800/50 rounded-2xl space-y-2 border border-zinc-100 dark:border-zinc-800">
                         <h3 className="font-bold text-sm text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
-                            <CheckCircle2 className="w-4 h-4 text-emerald-600" /> Standard Home Clean Checklist
+                            <CheckCircle2 className="w-4 h-4 text-emerald-600" /> Standard Clean Checklist
                         </h3>
                         <ul className="text-xs text-zinc-600 dark:text-zinc-400 space-y-1 list-disc list-inside">
                             <li>Dust all open horizontal surfaces and tables</li>

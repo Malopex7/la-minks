@@ -14,7 +14,12 @@ import {
     ArrowRight
 } from "lucide-react";
 
+import { useAuthStore } from "@/store/useAuthStore";
+
 export default function AdminGuidePage() {
+    const { user } = useAuthStore();
+    const isSuperAdmin = user?.role === 'superadmin';
+
     return (
         <div className="max-w-5xl space-y-10 pb-16">
             {/* Header */}
@@ -25,7 +30,7 @@ export default function AdminGuidePage() {
                     </div>
                     <div>
                         <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
-                            Admin How-To Guide
+                            {isSuperAdmin ? 'Super Admin How-To Guide' : 'Admin How-To Guide'}
                         </h1>
                         <p className="text-sm text-zinc-500">
                             A quick-start operational reference for managing services, bookings, staff, and audits.
@@ -35,7 +40,7 @@ export default function AdminGuidePage() {
             </div>
 
             {/* Quick Actions / Jump Navigation */}
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className={`grid sm:grid-cols-2 ${isSuperAdmin ? 'lg:grid-cols-5' : 'lg:grid-cols-4'} gap-4`}>
                 <a
                     href="#overview"
                     className="p-4 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl hover:border-[#86a373] transition-colors flex items-center gap-3 shadow-sm"
@@ -79,6 +84,19 @@ export default function AdminGuidePage() {
                         <p className="text-xs text-zinc-500">Event History</p>
                     </div>
                 </a>
+
+                {isSuperAdmin && (
+                    <a
+                        href="#users"
+                        className="p-4 bg-white dark:bg-zinc-900 border border-purple-200 dark:border-purple-800/50 rounded-2xl hover:border-purple-500 transition-colors flex items-center gap-3 shadow-sm"
+                    >
+                        <UserCheck className="w-5 h-5 text-purple-600 shrink-0" />
+                        <div>
+                            <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">5. Users</p>
+                            <p className="text-xs text-zinc-500">Super Admin</p>
+                        </div>
+                    </a>
+                )}
             </div>
 
             {/* Section 1: Dashboard Overview */}
@@ -234,32 +252,34 @@ export default function AdminGuidePage() {
                 </ul>
             </section>
 
-            {/* Section 5: Super Admin User Management */}
-            <section id="users" className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-8 shadow-sm space-y-4">
-                <div className="flex items-center gap-3 border-b border-zinc-100 dark:border-zinc-800 pb-4">
-                    <div className="p-2 bg-purple-100 dark:bg-purple-900/30 text-purple-600 rounded-lg">
-                        <UserCheck className="w-5 h-5" />
+            {/* Section 5: Super Admin User Management (Visible ONLY to Super Admin) */}
+            {isSuperAdmin && (
+                <section id="users" className="bg-white dark:bg-zinc-900 border border-purple-200 dark:border-purple-800/50 rounded-3xl p-8 shadow-sm space-y-4">
+                    <div className="flex items-center gap-3 border-b border-zinc-100 dark:border-zinc-800 pb-4">
+                        <div className="p-2 bg-purple-100 dark:bg-purple-900/30 text-purple-600 rounded-lg">
+                            <UserCheck className="w-5 h-5" />
+                        </div>
+                        <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">
+                            5. Super Admin: User Creation & Role Management
+                        </h2>
                     </div>
-                    <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">
-                        5. Super Admin: User Creation & Role Management
-                    </h2>
-                </div>
 
-                <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                    Super Administrators have exclusive access to the <Link href="/admin/users" className="text-[#d46b4e] font-semibold underline">User Management Portal</Link> to provision, inspect, edit, and delete accounts:
-                </p>
+                    <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                        Super Administrators have exclusive access to the <Link href="/admin/users" className="text-[#d46b4e] font-semibold underline">User Management Portal</Link> to provision, inspect, edit, and delete accounts:
+                    </p>
 
-                <div className="grid sm:grid-cols-2 gap-4 pt-2">
-                    <div className="p-4 bg-zinc-50 dark:bg-zinc-800/50 rounded-2xl">
-                        <p className="font-semibold text-sm text-zinc-900 dark:text-zinc-100">Create Any User Role</p>
-                        <p className="text-xs text-zinc-500 mt-1">Create Super Admins, Admins, Staff, and Customers with initial passwords and pre-verified email status.</p>
+                    <div className="grid sm:grid-cols-2 gap-4 pt-2">
+                        <div className="p-4 bg-zinc-50 dark:bg-zinc-800/50 rounded-2xl">
+                            <p className="font-semibold text-sm text-zinc-900 dark:text-zinc-100">Create Any User Role</p>
+                            <p className="text-xs text-zinc-500 mt-1">Create Super Admins, Admins, Staff, and Customers with initial passwords and pre-verified email status.</p>
+                        </div>
+                        <div className="p-4 bg-zinc-50 dark:bg-zinc-800/50 rounded-2xl">
+                            <p className="font-semibold text-sm text-zinc-900 dark:text-zinc-100">Edit & Password Resets</p>
+                            <p className="text-xs text-zinc-500 mt-1">Update names, phone, role assignments, or reset passwords directly from the modal editor.</p>
+                        </div>
                     </div>
-                    <div className="p-4 bg-zinc-50 dark:bg-zinc-800/50 rounded-2xl">
-                        <p className="font-semibold text-sm text-zinc-900 dark:text-zinc-100">Edit & Password Resets</p>
-                        <p className="text-xs text-zinc-500 mt-1">Update names, phone, role assignments, or reset passwords directly from the modal editor.</p>
-                    </div>
-                </div>
-            </section>
+                </section>
+            )}
 
             {/* Help Callout */}
             <div className="bg-[#f4f1ea] dark:bg-zinc-800/50 rounded-3xl p-8 text-center border border-[#86a373]/15 space-y-3">

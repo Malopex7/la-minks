@@ -48,18 +48,18 @@ export default function Home() {
         </div>
         <div className="relative z-20 max-w-3xl">
           <span className="inline-block py-1.5 px-3.5 rounded-full bg-[#86a373]/15 text-[#5c7a4d] text-xs font-bold uppercase tracking-widest mb-4">
-            Premium Cleaning Services
+            Premium Cleaning & Property Care
           </span>
           <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-slate-900 leading-[1.12] mb-6 [text-wrap:balance]" style={{ fontFamily: "'Playfair Display', serif" }}>
             Your Space, <br className="hidden sm:inline" />
             <span className="text-[#d46b4e] italic font-normal">Beautifully</span> Cared&nbsp;For
           </h1>
           <p className="text-lg text-slate-600 mb-8 max-w-xl leading-relaxed">
-            La-Minks Cleaning Services offers a new standard of professional cleaning tailored for modern South African living. From homes and offices to gardening, we bring pristine spaces to your doorstep.
+            La-Minks Cleaning Services offers a new standard of professional care tailored for modern South African living. From homes and offices to gardening, windows, and painting, we bring pristine spaces to your doorstep.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
             <Link href="/quote" className="bg-[#d46b4e] hover:bg-[#d46b4e]/90 text-white px-8 py-4 rounded-xl text-base font-bold shadow-xl shadow-[#d46b4e]/30 transition-all">
-              Book Your First Clean
+              Book Your Service
             </Link>
             <Link href="/services" className="bg-white hover:bg-slate-50 text-slate-900 px-8 py-4 rounded-xl text-base font-bold border border-slate-200 transition-all flex items-center justify-center gap-2">
               <span className="material-symbols-outlined">play_circle</span>
@@ -74,7 +74,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl text-slate-900 mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>Our Services</h2>
-            <p className="text-slate-600 max-w-2xl mx-auto">From deep cleans to gardening, La-Minks covers every corner of your home and workspace with professional South African care.</p>
+            <p className="text-slate-600 max-w-2xl mx-auto">From routine cleans and office upkeep to gardening and painting, La-Minks covers every corner of your residential and commercial spaces with professional South African care.</p>
           </div>
           {isLoading ? (
             <div className="flex justify-center items-center h-40">

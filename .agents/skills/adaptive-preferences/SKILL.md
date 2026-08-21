@@ -35,3 +35,6 @@ This skill outlines the enforced rules and standards for the La-Minks project to
 - Environment variables must remain strictly in `.env`/`.env.local`. Do not commit these.
 - Always hash passwords with `bcrypt` prior to saving.
 - Payment amounts and logic must be exclusively calculated on the server. The frontend must never send final prices directly.
+
+## 6. Testing & Verification Rules
+- **Do not test unless requested**: Do not run test suites (Playwright, unit tests, integration tests, E2E tests, etc.) unless the user explicitly requests a test.
