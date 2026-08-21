@@ -9,11 +9,10 @@ Welcome to the **La-Minks Cleaning Services Admin Portal**. This guide provides 
 2. [Dashboard Overview & Metrics](#2-dashboard-overview--metrics)
 3. [Managing Cleaning Services](#3-managing-cleaning-services)
 4. [Managing Bookings & Assigning Staff](#4-managing-bookings--assigning-staff)
-5. [Super Admin: User & Role Management](#5-super-admin-user--role-management)
-6. [Reviewing Service Photos & Quality Inspection](#6-reviewing-service-photos--quality-inspection)
-7. [Exporting Booking Reports (CSV)](#7-exporting-booking-reports-csv)
-8. [System Audit Logs](#8-system-audit-logs)
-9. [Troubleshooting & FAQs](#9-troubleshooting--faqs)
+5. [Reviewing Service Photos & Quality Inspection](#5-reviewing-service-photos--quality-inspection)
+6. [Exporting Booking Reports (CSV)](#6-exporting-booking-reports-csv)
+7. [System Audit Logs](#7-system-audit-logs)
+8. [Troubleshooting & FAQs](#8-troubleshooting--faqs)
 
 ---
 
@@ -85,37 +84,7 @@ Navigate to **Bookings** in the sidebar (`/admin/bookings`).
 
 ---
 
-## 5. Super Admin: User & Role Management
-
-Super Administrators possess elevated privileges to provision and manage user accounts across all roles.
-
-Navigate to **Users** in the sidebar ([`/admin/users`](http://localhost:3000/admin/users)):
-
-### 5.1 Creating a New User
-1. Click **+ Create New User**.
-2. Fill in:
-   - **First & Last Name**
-   - **Email Address**
-   - **Role Assignment:** Choose from `Super Admin`, `Admin`, `Staff`, or `Customer`.
-   - **Phone Number** (Optional)
-   - **Password:** Set their initial login password.
-   - **Email Verified Checkbox:** Checked by default so the user can sign in immediately without email link verification.
-3. Click **Create Account**.
-
-### 5.2 Editing Accounts & Role Changes
-1. Click the **Edit (pencil)** icon on any user row.
-2. You can modify names, email, phone number, verification status, and change their active role (e.g. promote a `Customer` to `Staff` or `Admin`).
-3. To reset a user's password, enter a new password into the password field; leaving it blank preserves their existing password.
-4. Click **Save Changes**.
-
-### 5.3 Account Deletion & Security Rules
-- Super Admins can permanently delete accounts with one click via the red trash icon.
-- **Safety Guard:** Super Admins cannot delete their own active account to prevent accidental lockouts.
-- All user creation, modification, and deletion actions are recorded in the **Audit Log** (`/admin/audit`).
-
----
-
-## 6. Reviewing Service Photos & Quality Inspection
+## 5. Reviewing Service Photos & Quality Inspection
 
 La-Minks incorporates before-and-after photo verification to maintain hospitality-grade standards:
 
