@@ -155,11 +155,16 @@ export default function DashboardPage() {
 
                                 <div className="space-y-1">
                                     <p className="text-xs text-zinc-500 uppercase font-semibold tracking-wider">Amount</p>
-                                    <div className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                                    <div className="text-sm font-bold text-zinc-900 dark:text-zinc-100">
                                         R {booking.payment?.amount ? Number(booking.payment.amount).toFixed(2) : '0.00'}
                                     </div>
-                                    <div className="text-xs text-zinc-500">
-                                        {booking.payment?.status}
+                                    <div className="flex items-center gap-1.5 mt-0.5">
+                                        <span className={`text-[11px] font-semibold uppercase px-2 py-0.5 rounded ${booking.payment?.status?.toUpperCase() === 'PAID'
+                                            ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400'
+                                            : 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'
+                                            }`}>
+                                            {booking.payment?.status || 'UNPAID'}
+                                        </span>
                                     </div>
                                 </div>
                             </div>

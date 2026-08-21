@@ -9,7 +9,7 @@ import { fetchWithAuth } from '@/lib/api';
 import {
     ArrowLeft, Loader2, CalendarDays, MapPin,
     Home, CheckCircle2, Circle, CreditCard, FileText,
-    Camera
+    Camera, ShieldCheck, AlertCircle
 } from 'lucide-react';
 import { useLightbox } from '@/components/PhotoLightbox';
 
@@ -130,19 +130,22 @@ export default function BookingDetailsPage() {
         }
     };
 
+    const isPaid = booking?.payment?.status?.toUpperCase() === 'PAID';
+    const canPay = Boolean(booking && !isPaid && booking.status !== 'CANCELLED' && booking.status !== 'COMPLETED');
+
     if (isLoading) {
         return (
             <div className="flex justify-center py-20">
-                <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+                <Loader2 className="w-8 h-8 animate-spin text-[#d46b4e]" />
             </div>
         );
     }
 
-    if (error || !booking) {
+    if (error && !booking) {
         return (
             <div className="max-w-2xl mx-auto text-center py-12">
                 <div className="bg-red-50 dark:bg-red-900/10 text-red-600 dark:text-red-400 p-6 rounded-2xl mb-6 inline-block border border-red-200 dark:border-red-800/30">
-                    <p className="font-medium">{error || 'Booking not found'}</p>
+                    <p className="font-medium">{error}</p>
                 </div>
                 <div>
                     <Link href="/dashboard" className="text-blue-600 hover:text-blue-700 font-medium inline-flex items-center">
@@ -153,6 +156,8 @@ export default function BookingDetailsPage() {
             </div>
         );
     }
+
+    if (!booking) return null;
 
     return (
         <div className="max-w-4xl mx-auto space-y-6">
@@ -206,16 +211,27 @@ export default function BookingDetailsPage() {
 
                     <div className="p-6 flex items-start gap-4">
                         <CreditCard className="w-5 h-5 text-zinc-400 shrink-0 mt-0.5" />
-                        <div>
+                        <div className="flex-1">
                             <p className="text-xs text-zinc-500 uppercase font-bold tracking-wider mb-1">Payment</p>
                             <p className="text-xl font-bold text-zinc-900 dark:text-zinc-100">R {Number(booking.payment.amount).toFixed(2)}</p>
-                            <p className="text-sm mt-1">
-                                <span className={`inline-flex px-2 py-0.5 rounded text-xs font-medium uppercase
-                                    ${booking.payment.status === 'PAID' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400'
+                            <div className="flex items-center gap-2 mt-1">
+                                <span className={`inline-flex px-2 py-0.5 rounded text-xs font-semibold uppercase tracking-wide
+                                    ${isPaid
+                                        ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400'
                                         : 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'}`}>
-                                    {booking.payment.status}
+                                    {booking.payment?.status || 'UNPAID'}
                                 </span>
-                            </p>
+
+                                {canPay && (
+                                    <button
+                                        onClick={handlePayment}
+                                        disabled={isPaying}
+                                        className="text-xs text-[#d46b4e] hover:text-[#b3573c] font-bold underline cursor-pointer disabled:opacity-50"
+                                    >
+                                        {isPaying ? 'Loading...' : 'Pay Now →'}
+                                    </button>
+                                )}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -229,7 +245,7 @@ export default function BookingDetailsPage() {
                     {/* Property & Extras */}
                     <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6 md:p-8 shadow-sm">
                         <h2 className="text-lg font-bold text-zinc-900 dark:text-zinc-100 mb-6 flex items-center gap-2">
-                            <Home className="w-5 h-5 text-blue-500" />
+                            <Home className="w-5 h-5 text-[#d46b4e]" />
                             Property Details
                         </h2>
 
@@ -266,7 +282,7 @@ export default function BookingDetailsPage() {
                     {booking.checklist && booking.checklist.length > 0 && (
                         <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6 md:p-8 shadow-sm">
                             <h2 className="text-lg font-bold text-zinc-900 dark:text-zinc-100 mb-6 flex items-center gap-2">
-                                <FileText className="w-5 h-5 text-blue-500" />
+                                <FileText className="w-5 h-5 text-[#d46b4e]" />
                                 Staff Checklist
                             </h2>
                             <div className="space-y-3">
@@ -292,7 +308,7 @@ export default function BookingDetailsPage() {
                     {/* Photos Preview */}
                     <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6 shadow-sm">
                         <h2 className="text-base font-bold text-zinc-900 dark:text-zinc-100 mb-4 flex items-center gap-2">
-                            <Camera className="w-4 h-4 text-blue-500" />
+                            <Camera className="w-4 h-4 text-[#d46b4e]" />
                             Job Photos
                         </h2>
 
@@ -343,25 +359,62 @@ export default function BookingDetailsPage() {
                         </div>
                     </div>
 
-                    {/* Actions / Info Box */}
-                    {booking.payment.status === 'UNPAID' && booking.status !== 'CANCELLED' && (
+                    {/* Actions / Payment Box */}
+                    {canPay && (
                         <div className="bg-gradient-to-br from-amber-500/10 to-orange-500/10 dark:bg-amber-950/20 rounded-2xl border border-amber-200 dark:border-amber-800/40 p-6 shadow-sm text-center">
+                            <div className="w-12 h-12 rounded-full bg-[#d46b4e]/10 text-[#d46b4e] flex items-center justify-center mx-auto mb-3">
+                                <CreditCard className="w-6 h-6" />
+                            </div>
+
                             <h3 className="font-bold text-zinc-900 dark:text-zinc-100 mb-2">
-                                {booking.status === 'QUOTE' ? 'Ready to Confirm Your Quote?' : 'Payment Required'}
-                            </h3>
-                            <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-4">
                                 {booking.status === 'QUOTE'
-                                    ? 'Convert this quote into a confirmed booking anytime by paying securely via Paystack.'
-                                    : 'Secure your booking by completing your payment securely via Paystack.'}
+                                    ? 'Ready to Confirm Your Quote?'
+                                    : booking.payment?.status?.toUpperCase() === 'PENDING'
+                                        ? 'Complete Your Pending Payment'
+                                        : 'Payment Required'}
+                            </h3>
+
+                            <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-5 leading-relaxed">
+                                {booking.payment?.status?.toUpperCase() === 'PENDING'
+                                    ? 'Your previous checkout was interrupted. You can securely resume and complete your payment via Paystack anytime to confirm your booking.'
+                                    : booking.status === 'QUOTE'
+                                        ? 'Convert this quote into a confirmed booking anytime by paying securely via Paystack.'
+                                        : 'Secure your booking by completing your payment securely via Paystack.'}
                             </p>
+
+                            {error && (
+                                <div className="mb-4 p-3 rounded-lg bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 text-xs flex items-center gap-2 border border-red-200 dark:border-red-800/30">
+                                    <AlertCircle className="w-4 h-4 shrink-0" />
+                                    <span>{error}</span>
+                                </div>
+                            )}
+
                             <button
                                 onClick={handlePayment}
                                 disabled={isPaying}
-                                className="w-full py-2.5 px-4 bg-[#d46b4e] hover:bg-[#b3573c] text-white rounded-lg font-semibold transition-colors disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-md"
+                                className="w-full py-3 px-4 bg-[#d46b4e] hover:bg-[#b3573c] text-white rounded-xl font-bold transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-md shadow-[#d46b4e]/20"
                             >
-                                {isPaying ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
-                                {isPaying ? 'Processing...' : (booking.status === 'QUOTE' ? `Confirm & Pay R ${Number(booking.payment.amount).toFixed(2)}` : `Pay R ${Number(booking.payment.amount).toFixed(2)} Now`)}
+                                {isPaying ? (
+                                    <>
+                                        <Loader2 className="w-4 h-4 animate-spin" />
+                                        <span>Redirecting to Paystack...</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <ShieldCheck className="w-4 h-4" />
+                                        <span>
+                                            {booking.status === 'QUOTE'
+                                                ? `Confirm & Pay R ${Number(booking.payment.amount).toFixed(2)}`
+                                                : `Pay R ${Number(booking.payment.amount).toFixed(2)} Now`}
+                                        </span>
+                                    </>
+                                )}
                             </button>
+
+                            <p className="text-[11px] text-zinc-400 dark:text-zinc-500 mt-3 flex items-center justify-center gap-1">
+                                <ShieldCheck className="w-3 h-3 text-emerald-600" />
+                                <span>256-bit Encrypted & Powered by Paystack</span>
+                            </p>
                         </div>
                     )}
                 </div>
