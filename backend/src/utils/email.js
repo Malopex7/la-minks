@@ -198,7 +198,11 @@ export const sendQuoteEmail = async (quoteData, customerEmail, customerName = 'V
             ` : ''}
 
             ${quoteData.estimatedHours ? `<p style="margin-top: 8px;"><strong>Estimated Time:</strong> ~${quoteData.estimatedHours} hours</p>` : ''}
-            <p style="margin-top: 16px; font-size: 18px; color: #d46b4e;"><strong>Estimated Total:</strong> R${amount.toFixed(2)}</p>
+            <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid #e4e4e7;">
+                <p style="margin: 0 0 4px 0; font-size: 13px; color: #71717a;">Subtotal (excl. VAT): R${(amount / 1.15).toFixed(2)}</p>
+                <p style="margin: 0 0 8px 0; font-size: 13px; color: #71717a;">VAT (15%): R${(amount - (amount / 1.15)).toFixed(2)}</p>
+                <p style="margin: 0; font-size: 18px; color: #d46b4e;"><strong>Total (incl. 15% VAT):</strong> R${amount.toFixed(2)}</p>
+            </div>
         </div>
 
         <p>No immediate payment is required to review this quote. When you're ready to proceed with your booking, simply log in to your account or click the link below.</p>

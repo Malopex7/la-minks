@@ -27,6 +27,9 @@ export type QuoteData = {
         baseAmount: number;
         extrasAmount: number;
         aiExtrasAmount: number;
+        subtotal: number;
+        vatRate: number;
+        vatAmount: number;
         totalAmount: number;
         estimatedHours: number;
     };

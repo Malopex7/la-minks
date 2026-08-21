@@ -39,9 +39,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     }
 
     return (
-        <div className="min-h-[calc(100vh-120px)] bg-zinc-50 dark:bg-zinc-950 flex">
+        <div className="min-h-[calc(100vh-120px)] bg-zinc-50 dark:bg-zinc-950 flex print:min-h-0 print:bg-white print:block">
             {/* Sidebar */}
-            <aside className="w-64 bg-white dark:bg-zinc-900 border-r border-zinc-200 dark:border-zinc-800 hidden md:flex flex-col h-[calc(100vh-120px)] sticky top-[120px]">
+            <aside className="w-64 bg-white dark:bg-zinc-900 border-r border-zinc-200 dark:border-zinc-800 hidden md:flex flex-col h-[calc(100vh-120px)] sticky top-[120px] print:hidden">
                 <div className="h-16 flex items-center px-6 border-b border-zinc-200 dark:border-zinc-800">
                     <Link href="/" className="flex items-center gap-2 font-bold text-xl">
                         <Sparkles className="h-6 w-6 text-[#d46b4e]" />
@@ -88,8 +88,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </aside>
 
             {/* Main Content */}
-            <main className="flex-1 overflow-y-auto">
-                <div className="md:hidden h-16 bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between px-4">
+            <main className="flex-1 overflow-y-auto print:overflow-visible print:p-0">
+                <div className="md:hidden h-16 bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between px-4 print:hidden">
                     <Link href="/" className="flex items-center gap-2 font-bold text-lg">
                         <Sparkles className="h-5 w-5 text-[#d46b4e]" />
                         <span>La-Minks</span>
@@ -98,7 +98,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                         <LogOut className="w-5 h-5" />
                     </button>
                 </div>
-                <div className="p-6 md:p-8 max-w-6xl mx-auto">
+                <div className="p-6 md:p-8 max-w-6xl mx-auto print:p-0 print:max-w-none">
                     {children}
                 </div>
             </main>

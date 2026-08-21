@@ -228,40 +228,40 @@ export default function BookingDetailsPage() {
                 {/* Specifications & Cost Breakdown Table */}
                 <div className="mb-6">
                     <h4 className="text-xs font-bold uppercase text-gray-700 tracking-wider mb-3">Service & Cost Breakdown</h4>
-                    <table className="w-full border-collapse border border-gray-200 text-xs">
+                    <table className="w-full border-collapse border border-gray-300 text-xs table-fixed">
                         <thead>
-                            <tr className="bg-gray-100 border-b border-gray-200">
-                                <th className="text-left py-2 px-3 font-semibold text-gray-700">Description</th>
-                                <th className="text-left py-2 px-3 font-semibold text-gray-700">Scope / Specifications</th>
-                                <th className="text-right py-2 px-3 font-semibold text-gray-700">Amount (ZAR)</th>
+                            <tr className="bg-gray-100 border-b border-gray-300">
+                                <th className="w-[35%] text-left py-2.5 px-3 font-semibold text-gray-700">Description</th>
+                                <th className="w-[45%] text-left py-2.5 px-3 font-semibold text-gray-700">Scope / Specifications</th>
+                                <th className="w-[20%] text-right py-2.5 px-3 font-semibold text-gray-700 whitespace-nowrap">Amount (ZAR)</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-200">
                             <tr>
-                                <td className="py-3 px-3 font-semibold text-gray-900">
+                                <td className="py-3 px-3 font-semibold text-gray-900 align-top">
                                     {booking.serviceId?.name || 'Cleaning Service'} (Base Package)
                                 </td>
-                                <td className="py-3 px-3 text-gray-600">
+                                <td className="py-3 px-3 text-gray-600 align-top">
                                     {booking.serviceDetails && Object.entries(booking.serviceDetails).map(([k, v]) => {
                                         const label = k.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
                                         return `${label}: ${String(v).replace('_', ' ')}`;
                                     }).join(' • ')}
                                 </td>
-                                <td className="py-3 px-3 text-right font-medium text-gray-900">
-                                    R{booking.serviceId?.baseRate ? Number(booking.serviceId.baseRate).toFixed(2) : 'Included'}
+                                <td className="py-3 px-3 text-right font-medium text-gray-900 align-top whitespace-nowrap">
+                                    {booking.serviceId?.baseRate ? `R ${Number(booking.serviceId.baseRate).toFixed(2)}` : `R ${Number(booking.payment?.amount || 0).toFixed(2)}`}
                                 </td>
                             </tr>
 
                             {booking.extrasSelected && booking.extrasSelected.length > 0 && (
                                 <tr>
-                                    <td className="py-3 px-3 font-semibold text-gray-900">
+                                    <td className="py-3 px-3 font-semibold text-gray-900 align-top">
                                         Selected Extras & Add-ons
                                     </td>
-                                    <td className="py-3 px-3 text-gray-600">
+                                    <td className="py-3 px-3 text-gray-600 align-top">
                                         {booking.extrasSelected.join(', ')}
                                     </td>
-                                    <td className="py-3 px-3 text-right font-medium text-gray-900">
-                                        Included in Total
+                                    <td className="py-3 px-3 text-right font-medium text-gray-900 align-top whitespace-nowrap">
+                                        Included
                                     </td>
                                 </tr>
                             )}
@@ -273,26 +273,42 @@ export default function BookingDetailsPage() {
                                 <td className="py-2.5 px-3 text-gray-600">
                                     Approx. {booking.schedule?.estimatedHours || 2} hours on-site
                                 </td>
-                                <td className="py-2.5 px-3 text-right text-gray-500">
+                                <td className="py-2.5 px-3 text-right text-gray-500 whitespace-nowrap">
                                     Included
                                 </td>
                             </tr>
                         </tbody>
                         <tfoot>
+                            <tr>
+                                <td colSpan={2} className="py-2 px-3 text-xs text-gray-700 text-right font-medium">
+                                    Subtotal (excl. VAT):
+                                </td>
+                                <td className="py-2 px-3 text-right text-xs font-semibold text-gray-900 whitespace-nowrap">
+                                    R {(booking.payment.subtotal ?? (Number(booking.payment.amount || 0) / 1.15)).toFixed(2)}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colSpan={2} className="py-1.5 px-3 text-xs text-gray-600 text-right">
+                                    VAT (15%):
+                                </td>
+                                <td className="py-1.5 px-3 text-right text-xs font-semibold text-gray-800 whitespace-nowrap">
+                                    R {(booking.payment.vatAmount ?? (Number(booking.payment.amount || 0) - (Number(booking.payment.amount || 0) / 1.15))).toFixed(2)}
+                                </td>
+                            </tr>
                             <tr className="border-t-2 border-gray-900 bg-gray-50">
                                 <td colSpan={2} className="py-3 px-3 text-base font-bold text-gray-900 text-right">
-                                    Total Amount ({isPaid ? 'PAID' : 'DUE'}):
+                                    Total Amount ({isPaid ? 'PAID' : 'DUE'} - incl. 15% VAT):
                                 </td>
-                                <td className="py-3 px-3 text-right text-base font-extrabold text-[#d46b4e]">
-                                    R{Number(booking.payment.amount).toFixed(2)}
+                                <td className="py-3 px-3 text-right text-base font-extrabold text-[#d46b4e] whitespace-nowrap">
+                                    R {Number(booking.payment.amount).toFixed(2)}
                                 </td>
                             </tr>
                             <tr>
                                 <td colSpan={2} className="py-2 px-3 text-xs text-gray-600 text-right">
                                     Payment Status:
                                 </td>
-                                <td className="py-2 px-3 text-right text-xs font-bold uppercase text-gray-800">
-                                    {booking.payment?.status} {booking.payment?.reference ? `(Ref: ${booking.payment.reference})` : ''}
+                                <td className="py-2 px-3 text-right text-xs font-bold uppercase text-gray-800 whitespace-nowrap">
+                                    {booking.payment?.status} {booking.payment?.reference ? `(${booking.payment.reference})` : ''}
                                 </td>
                             </tr>
                         </tfoot>

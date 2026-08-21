@@ -17,6 +17,9 @@ import {
 interface QuoteDetails {
     baseCost: number;
     extrasCost: number;
+    subtotal?: number;
+    vatRate?: number;
+    vatAmount?: number;
     estimatedHours: number;
     finalPrice: number;
 }
@@ -66,11 +69,18 @@ export default function ReviewQuote() {
             } catch (err: unknown) {
                 console.error(err instanceof Error ? err.message : 'Unknown error');
                 // Fallback mock quote for demonstration 
+                const base = 800;
+                const extras = 150;
+                const sub = base + extras;
+                const vat = sub * 0.15;
                 setQuoteDetails({
-                    baseCost: 800,
-                    extrasCost: 150,
+                    baseCost: base,
+                    extrasCost: extras,
+                    subtotal: sub,
+                    vatRate: 0.15,
+                    vatAmount: vat,
                     estimatedHours: 4.5,
-                    finalPrice: 950
+                    finalPrice: sub + vat
                 });
             } finally {
                 setLoading(false);
@@ -367,9 +377,25 @@ export default function ReviewQuote() {
                             </tr>
                         </tbody>
                         <tfoot>
+                            <tr>
+                                <td colSpan={2} className="py-2 px-3 text-xs text-gray-700 text-right font-medium">
+                                    Subtotal (excl. VAT):
+                                </td>
+                                <td className="py-2 px-3 text-right text-xs font-semibold text-gray-900">
+                                    R{(quoteDetails?.subtotal ?? ((quoteDetails?.baseCost || 0) + (quoteDetails?.extrasCost || 0))).toFixed(2)}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colSpan={2} className="py-1.5 px-3 text-xs text-gray-600 text-right">
+                                    VAT (15%):
+                                </td>
+                                <td className="py-1.5 px-3 text-right text-xs font-semibold text-gray-800">
+                                    R{(quoteDetails?.vatAmount ?? (((quoteDetails?.subtotal ?? ((quoteDetails?.baseCost || 0) + (quoteDetails?.extrasCost || 0)))) * 0.15)).toFixed(2)}
+                                </td>
+                            </tr>
                             <tr className="border-t-2 border-gray-900 bg-gray-50">
                                 <td colSpan={2} className="py-3 px-3 text-base font-bold text-gray-900 text-right">
-                                    Total Estimated Quote:
+                                    Total Estimated Quote (incl. 15% VAT):
                                 </td>
                                 <td className="py-3 px-3 text-right text-base font-extrabold text-[#d46b4e]">
                                     R{quoteDetails?.finalPrice.toFixed(2)}
@@ -581,10 +607,22 @@ export default function ReviewQuote() {
                                                         <span className="font-medium text-slate-900 dark:text-zinc-100">R{quoteDetails.extrasCost.toFixed(2)}</span>
                                                     </div>
                                                 )}
+                                                <div className="flex justify-between text-slate-600 dark:text-zinc-400 text-xs pt-2 border-t border-slate-100 dark:border-zinc-800">
+                                                    <span>Subtotal (excl. VAT)</span>
+                                                    <span className="font-medium text-slate-800 dark:text-zinc-200">
+                                                        R{(quoteDetails.subtotal ?? (quoteDetails.baseCost + quoteDetails.extrasCost)).toFixed(2)}
+                                                    </span>
+                                                </div>
+                                                <div className="flex justify-between text-slate-600 dark:text-zinc-400 text-xs">
+                                                    <span>VAT (15%)</span>
+                                                    <span className="font-medium text-slate-800 dark:text-zinc-200">
+                                                        R{(quoteDetails.vatAmount ?? ((quoteDetails.subtotal ?? (quoteDetails.baseCost + quoteDetails.extrasCost)) * 0.15)).toFixed(2)}
+                                                    </span>
+                                                </div>
                                                 <div className="border-t border-slate-200 dark:border-zinc-800 pt-4 mt-2 flex justify-between items-end">
                                                     <div>
                                                         <span className="block font-bold text-slate-900 dark:text-zinc-100 text-lg">Total Quote</span>
-                                                        <span className="text-xs text-slate-500 dark:text-zinc-400">Est. {quoteDetails.estimatedHours} hours</span>
+                                                        <span className="text-xs text-slate-500 dark:text-zinc-400">Incl. 15% VAT • Est. {quoteDetails.estimatedHours} hours</span>
                                                     </div>
                                                     <span className="text-3xl font-extrabold text-[#d46b4e]">
                                                         R{quoteDetails.finalPrice.toFixed(2)}

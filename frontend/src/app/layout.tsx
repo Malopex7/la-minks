@@ -27,10 +27,10 @@ export default function RootLayout({
         {/* eslint-disable-next-line @next/next/no-page-custom-font */}
         <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
       </head>
-      <body className={`${inter.className} bg-[#fafcf8] text-slate-900 antialiased`}>
-        <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden">
+      <body className={`${inter.className} bg-[#fafcf8] text-slate-900 antialiased print:bg-white`}>
+        <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden print:min-h-0">
           {/* Navigation — exact Stitch design */}
-          <header className="fixed top-0 left-0 z-50 w-full h-[120px] bg-white/90 backdrop-blur-md border-b border-[#86a373]/10 px-6 lg:px-20 py-2">
+          <header className="fixed top-0 left-0 z-50 w-full h-[120px] bg-white/90 backdrop-blur-md border-b border-[#86a373]/10 px-6 lg:px-20 py-2 print:hidden">
             <div className="flex items-center justify-between h-full">
               <Link href="/" className="flex items-center gap-2">
                 <Image src="/images/La-Minks-Logo.svg" alt="La-Minks Cleaning Services" width={200} height={200} className="h-[92px] w-auto" style={{ mixBlendMode: 'multiply' }} priority />
@@ -43,12 +43,12 @@ export default function RootLayout({
           </header>
 
           {/* Main Content */}
-          <main className="flex-1 pt-[120px]">
+          <main className="flex-1 pt-[120px] print:pt-0 print:p-0">
             {children}
           </main>
 
           {/* Footer — exact Stitch design */}
-          <footer className="bg-[#f4f1ea] text-slate-800 py-16 px-6 lg:px-20 border-t border-[#86a373]/10">
+          <footer className="bg-[#f4f1ea] text-slate-800 py-16 px-6 lg:px-20 border-t border-[#86a373]/10 print:hidden">
             <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12">
               <div className="col-span-1 md:col-span-2">
                 <div className="flex items-center gap-2 mb-6">

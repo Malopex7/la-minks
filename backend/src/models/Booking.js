@@ -51,6 +51,12 @@ const bookingSchema = new mongoose.Schema(
                 enum: ['PAYSTACK'],
             },
             reference: String,
+            subtotal: Number,
+            vatRate: {
+                type: Number,
+                default: 0.15,
+            },
+            vatAmount: Number,
             amount: Number,
             currency: {
                 type: String,

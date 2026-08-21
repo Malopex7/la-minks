@@ -64,8 +64,11 @@ export const calculateQuote = async (req, res) => {
             });
         }
 
-        // 4. Final Price and Hours
-        const finalPrice = baseCost + extrasCost;
+        // 4. Subtotal, 15% VAT, and Final Price Calculation
+        const subtotal = Math.round((baseCost + extrasCost) * 100) / 100;
+        const vatRate = 0.15;
+        const vatAmount = Math.round((subtotal * vatRate) * 100) / 100;
+        const finalPrice = Math.round((subtotal + vatAmount) * 100) / 100;
 
         // Rough estimation logic:
         // Base 2 hours + 0.5 hours for every major unit counted (+ extras)
@@ -86,6 +89,9 @@ export const calculateQuote = async (req, res) => {
         res.status(200).json({
             baseCost,
             extrasCost,
+            subtotal,
+            vatRate,
+            vatAmount,
             estimatedHours: totalEstimatedHours,
             finalPrice,
         });

@@ -190,7 +190,10 @@ export const createBooking = async (req, res) => {
             });
         }
 
-        const finalPrice = baseCost + extrasCost;
+        const subtotal = Math.round((baseCost + extrasCost) * 100) / 100;
+        const vatRate = 0.15;
+        const vatAmount = Math.round((subtotal * vatRate) * 100) / 100;
+        const finalPrice = Math.round((subtotal + vatAmount) * 100) / 100;
 
         // ── Double-booking checks ──────────────────────────────────────────
         // 1. Same customer, same address, overlapping time → block
@@ -220,6 +223,9 @@ export const createBooking = async (req, res) => {
             payment: {
                 status: 'UNPAID',
                 provider: 'PAYSTACK',
+                subtotal,
+                vatRate,
+                vatAmount,
                 amount: finalPrice,
                 currency: 'ZAR'
             }
