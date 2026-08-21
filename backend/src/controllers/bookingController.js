@@ -191,7 +191,8 @@ export const createBooking = async (req, res) => {
         }
 
         const subtotal = Math.round((baseCost + extrasCost) * 100) / 100;
-        const vatRate = 0.15;
+        const vatPercentage = typeof service.vatRate === 'number' ? service.vatRate : 15;
+        const vatRate = vatPercentage / 100;
         const vatAmount = Math.round((subtotal * vatRate) * 100) / 100;
         const finalPrice = Math.round((subtotal + vatAmount) * 100) / 100;
 

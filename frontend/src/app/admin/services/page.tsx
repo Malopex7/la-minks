@@ -32,6 +32,7 @@ export default function AdminServicesPage() {
         name: "",
         description: "",
         basePrice: 0,
+        vatRate: 15,
         isActive: true,
     });
 
@@ -47,6 +48,7 @@ export default function AdminServicesPage() {
                 name: service.name,
                 description: service.description || "",
                 basePrice: service.basePrice,
+                vatRate: service.vatRate !== undefined ? service.vatRate : 15,
                 isActive: service.isActive,
             });
         } else {
@@ -55,6 +57,7 @@ export default function AdminServicesPage() {
                 name: "",
                 description: "",
                 basePrice: 0,
+                vatRate: 15,
                 isActive: true,
             });
         }
@@ -109,10 +112,27 @@ export default function AdminServicesPage() {
                                 <Input
                                     id="basePrice"
                                     type="number"
+                                    min={0}
                                     value={formData.basePrice}
-                                    onChange={(e) => setFormData({ ...formData, basePrice: parseFloat(e.target.value) })}
+                                    onChange={(e) => setFormData({ ...formData, basePrice: parseFloat(e.target.value) || 0 })}
                                     className="col-span-3"
                                 />
+                            </div>
+                            <div className="grid grid-cols-4 items-center gap-4">
+                                <Label htmlFor="vatRate" className="text-right">VAT Rate (%)</Label>
+                                <div className="col-span-3 flex items-center gap-3">
+                                    <Input
+                                        id="vatRate"
+                                        type="number"
+                                        min={0}
+                                        max={100}
+                                        step={1}
+                                        value={formData.vatRate}
+                                        onChange={(e) => setFormData({ ...formData, vatRate: parseFloat(e.target.value) || 0 })}
+                                        className="w-28"
+                                    />
+                                    <span className="text-xs text-muted-foreground">% (Default: 15% standard SA VAT)</span>
+                                </div>
                             </div>
                             <div className="grid grid-cols-4 items-center gap-4">
                                 <Label htmlFor="isActive" className="text-right">Active?</Label>
@@ -142,6 +162,7 @@ export default function AdminServicesPage() {
                             <TableHead>Service Name</TableHead>
                             <TableHead>Description</TableHead>
                             <TableHead>Base Price</TableHead>
+                            <TableHead>VAT Rate</TableHead>
                             <TableHead>Status</TableHead>
                             <TableHead className="text-right">Actions</TableHead>
                         </TableRow>
@@ -149,11 +170,11 @@ export default function AdminServicesPage() {
                     <TableBody>
                         {isLoading && services.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={5} className="text-center py-8">Loading services...</TableCell>
+                                <TableCell colSpan={6} className="text-center py-8">Loading services...</TableCell>
                             </TableRow>
                         ) : services.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={5} className="text-center py-8">No services found. Create one!</TableCell>
+                                <TableCell colSpan={6} className="text-center py-8">No services found. Create one!</TableCell>
                             </TableRow>
                         ) : (
                             services.map((service) => (
@@ -161,6 +182,9 @@ export default function AdminServicesPage() {
                                     <TableCell className="font-medium">{service.name}</TableCell>
                                     <TableCell className="max-w-[300px] truncate">{service.description || 'N/A'}</TableCell>
                                     <TableCell>R{service.basePrice.toFixed(2)}</TableCell>
+                                    <TableCell className="font-semibold text-xs text-zinc-700">
+                                        {service.vatRate !== undefined ? `${service.vatRate}%` : '15%'}
+                                    </TableCell>
                                     <TableCell>
                                         <span className={`px-2 py-1 rounded-full text-xs ${service.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
                                             {service.isActive ? 'Active' : 'Inactive'}

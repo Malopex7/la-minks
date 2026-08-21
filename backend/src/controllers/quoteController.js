@@ -64,9 +64,10 @@ export const calculateQuote = async (req, res) => {
             });
         }
 
-        // 4. Subtotal, 15% VAT, and Final Price Calculation
+        // 4. Subtotal, Dynamic Service VAT, and Final Price Calculation
         const subtotal = Math.round((baseCost + extrasCost) * 100) / 100;
-        const vatRate = 0.15;
+        const vatPercentage = typeof service.vatRate === 'number' ? service.vatRate : 15;
+        const vatRate = vatPercentage / 100;
         const vatAmount = Math.round((subtotal * vatRate) * 100) / 100;
         const finalPrice = Math.round((subtotal + vatAmount) * 100) / 100;
 

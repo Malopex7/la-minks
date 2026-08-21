@@ -16,6 +16,12 @@ const serviceSchema = new mongoose.Schema(
             required: true,
             min: 0,
         },
+        vatRate: {
+            type: Number,
+            default: 15,
+            min: 0,
+            max: 100,
+        },
         isActive: {
             type: Boolean,
             default: true,

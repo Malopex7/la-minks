@@ -62,12 +62,13 @@ export const getServiceById = async (req, res) => {
 // @access  Private/Admin
 export const createService = async (req, res) => {
     try {
-        const { name, description, basePrice, isActive, imageUrl } = req.body;
+        const { name, description, basePrice, vatRate, isActive, imageUrl } = req.body;
 
         const service = new Service({
             name,
             description,
             basePrice,
+            vatRate: vatRate !== undefined ? Number(vatRate) : 15,
             isActive,
             imageUrl
         });
@@ -85,14 +86,15 @@ export const createService = async (req, res) => {
 // @access  Private/Admin
 export const updateService = async (req, res) => {
     try {
-        const { name, description, basePrice, isActive, imageUrl } = req.body;
+        const { name, description, basePrice, vatRate, isActive, imageUrl } = req.body;
 
         const service = await Service.findById(req.params.id);
 
         if (service) {
             service.name = name || service.name;
             service.description = description !== undefined ? description : service.description;
-            service.basePrice = basePrice || service.basePrice;
+            service.basePrice = basePrice !== undefined ? Number(basePrice) : service.basePrice;
+            service.vatRate = vatRate !== undefined ? Number(vatRate) : (service.vatRate !== undefined ? service.vatRate : 15);
             service.isActive = isActive !== undefined ? isActive : service.isActive;
             service.imageUrl = imageUrl || service.imageUrl;
 
