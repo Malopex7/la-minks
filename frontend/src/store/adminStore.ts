@@ -39,6 +39,9 @@ export interface Booking {
     payment?: {
         status?: string;
         amount?: number;
+        subtotal?: number;
+        vatRate?: number;
+        vatAmount?: number;
         provider?: string;
         reference?: string;
         currency?: string;

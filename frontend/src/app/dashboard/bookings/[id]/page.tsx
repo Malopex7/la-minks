@@ -45,6 +45,9 @@ interface BookingDetail {
     payment: {
         status: string;
         amount: number;
+        subtotal?: number;
+        vatRate?: number;
+        vatAmount?: number;
         provider: string;
         reference?: string;
     };
