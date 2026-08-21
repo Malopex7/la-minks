@@ -36,11 +36,8 @@ export default function RootLayout({
                 <Image src="/images/La-Minks-Logo.svg" alt="La-Minks Cleaning Services" width={200} height={200} className="h-[92px] w-auto" style={{ mixBlendMode: 'multiply' }} priority />
               </Link>
               <TopNav />
-              <div className="flex items-center gap-6">
+              <div className="flex items-center">
                 <AuthNav />
-                <Link href="/quote" className="bg-[#d46b4e] hover:bg-[#d46b4e]/90 text-white px-6 py-2.5 rounded-full text-sm font-bold shadow-lg shadow-[#d46b4e]/20 transition-all">
-                  Get a Quote
-                </Link>
               </div>
             </div>
           </header>

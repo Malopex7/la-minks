@@ -20,6 +20,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     useEffect(() => {
         if (mounted && !user) {
             router.push('/login');
+        } else if (mounted && user?.role === 'staff') {
+            router.push('/staff');
         }
     }, [user, mounted, router]);
 

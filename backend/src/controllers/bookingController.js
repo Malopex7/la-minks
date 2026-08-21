@@ -148,6 +148,10 @@ export const getBookingById = async (req, res) => {
 // @access  Private
 export const createBooking = async (req, res) => {
     try {
+        if (req.user && req.user.role === 'staff') {
+            return res.status(403).json({ message: 'Cleaner and staff accounts are not authorized to create quotes or bookings.' });
+        }
+
         const { serviceId, address, serviceDetails, extrasSelected, aiExtras, schedule } = req.body;
 
         // Fetch service and pricing rules to calculate amount

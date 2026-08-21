@@ -84,6 +84,11 @@ export default function ReviewQuote() {
 
     // Handle "Save & Generate Quote" (No immediate payment required)
     const handleGenerateQuoteOnly = async () => {
+        if (user?.role === 'staff') {
+            setErrorMsg('Cleaners and staff members are not permitted to create quotes or bookings.');
+            return;
+        }
+
         if (!user) {
             // Prompt guest email modal to send/save
             setShowEmailModal(true);
@@ -130,6 +135,11 @@ export default function ReviewQuote() {
 
     // Handle "Pay & Book Now" (Proceeds directly to Paystack payment)
     const handlePayAndBook = async () => {
+        if (user?.role === 'staff') {
+            setErrorMsg('Cleaners and staff members are not permitted to create quotes or bookings.');
+            return;
+        }
+
         if (!user) {
             router.push('/login');
             return;
@@ -566,9 +576,18 @@ export default function ReviewQuote() {
                                                     </span>
                                                 </div>
 
-                                                <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/40 rounded-lg p-3 text-xs text-amber-800 dark:text-amber-300">
-                                                    <span className="font-bold">No obligation:</span> You can generate and save this quote for free without paying today, or proceed to book right away.
-                                                </div>
+                                                {user?.role === 'staff' ? (
+                                                    <div className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800/40 rounded-lg p-3 text-xs text-red-700 dark:text-red-300 flex items-start gap-2">
+                                                        <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-red-600" />
+                                                        <span>
+                                                            <strong>Cleaner Account:</strong> Staff members cannot book or generate quotes. Please visit your <Link href="/staff" className="underline font-bold">Staff Portal</Link>.
+                                                        </span>
+                                                    </div>
+                                                ) : (
+                                                    <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/40 rounded-lg p-3 text-xs text-amber-800 dark:text-amber-300">
+                                                        <span className="font-bold">No obligation:</span> You can generate and save this quote for free without paying today, or proceed to book right away.
+                                                    </div>
+                                                )}
 
                                                 {errorMsg && (
                                                     <div className="p-3 bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-300 text-sm rounded-lg border border-red-200 dark:border-red-800 flex items-start gap-2">
@@ -586,8 +605,8 @@ export default function ReviewQuote() {
                                             type="button"
                                             variant="outline"
                                             onClick={handleGenerateQuoteOnly}
-                                            disabled={saveQuoteLoading || payLoading}
-                                            className="w-full h-12 text-base font-semibold border-2 border-slate-300 dark:border-zinc-700 hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-800 dark:text-zinc-200 transition-all"
+                                            disabled={saveQuoteLoading || payLoading || user?.role === 'staff'}
+                                            className="w-full h-12 text-base font-semibold border-2 border-slate-300 dark:border-zinc-700 hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-800 dark:text-zinc-200 transition-all disabled:opacity-50"
                                         >
                                             {saveQuoteLoading ? (
                                                 <>
@@ -606,8 +625,8 @@ export default function ReviewQuote() {
                                         <Button
                                             type="button"
                                             onClick={handlePayAndBook}
-                                            disabled={payLoading || saveQuoteLoading}
-                                            className="w-full h-12 text-base bg-[#d46b4e] hover:bg-[#b3573c] text-white shadow-md transition-all font-semibold"
+                                            disabled={payLoading || saveQuoteLoading || user?.role === 'staff'}
+                                            className="w-full h-12 text-base bg-[#d46b4e] hover:bg-[#b3573c] text-white shadow-md transition-all font-semibold disabled:opacity-50"
                                         >
                                             {payLoading ? (
                                                 <>
