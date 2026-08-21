@@ -515,13 +515,28 @@ export default function ReviewQuote() {
 
                                 {data.extrasSelected && data.extrasSelected.length > 0 && (
                                     <div>
-                                        <h3 className="text-sm font-semibold text-slate-800 dark:text-zinc-200 mb-2">Selected Extras</h3>
+                                        <h3 className="text-sm font-semibold text-slate-800 dark:text-zinc-200 mb-2">Selected Extras & Add-ons</h3>
                                         <div className="flex flex-wrap gap-2">
-                                            {data.extrasSelected.map((extra, idx) => (
-                                                <span key={idx} className="bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 text-xs px-2.5 py-1 rounded-md font-medium">
-                                                    {extra}
-                                                </span>
-                                            ))}
+                                            {data.extrasSelected.map((extra, idx) => {
+                                                const aiExtra = data.aiExtras?.find(e => e.name.toLowerCase() === extra.toLowerCase());
+                                                return (
+                                                    <span
+                                                        key={idx}
+                                                        className={`text-xs px-2.5 py-1 rounded-md font-medium flex items-center gap-1.5 ${aiExtra
+                                                            ? 'bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/50 text-amber-800 dark:text-amber-300'
+                                                            : 'bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300'
+                                                            }`}
+                                                    >
+                                                        {aiExtra && <Sparkles className="w-3 h-3 text-amber-500 shrink-0" />}
+                                                        <span>{extra}</span>
+                                                        {aiExtra?.category && (
+                                                            <span className="text-[10px] text-amber-600 dark:text-amber-400 font-semibold opacity-80">
+                                                                ({aiExtra.category})
+                                                            </span>
+                                                        )}
+                                                    </span>
+                                                );
+                                            })}
                                         </div>
                                     </div>
                                 )}

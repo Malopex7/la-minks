@@ -7,8 +7,8 @@ export type QuoteData = {
     serviceInputs: { name: string; type: string; label: string; placeholder?: string; required?: boolean }[];
     // Track the available extras config for the selected service
     serviceExtras: { name: string; price: number; estimatedAdditionalHours?: number; description?: string }[];
-    // Track AI-suggested extras that are not in the DB
-    aiExtras: { name: string; price: number; estimatedAdditionalHours: number }[];
+    // Track AI-suggested and cross-service extras
+    aiExtras: { name: string; category?: string; price: number; estimatedAdditionalHours: number; isCrossService?: boolean }[];
     // Dynamic mapping of input answers, e.g. { numWindows: 12, conditionLevel: 'standard' }
     serviceDetails: Record<string, string | number | boolean>;
     extrasSelected: string[];
