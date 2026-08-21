@@ -49,6 +49,7 @@ export default function ServiceSelection() {
         // We wipe out existing serviceDetails when switching services to avoid stale answers from a different service's inputs
         updateData({
             serviceId: service._id,
+            serviceName: service.name,
             serviceInputs: service.inputs || [],
             serviceExtras: service.pricingRule?.extras || [],
             aiExtras: [],

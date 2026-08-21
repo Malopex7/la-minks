@@ -129,3 +129,41 @@
     @apply bg-background text-foreground;
   }
 }
+
+@media print {
+  header,
+  footer,
+  nav,
+  .no-print,
+  button,
+  .wizard-header {
+    display: none !important;
+  }
+
+  body, html {
+    background: #ffffff !important;
+    color: #111827 !important;
+    font-size: 11pt !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  main {
+    padding-top: 0 !important;
+    margin: 0 !important;
+  }
+
+  .print-only {
+    display: block !important;
+  }
+
+  .screen-only {
+    display: none !important;
+  }
+
+  @page {
+    margin: 1.2cm;
+    size: A4 portrait;
+  }
+}
+

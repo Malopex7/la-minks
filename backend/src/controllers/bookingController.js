@@ -2,7 +2,7 @@ import Booking from '../models/Booking.js';
 import Service from '../models/Service.js';
 import PricingRule from '../models/PricingRule.js';
 import AuditLog from '../models/AuditLog.js';
-import { sendBookingCreatedEmail, sendStaffAssignmentEmail, sendJobCompletionEmail, sendJobCheckInEmail } from '../utils/email.js';
+import { sendBookingCreatedEmail, sendQuoteEmail, sendStaffAssignmentEmail, sendJobCompletionEmail, sendJobCheckInEmail } from '../utils/email.js';
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -202,6 +202,8 @@ export const createBooking = async (req, res) => {
         }
         // ─────────────────────────────────────────────────────────────────────
 
+        const targetStatus = req.body.status === 'QUOTE' ? 'QUOTE' : 'BOOKED';
+
         const booking = new Booking({
             customerId: req.user._id,
             serviceId,
@@ -210,7 +212,7 @@ export const createBooking = async (req, res) => {
             extrasSelected,
             aiExtras: aiExtras || [],
             schedule,
-            status: 'BOOKED',
+            status: targetStatus,
             payment: {
                 status: 'UNPAID',
                 provider: 'PAYSTACK',
@@ -228,7 +230,11 @@ export const createBooking = async (req, res) => {
         AuditLog.create({ userId: req.user._id, action: 'CREATE', entityType: 'Booking', entityId: createdBooking._id, details: { status: createdBooking.status, totalPrice: finalPrice } }).catch(() => { });
 
         // Send Email Notification async
-        sendBookingCreatedEmail(populatedBooking, req.user.email, req.user.firstName).catch(err => console.error('Email failed:', err));
+        if (targetStatus === 'QUOTE') {
+            sendQuoteEmail(populatedBooking, req.user.email, req.user.firstName).catch(err => console.error('Quote Email failed:', err));
+        } else {
+            sendBookingCreatedEmail(populatedBooking, req.user.email, req.user.firstName).catch(err => console.error('Email failed:', err));
+        }
 
         res.status(201).json(createdBooking);
     } catch (error) {

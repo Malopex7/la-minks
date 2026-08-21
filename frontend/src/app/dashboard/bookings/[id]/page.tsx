@@ -120,9 +120,10 @@ export default function BookingDetailsPage() {
 
     const getStatusStyle = (status: string) => {
         switch (status) {
+            case 'QUOTE': return 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300 border-amber-200 dark:border-amber-800';
             case 'BOOKED': return 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 border-blue-200 dark:border-blue-800';
             case 'CONFIRMED': return 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800';
-            case 'IN_PROGRESS': return 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 border-amber-200 dark:border-amber-800';
+            case 'IN_PROGRESS': return 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400 border-indigo-200 dark:border-indigo-800';
             case 'COMPLETED': return 'bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 border-zinc-300 dark:border-zinc-700';
             case 'CANCELLED': return 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 border-red-200 dark:border-red-800';
             default: return 'bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 border-zinc-200 dark:border-zinc-800';
@@ -344,18 +345,22 @@ export default function BookingDetailsPage() {
 
                     {/* Actions / Info Box */}
                     {booking.payment.status === 'UNPAID' && booking.status !== 'CANCELLED' && (
-                        <div className="bg-blue-50 dark:bg-blue-900/10 rounded-2xl border border-blue-200 dark:border-blue-800 p-6 shadow-sm text-center">
-                            <h3 className="font-bold text-blue-900 dark:text-blue-100 mb-2">Payment Required</h3>
-                            <p className="text-sm text-blue-700 dark:text-blue-300 mb-4">
-                                Secure your booking by completing your payment securely via Paystack.
+                        <div className="bg-gradient-to-br from-amber-500/10 to-orange-500/10 dark:bg-amber-950/20 rounded-2xl border border-amber-200 dark:border-amber-800/40 p-6 shadow-sm text-center">
+                            <h3 className="font-bold text-zinc-900 dark:text-zinc-100 mb-2">
+                                {booking.status === 'QUOTE' ? 'Ready to Confirm Your Quote?' : 'Payment Required'}
+                            </h3>
+                            <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-4">
+                                {booking.status === 'QUOTE'
+                                    ? 'Convert this quote into a confirmed booking anytime by paying securely via Paystack.'
+                                    : 'Secure your booking by completing your payment securely via Paystack.'}
                             </p>
                             <button
                                 onClick={handlePayment}
                                 disabled={isPaying}
-                                className="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                className="w-full py-2.5 px-4 bg-[#d46b4e] hover:bg-[#b3573c] text-white rounded-lg font-semibold transition-colors disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-md"
                             >
                                 {isPaying ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
-                                {isPaying ? 'Processing...' : `Pay R ${Number(booking.payment.amount).toFixed(2)} Now`}
+                                {isPaying ? 'Processing...' : (booking.status === 'QUOTE' ? `Confirm & Pay R ${Number(booking.payment.amount).toFixed(2)}` : `Pay R ${Number(booking.payment.amount).toFixed(2)} Now`)}
                             </button>
                         </div>
                     )}

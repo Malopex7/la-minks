@@ -94,3 +94,42 @@ export const calculateQuote = async (req, res) => {
         res.status(500).json({ message: 'Server error calculating quote' });
     }
 };
+
+// @desc    Send quote details via email (for guests or logged-in users)
+// @route   POST /api/quote/send-email
+// @access  Public
+export const emailQuote = async (req, res) => {
+    try {
+        const { email, name, serviceId, serviceName, serviceDetails, extrasSelected, aiExtras, schedule, address, pricing } = req.body;
+
+        if (!email) {
+            return res.status(400).json({ message: 'Email address is required' });
+        }
+
+        let resolvedServiceName = serviceName;
+        if (!resolvedServiceName && serviceId) {
+            const service = await Service.findById(serviceId);
+            if (service) resolvedServiceName = service.name;
+        }
+
+        const quotePayload = {
+            serviceName: resolvedServiceName || 'Cleaning Service',
+            serviceDetails: serviceDetails || {},
+            extrasSelected: extrasSelected || [],
+            aiExtras: aiExtras || [],
+            schedule: schedule || {},
+            address: address || {},
+            finalPrice: pricing?.finalPrice || pricing?.totalAmount || 0,
+            estimatedHours: pricing?.estimatedHours || 0,
+        };
+
+        const { sendQuoteEmail } = await import('../utils/email.js');
+        await sendQuoteEmail(quotePayload, email, name || 'Valued Customer');
+
+        res.status(200).json({ success: true, message: 'Quote sent successfully to your email!' });
+    } catch (error) {
+        console.error('Error sending quote email:', error);
+        res.status(500).json({ message: 'Server error sending quote email' });
+    }
+};
+

@@ -146,7 +146,7 @@ export const sendBookingCreatedEmail = async (booking, customerEmail, customerNa
                 </div>
             ` : ''}
 
-            <p style="margin-top: 16px;"><strong>Amount Due:</strong> R${booking.payment.amount.toFixed(2)}</p>
+            <p style="margin-top: 16px;"><strong>Amount Due:</strong> R${(booking.payment?.amount || 0).toFixed(2)}</p>
         </div>
 
         <p>You can view and manage your booking, or complete your payment via your dashboard.</p>
@@ -156,6 +156,58 @@ export const sendBookingCreatedEmail = async (booking, customerEmail, customerNa
     `;
 
     return sendEmail(customerEmail, subject, wrapHtmlEmail(content, 'Booking Received'));
+};
+
+// 1b. Quote Generated (Customer)
+export const sendQuoteEmail = async (quoteData, customerEmail, customerName = 'Valued Customer') => {
+    const refCode = quoteData._id ? quoteData._id.toString().slice(-6).toUpperCase() : Math.random().toString(36).substring(2, 8).toUpperCase();
+    const subject = `Your La-Minks Cleaning Quote - Ref: ${refCode}`;
+    const dateStr = quoteData.schedule?.date ? new Date(quoteData.schedule.date).toLocaleDateString('en-ZA') : 'Flexible / TBD';
+    const amount = Number(quoteData.totalPrice || quoteData.payment?.amount || quoteData.finalPrice || 0);
+
+    const content = `
+        <p>Hi ${customerName},</p>
+        <p>Thank you for requesting a cleaning quote from La-Minks! Here is your custom estimated quote breakdown:</p>
+        
+        <div class="details-box">
+            <p><strong>Quote Reference:</strong> ${refCode}</p>
+            <p><strong>Service:</strong> ${quoteData.serviceName || quoteData.serviceId?.name || 'Cleaning Service'}</p>
+            <p><strong>Proposed Date:</strong> ${dateStr}</p>
+            ${quoteData.schedule?.timeSlot ? `<p><strong>Preferred Slot:</strong> ${quoteData.schedule.timeSlot}</p>` : ''}
+            ${quoteData.address?.line1 ? `<p><strong>Location:</strong> ${quoteData.address.line1}, ${quoteData.address.suburb || quoteData.address.city || ''}</p>` : ''}
+            
+            ${Object.keys(parseServiceDetails(quoteData.serviceDetails)).length > 0 ? `
+                <div style="margin-top: 12px; padding-top: 12px; border-top: 1px dashed #e4e4e7;">
+                    <p style="margin-bottom: 4px;"><strong>Property / Service Details:</strong></p>
+                    <ul style="margin: 0; padding-left: 20px; font-size: 14px;">
+                        ${Object.entries(parseServiceDetails(quoteData.serviceDetails)).map(([k, v]) => `<li>${k.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}: ${v}</li>`).join('')}
+                    </ul>
+                </div>
+            ` : ''}
+
+            ${(quoteData.extrasSelected?.length > 0) ? `
+                <div style="margin-top: 12px; padding-top: 12px; border-top: 1px dashed #e4e4e7;">
+                    <p style="margin-bottom: 4px;"><strong>Selected Extras:</strong></p>
+                    <ul style="margin: 0; padding-left: 20px; font-size: 14px;">
+                        ${quoteData.extrasSelected.map(e => {
+        const isAiExtra = quoteData.aiExtras?.some(ai => ai.name === e);
+        return `<li>${isAiExtra ? '✨ ' : ''}${e}</li>`;
+    }).join('')}
+                    </ul>
+                </div>
+            ` : ''}
+
+            ${quoteData.estimatedHours ? `<p style="margin-top: 8px;"><strong>Estimated Time:</strong> ~${quoteData.estimatedHours} hours</p>` : ''}
+            <p style="margin-top: 16px; font-size: 18px; color: #d46b4e;"><strong>Estimated Total:</strong> R${amount.toFixed(2)}</p>
+        </div>
+
+        <p>No immediate payment is required to review this quote. When you're ready to proceed with your booking, simply log in to your account or click the link below.</p>
+        <div style="text-align: center;">
+            <a href="${quoteData._id ? `${process.env.FRONTEND_URL}/dashboard/bookings/${quoteData._id}` : `${process.env.FRONTEND_URL}/quote`}" class="button">View & Confirm Booking</a>
+        </div>
+    `;
+
+    return sendEmail(customerEmail, subject, wrapHtmlEmail(content, 'Your Custom Quote'));
 };
 
 // 2. Payment Success (Customer)

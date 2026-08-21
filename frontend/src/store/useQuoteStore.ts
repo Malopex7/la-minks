@@ -2,6 +2,7 @@ import { create } from 'zustand';
 
 export type QuoteData = {
     serviceId?: string;
+    serviceName?: string;
     // Store the selected service's required inputs schema (e.g. from the backend)
     serviceInputs: { name: string; type: string; label: string; placeholder?: string; required?: boolean }[];
     // Track the available extras config for the selected service

@@ -13,10 +13,10 @@ export default function QuotePage() {
     const step = useQuoteStore((state) => state.step);
 
     return (
-        <div className="min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-3xl mx-auto">
-                <div className="bg-white rounded-xl shadow-lg p-6 sm:p-10">
-                    <div className="mb-8">
+        <div className="min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8 print:p-0 print:m-0 print:bg-white print:min-h-0">
+            <div className="max-w-3xl mx-auto print:max-w-none print:w-full print:m-0">
+                <div className="bg-white rounded-xl shadow-lg p-6 sm:p-10 print:p-0 print:shadow-none print:rounded-none print:border-none">
+                    <div className="mb-8 wizard-header no-print">
                         <h1 className="text-3xl font-extrabold text-slate-900 border-b pb-4">
                             Get a Free Quote
                         </h1>
@@ -44,3 +44,4 @@ export default function QuotePage() {
         </div>
     );
 }
+
