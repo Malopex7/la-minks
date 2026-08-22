@@ -1,6 +1,7 @@
 import Service from '../models/Service.js';
 import PricingRule from '../models/PricingRule.js';
 import AuditLog from '../models/AuditLog.js';
+import { invalidatePricingCache } from './quoteController.js';
 
 // @desc    Get all active services
 // @route   GET /api/services
@@ -74,6 +75,7 @@ export const createService = async (req, res) => {
         });
 
         const createdService = await service.save();
+        invalidatePricingCache(createdService._id);
         await AuditLog.create({ userId: req.user._id, action: 'CREATE', entityType: 'Service', entityId: createdService._id, details: { name: createdService.name } });
         res.status(201).json(createdService);
     } catch (error) {
@@ -99,6 +101,7 @@ export const updateService = async (req, res) => {
             service.imageUrl = imageUrl || service.imageUrl;
 
             const updatedService = await service.save();
+            invalidatePricingCache(service._id);
             await AuditLog.create({ userId: req.user._id, action: 'UPDATE', entityType: 'Service', entityId: updatedService._id, details: { name: updatedService.name } });
             res.json(updatedService);
         } else {
@@ -117,9 +120,8 @@ export const deleteService = async (req, res) => {
         const service = await Service.findById(req.params.id);
 
         if (service) {
-            // Opting for document removal instead of soft delete initially. 
-            // Replace with `service.isActive = false; await service.save();` for soft deletes if needed.
             await Service.deleteOne({ _id: service._id });
+            invalidatePricingCache(service._id);
             await AuditLog.create({ userId: req.user._id, action: 'DELETE', entityType: 'Service', entityId: service._id, details: { name: service.name } });
             res.json({ message: 'Service removed' });
         } else {

@@ -1,7 +1,11 @@
-"use client";
-
+import { Metadata } from "next";
 import Link from "next/link";
 import { Scale, CheckCircle, AlertCircle, CreditCard, ArrowRight } from "lucide-react";
+
+export const metadata: Metadata = {
+    title: "Terms of Service | La-Minks Cleaning Services",
+    description: "Terms and conditions for booking and utilizing La-Minks cleaning and property maintenance services.",
+};
 
 export default function TermsPage() {
     return (

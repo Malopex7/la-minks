@@ -1,6 +1,33 @@
 import Service from '../models/Service.js';
 import PricingRule from '../models/PricingRule.js';
 
+// Lightweight in-memory cache for fast quoting without repetitive DB roundtrips
+const pricingCache = new Map();
+const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
+
+export const invalidatePricingCache = (serviceId) => {
+    if (serviceId) {
+        pricingCache.delete(`service_${serviceId}`);
+        pricingCache.delete(`pricing_${serviceId}`);
+    } else {
+        pricingCache.clear();
+    }
+};
+
+const getCached = (key) => {
+    const item = pricingCache.get(key);
+    if (!item) return null;
+    if (Date.now() - item.cachedAt > CACHE_TTL_MS) {
+        pricingCache.delete(key);
+        return null;
+    }
+    return item.data;
+};
+
+const setCached = (key, data) => {
+    pricingCache.set(key, { data, cachedAt: Date.now() });
+};
+
 // @desc    Calculate quote based on dynamic serviceDetails and extras
 // @route   POST /api/quote
 // @access  Public
@@ -12,13 +39,21 @@ export const calculateQuote = async (req, res) => {
             return res.status(400).json({ message: 'serviceId is required' });
         }
 
-        // 1. Fetch the service and its pricing rule
-        const service = await Service.findById(serviceId);
+        // 1. Fetch the service and its pricing rule (from fast in-memory cache or DB)
+        let service = getCached(`service_${serviceId}`);
+        if (!service) {
+            service = await Service.findById(serviceId).lean();
+            if (service) setCached(`service_${serviceId}`, service);
+        }
         if (!service) {
             return res.status(404).json({ message: 'Service not found' });
         }
 
-        const pricingRule = await PricingRule.findOne({ serviceId });
+        let pricingRule = getCached(`pricing_${serviceId}`);
+        if (!pricingRule) {
+            pricingRule = await PricingRule.findOne({ serviceId }).lean();
+            if (pricingRule) setCached(`pricing_${serviceId}`, pricingRule);
+        }
         if (!pricingRule) {
             return res.status(404).json({ message: 'Pricing rules not found for this service' });
         }

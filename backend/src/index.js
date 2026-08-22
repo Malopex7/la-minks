@@ -27,14 +27,18 @@ app.use(cors({ origin: process.env.FRONTEND_URL || 'http://localhost:3000', cred
 app.use(express.json());
 app.use(cookieParser());
 
-// Connect to MongoDB (use MONGO_URI from .env)
+// Connect to MongoDB with optimized connection pool settings
 mongoose.connect(process.env.MONGO_URI, {
   family: 4,
-  serverSelectionTimeoutMS: 10000,
+  maxPoolSize: 20,
+  minPoolSize: 5,
+  maxIdleTimeMS: 30000,
+  serverSelectionTimeoutMS: 5000,
   connectTimeoutMS: 10000,
+  socketTimeoutMS: 45000,
 })
   .then(() => {
-    console.log('MongoDB connected');
+    console.log('MongoDB connected with pooled connections');
     initBucket(mongoose.connection.db);
   })
   .catch(err => console.error('MongoDB connection error:', err.message));

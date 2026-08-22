@@ -1,7 +1,11 @@
-"use client";
-
+import { Metadata } from "next";
 import Link from "next/link";
 import { Shield, Lock, Eye, FileText, ArrowRight } from "lucide-react";
+
+export const metadata: Metadata = {
+    title: "Privacy Policy | La-Minks Cleaning Services",
+    description: "Read our privacy policy and how we protect and manage your personal data.",
+};
 
 export default function PrivacyPage() {
     return (

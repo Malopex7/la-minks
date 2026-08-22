@@ -1,7 +1,11 @@
-"use client";
-
+import { Metadata } from "next";
 import Link from "next/link";
 import { Sparkles, ShieldCheck, HeartHandshake, Award, Clock, ArrowRight } from "lucide-react";
+
+export const metadata: Metadata = {
+    title: "About Us | La-Minks Cleaning Services",
+    description: "Learn about La-Minks - elevating the standard of residential, commercial, and property care across South Africa.",
+};
 
 export default function AboutPage() {
     return (

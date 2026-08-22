@@ -1,5 +1,6 @@
 import PricingRule from '../models/PricingRule.js';
 import Service from '../models/Service.js';
+import { invalidatePricingCache } from './quoteController.js';
 
 // @desc    Get all pricing rules (optionally filtered by serviceId)
 // @route   GET /api/pricing-rules
@@ -72,6 +73,7 @@ export const createPricingRule = async (req, res) => {
         });
 
         const createdRule = await pricingRule.save();
+        invalidatePricingCache(serviceId);
         res.status(201).json(createdRule);
     } catch (error) {
         res.status(400).json({ message: error.message });
@@ -104,6 +106,7 @@ export const updatePricingRule = async (req, res) => {
             rule.isActive = isActive !== undefined ? isActive : rule.isActive;
 
             const updatedRule = await rule.save();
+            invalidatePricingCache(rule.serviceId);
             res.json(updatedRule);
         } else {
             res.status(404).json({ message: 'Pricing Rule not found' });
@@ -122,6 +125,7 @@ export const deletePricingRule = async (req, res) => {
 
         if (rule) {
             await PricingRule.deleteOne({ _id: rule._id });
+            invalidatePricingCache(rule.serviceId);
             res.json({ message: 'Pricing Rule removed' });
         } else {
             res.status(404).json({ message: 'Pricing Rule not found' });

@@ -1,7 +1,11 @@
-"use client";
-
+import { Metadata } from "next";
 import Link from "next/link";
 import { Cookie, CheckCircle, Sliders, ShieldCheck, ArrowRight } from "lucide-react";
+
+export const metadata: Metadata = {
+    title: "Cookie Policy | La-Minks Cleaning Services",
+    description: "Learn how La-Minks uses cookies and local storage to personalize and enhance your browsing experience.",
+};
 
 export default function CookiesPage() {
     return (
