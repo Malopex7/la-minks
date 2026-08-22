@@ -5,9 +5,7 @@ import { useAuthStore } from '@/store/useAuthStore';
 import { Loader2, Calendar, MapPin, Clock, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { format } from 'date-fns';
-import { fetchWithAuth } from '@/lib/api';
-
-const API_URL = 'http://localhost:5001/api';
+import { fetchWithAuth, API_URL } from '@/lib/api';
 
 interface Booking {
     _id: string;

@@ -6,9 +6,8 @@ import { Loader2, Users, Calendar, Banknote, Camera, ChevronDown, ChevronUp, Dow
 import Image from 'next/image';
 import PhotoLightbox from '@/components/PhotoLightbox';
 import { bookingsToCsv, downloadCsv } from '@/lib/exportCsv';
-import { fetchWithAuth } from '@/lib/api';
+import { fetchWithAuth, API_URL } from '@/lib/api';
 
-const API_URL = 'http://localhost:5001/api';
 const VALID_STATUSES = ['QUOTE', 'BOOKED', 'CONFIRMED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED'];
 
 const statusColors: Record<string, string> = {

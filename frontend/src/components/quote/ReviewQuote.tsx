@@ -6,7 +6,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useQuoteStore } from '@/store/useQuoteStore';
 import { useAuthStore } from '@/store/useAuthStore';
-import { fetchWithAuth } from '@/lib/api';
+import { fetchWithAuth, API_URL } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import {
@@ -54,7 +54,7 @@ export default function ReviewQuote() {
                     aiExtras: data.aiExtras,
                 };
 
-                const response = await fetch('http://localhost:5001/api/quote', {
+                const response = await fetch(`${API_URL}/quote`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload),
@@ -119,7 +119,7 @@ export default function ReviewQuote() {
                 status: 'QUOTE', // Saved as quote without payment
             };
 
-            const bookingRes = await fetchWithAuth('http://localhost:5001/api/bookings', {
+            const bookingRes = await fetchWithAuth(`${API_URL}/bookings`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(bookingPayload),
@@ -170,7 +170,7 @@ export default function ReviewQuote() {
                 status: 'BOOKED',
             };
 
-            const bookingRes = await fetchWithAuth('http://localhost:5001/api/bookings', {
+            const bookingRes = await fetchWithAuth(`${API_URL}/bookings`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(bookingPayload),
@@ -184,7 +184,7 @@ export default function ReviewQuote() {
             const newBooking = await bookingRes.json();
 
             // 2. Initialize Paystack transaction
-            const paystackRes = await fetchWithAuth('http://localhost:5001/api/payments/paystack/initialize', {
+            const paystackRes = await fetchWithAuth(`${API_URL}/payments/paystack/initialize`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ bookingId: newBooking._id }),
@@ -221,7 +221,7 @@ export default function ReviewQuote() {
         setErrorMsg('');
 
         try {
-            const res = await fetch('http://localhost:5001/api/quote/send-email', {
+            const res = await fetch(`${API_URL}/quote/send-email`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

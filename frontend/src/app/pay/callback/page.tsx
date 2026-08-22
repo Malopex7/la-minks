@@ -4,6 +4,7 @@ import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { CheckCircle, XCircle, Loader2 } from 'lucide-react';
 import Link from 'next/link';
+import { API_URL } from '@/lib/api';
 
 function CallbackContent() {
     const searchParams = useSearchParams();
@@ -21,7 +22,7 @@ function CallbackContent() {
             }
 
             try {
-                const res = await fetch(`http://localhost:5001/api/payments/paystack/verify/${reference}`);
+                const res = await fetch(`${API_URL}/payments/paystack/verify/${reference}`);
                 const data = await res.json();
 
                 if (res.ok && data.status === 'success') {

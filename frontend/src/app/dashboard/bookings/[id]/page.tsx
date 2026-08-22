@@ -5,7 +5,7 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useAuthStore } from '@/store/useAuthStore';
-import { fetchWithAuth } from '@/lib/api';
+import { fetchWithAuth, API_URL } from '@/lib/api';
 import {
     ArrowLeft, Loader2, CalendarDays, MapPin,
     Home, CheckCircle2, Circle, CreditCard, FileText,
@@ -69,8 +69,8 @@ export default function BookingDetailsPage() {
     const [error, setError] = useState('');
 
     const allPhotoUrls = [
-        ...(booking?.photos?.before ?? []).map(id => `http://localhost:5001/api/photos/${id}`),
-        ...(booking?.photos?.after ?? []).map(id => `http://localhost:5001/api/photos/${id}`),
+        ...(booking?.photos?.before ?? []).map(id => `${API_URL}/photos/${id}`),
+        ...(booking?.photos?.after ?? []).map(id => `${API_URL}/photos/${id}`),
     ];
     const beforeCount = booking?.photos?.before?.length ?? 0;
     const { lightbox, open } = useLightbox(allPhotoUrls);
@@ -80,7 +80,7 @@ export default function BookingDetailsPage() {
         setIsPaying(true);
         setError('');
         try {
-            const res = await fetchWithAuth(`http://localhost:5001/api/payments/paystack/initialize`, {
+            const res = await fetchWithAuth(`${API_URL}/payments/paystack/initialize`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -107,7 +107,7 @@ export default function BookingDetailsPage() {
         const fetchBooking = async () => {
             if (!user || !params.id) return;
             try {
-                const res = await fetchWithAuth(`http://localhost:5001/api/bookings/${params.id}`);
+                const res = await fetchWithAuth(`${API_URL}/bookings/${params.id}`);
                 if (!res.ok) {
                     if (res.status === 404) throw new Error('Booking not found');
                     if (res.status === 403) throw new Error('Not authorized to view this booking');
@@ -511,7 +511,7 @@ export default function BookingDetailsPage() {
                                                     onClick={() => open(i)}
                                                     className="aspect-square rounded-lg bg-zinc-200 dark:bg-zinc-800 overflow-hidden block hover:opacity-90 transition-opacity cursor-pointer"
                                                 >
-                                                    <Image src={`http://localhost:5001/api/photos/${fileId}`} alt={`Before ${i + 1}`} width={400} height={400} className="w-full h-full object-cover" />
+                                                    <Image src={`${API_URL}/photos/${fileId}`} alt={`Before ${i + 1}`} width={400} height={400} className="w-full h-full object-cover" />
                                                 </div>
                                             ))}
                                         </div>
@@ -533,7 +533,7 @@ export default function BookingDetailsPage() {
                                                     onClick={() => open(beforeCount + i)}
                                                     className="aspect-square rounded-lg bg-zinc-200 dark:bg-zinc-800 overflow-hidden block hover:opacity-90 transition-opacity cursor-pointer"
                                                 >
-                                                    <Image src={`http://localhost:5001/api/photos/${fileId}`} alt={`After ${i + 1}`} width={400} height={400} className="w-full h-full object-cover" />
+                                                    <Image src={`${API_URL}/photos/${fileId}`} alt={`After ${i + 1}`} width={400} height={400} className="w-full h-full object-cover" />
                                                 </div>
                                             ))}
                                         </div>

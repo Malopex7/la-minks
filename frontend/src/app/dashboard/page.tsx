@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useAuthStore } from '@/store/useAuthStore';
-import { fetchWithAuth } from '@/lib/api';
+import { fetchWithAuth, API_URL } from '@/lib/api';
 import { CalendarDays, Clock, MapPin, Search, PlusCircle, ArrowRight, Loader2 } from 'lucide-react';
 
 interface Booking {
@@ -39,7 +39,7 @@ export default function DashboardPage() {
         const fetchBookings = async () => {
             if (!user) return;
             try {
-                const res = await fetchWithAuth('http://localhost:5001/api/bookings/my');
+                const res = await fetchWithAuth(`${API_URL}/bookings/my`);
                 if (!res.ok) throw new Error('Failed to fetch bookings');
                 const data = await res.json();
                 setBookings(data);

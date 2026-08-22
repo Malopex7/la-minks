@@ -2,10 +2,8 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { useAuthStore } from '@/store/useAuthStore';
-import { fetchWithAuth } from '@/lib/api';
+import { fetchWithAuth, API_URL } from '@/lib/api';
 import { Loader2, ShieldAlert, ChevronLeft, ChevronRight, Filter } from 'lucide-react';
-
-const API_URL = 'http://localhost:5001/api';
 
 interface AuditEntry {
     _id: string;

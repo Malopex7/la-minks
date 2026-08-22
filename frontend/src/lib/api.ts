@@ -1,5 +1,7 @@
 import { useAuthStore } from '@/store/useAuthStore';
 
+export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001/api';
+
 // Helper to make authenticated requests, automatically handling token refresh on 401
 export async function fetchWithAuth(url: string, options: RequestInit = {}) {
     const { user, refreshAuthToken } = useAuthStore.getState();

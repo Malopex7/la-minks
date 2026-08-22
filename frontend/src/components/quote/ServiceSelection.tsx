@@ -4,14 +4,17 @@ import { useState, useEffect } from 'react';
 import { useQuoteStore } from '@/store/useQuoteStore';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { API_URL } from '@/lib/api';
 
 interface Service {
     _id: string;
     name: string;
     description: string;
     basePrice: number;
-    inputs: { name: string; type: string; label: string }[]; // The dynamic inputs array we just added to the schema
-    pricingRule?: { extras?: { name: string; price: number; estimatedAdditionalHours?: number }[] }; // The pricing rule containing the extras
+    inputs: Array<{ name: string; label: string; type: string; options?: string[]; required: boolean }>;
+    pricingRule?: {
+        extras?: Array<{ name: string; price: number; estimatedAdditionalHours?: number }>;
+    };
 }
 
 export default function ServiceSelection() {
@@ -23,9 +26,7 @@ export default function ServiceSelection() {
     useEffect(() => {
         const fetchServices = async () => {
             try {
-                // In a perfect world, our backend GET /api/services would populate the pricingRule or we fetch it separately.
-                // For now, we'll fetch services and assume the backend will eventually embed pricingRule.extras
-                const res = await fetch('http://localhost:5001/api/services');
+                const res = await fetch(`${API_URL}/services`);
                 if (!res.ok) throw new Error('Failed to fetch services');
                 const json = await res.json();
                 setServices(json);

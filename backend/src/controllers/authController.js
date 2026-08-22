@@ -16,6 +16,16 @@ const generateTokens = (userId) => {
     return { accessToken, refreshToken };
 };
 
+const setRefreshCookie = (res, refreshToken) => {
+    const isProd = process.env.NODE_ENV === 'production';
+    res.cookie('jwt', refreshToken, {
+        httpOnly: true,
+        secure: isProd,
+        sameSite: isProd ? 'none' : 'lax',
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+};
+
 export const register = async (req, res) => {
     try {
         const { firstName, lastName, email, password, firebaseUid } = req.body;
@@ -92,16 +102,8 @@ export const googleAuth = async (req, res) => {
                 isEmailVerified: true,
                 role: 'customer',
             });
-        }
-
         const { accessToken, refreshToken } = generateTokens(user._id);
-
-        res.cookie('jwt', refreshToken, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV !== 'development',
-            sameSite: 'strict',
-            maxAge: 7 * 24 * 60 * 60 * 1000,
-        });
+        setRefreshCookie(res, refreshToken);
 
         res.status(200).json({
             _id: user._id,
@@ -147,13 +149,7 @@ export const firebaseSync = async (req, res) => {
         }
 
         const { accessToken, refreshToken } = generateTokens(user._id);
-
-        res.cookie('jwt', refreshToken, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV !== 'development',
-            sameSite: 'strict',
-            maxAge: 7 * 24 * 60 * 60 * 1000,
-        });
+        setRefreshCookie(res, refreshToken);
 
         res.status(200).json({
             _id: user._id,
@@ -211,13 +207,7 @@ export const login = async (req, res) => {
         }
 
         const { accessToken, refreshToken } = generateTokens(user._id);
-
-        res.cookie('jwt', refreshToken, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV !== 'development',
-            sameSite: 'strict',
-            maxAge: 7 * 24 * 60 * 60 * 1000,
-        });
+        setRefreshCookie(res, refreshToken);
 
         res.json({
             _id: user._id,
@@ -256,8 +246,11 @@ export const refresh = async (req, res) => {
 
 export const logout = async (req, res) => {
     try {
+        const isProd = process.env.NODE_ENV === 'production';
         res.cookie('jwt', '', {
             httpOnly: true,
+            secure: isProd,
+            sameSite: isProd ? 'none' : 'lax',
             expires: new Date(0),
         });
 
@@ -288,13 +281,7 @@ export const verifyEmail = async (req, res) => {
 
         // Immediately log them in
         const { accessToken, refreshToken } = generateTokens(user._id);
-
-        res.cookie('jwt', refreshToken, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV !== 'development',
-            sameSite: 'strict',
-            maxAge: 7 * 24 * 60 * 60 * 1000,
-        });
+        setRefreshCookie(res, refreshToken);
 
         res.status(200).json({
             message: 'Email verified successfully',

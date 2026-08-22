@@ -6,12 +6,14 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Sparkles, Plus, Check, Clock, Layers, ArrowRight } from 'lucide-react';
+import { API_URL } from '@/lib/api';
 
 interface SuggestedExtra {
     name: string;
+    description: string;
     category?: string;
     price: number;
-    estimatedAdditionalHours?: number;
+    estimatedAdditionalHours: number;
     isCrossService?: boolean;
 }
 
@@ -35,7 +37,7 @@ export default function SelectExtras() {
     useEffect(() => {
         // Fetch the service name for context in the AI prompt
         if (data.serviceId) {
-            fetch(`http://localhost:5001/api/services/${data.serviceId}`)
+            fetch(`${API_URL}/services/${data.serviceId}`)
                 .then(res => res.json())
                 .then(service => setServiceName(service.name || ''))
                 .catch(() => setServiceName(''));
@@ -79,7 +81,7 @@ export default function SelectExtras() {
         setChatLoading(true);
 
         try {
-            const res = await fetch('http://localhost:5001/api/quote/suggest-extra', {
+            const res = await fetch(`${API_URL}/quote/suggest-extra`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ serviceName, userRequest: userMessage }),

@@ -11,9 +11,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { format } from 'date-fns';
 import { useLightbox } from '@/components/PhotoLightbox';
-import { fetchWithAuth } from '@/lib/api';
-
-const API_URL = 'http://localhost:5001/api';
+import { fetchWithAuth, API_URL } from '@/lib/api';
 
 interface ChecklistItem {
     _id?: string;

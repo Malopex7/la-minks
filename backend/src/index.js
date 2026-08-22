@@ -22,8 +22,20 @@ import auditRoutes from './routes/auditRoutes.js';
 import aiRoutes from './routes/aiRoutes.js';
 import { protect, authorize } from './middleware/authMiddleware.js';
 import { initBucket } from './utils/gridfs.js';
-const app = express();
-app.use(cors({ origin: process.env.FRONTEND_URL || 'http://localhost:3000', credentials: true }));
+const allowedOrigins = process.env.FRONTEND_URL
+  ? process.env.FRONTEND_URL.split(',').map(u => u.trim())
+  : ['http://localhost:3000'];
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin) || origin.endsWith('.vercel.app')) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+}));
 app.use(express.json());
 app.use(cookieParser());
 
