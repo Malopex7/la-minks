@@ -173,47 +173,63 @@ export const login = async (req, res) => {
     try {
         const { email, password } = req.body;
 
+        if (!email || !password) {
+            return res.status(400).json({ message: 'Please provide both email and password' });
+        }
+
         const user = await User.findOne({ email });
 
-        if (user && (await bcrypt.compare(password, user.password))) {
-
-            // Block login if email is not verified
-            if (!user.isEmailVerified) {
-                // Generate a new token in case the old one expired
-                const newToken = crypto.randomBytes(32).toString('hex');
-                user.verificationToken = newToken;
-                await user.save();
-
-                // Send it async
-                sendVerificationEmail(user.email, user.firstName, newToken).catch(err => {
-                    console.error('Failed to resend verification email on login:', err);
-                });
-
-                return res.status(403).json({ message: 'Please verify your email address to log in. We just sent you a new verification link.' });
-            }
-
-            const { accessToken, refreshToken } = generateTokens(user._id);
-
-            res.cookie('jwt', refreshToken, {
-                httpOnly: true,
-                secure: process.env.NODE_ENV !== 'development',
-                sameSite: 'strict',
-                maxAge: 7 * 24 * 60 * 60 * 1000,
-            });
-
-            res.json({
-                _id: user._id,
-                firstName: user.firstName,
-                lastName: user.lastName,
-                email: user.email,
-                role: user.role,
-                accessToken,
-            });
-        } else {
-            res.status(401).json({ message: 'Invalid email or password' });
+        if (!user) {
+            return res.status(401).json({ message: 'Invalid email or password' });
         }
+
+        // If user registered with Google/Firebase OAuth and has no password set
+        if (!user.password) {
+            return res.status(400).json({
+                message: 'This account was registered using Google Sign-In. Please log in with Google.'
+            });
+        }
+
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(401).json({ message: 'Invalid email or password' });
+        }
+
+        // Block login if email is not verified
+        if (!user.isEmailVerified) {
+            // Generate a new token in case the old one expired
+            const newToken = crypto.randomBytes(32).toString('hex');
+            user.verificationToken = newToken;
+            await user.save();
+
+            // Send it async
+            sendVerificationEmail(user.email, user.firstName, newToken).catch(err => {
+                console.error('Failed to resend verification email on login:', err);
+            });
+
+            return res.status(403).json({ message: 'Please verify your email address to log in. We just sent you a new verification link.' });
+        }
+
+        const { accessToken, refreshToken } = generateTokens(user._id);
+
+        res.cookie('jwt', refreshToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV !== 'development',
+            sameSite: 'strict',
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+        });
+
+        res.json({
+            _id: user._id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            role: user.role,
+            accessToken,
+        });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error('Login Error:', error);
+        res.status(500).json({ message: error.message || 'Server error during login' });
     }
 };
 
