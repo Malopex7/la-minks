@@ -30,13 +30,13 @@ You will download and launch Coolify with a single terminal command:
 ### On Windows (via WSL / Ubuntu or Git Bash):
 Open your terminal (**Ubuntu** or **Git Bash**) and run:
 ```bash
-curl -fsSL https://cdn.coolify.io/coolify/install.sh | bash
+curl -fsSL https://cdn.coollabs.io/coolify/install.sh | sudo bash
 ```
 
 ### On Mac / Linux:
 Open the Terminal app and paste:
 ```bash
-curl -fsSL https://cdn.coolify.io/coolify/install.sh | bash
+curl -fsSL https://cdn.coollabs.io/coolify/install.sh | sudo bash
 ```
 
 1. Wait 2 to 3 minutes for Docker to download the necessary Coolify packages.
