@@ -1,159 +1,136 @@
-# 🐳 Deploying La-Minks on Coolify (Self-Hosted Docker)
+# 🐳 Deploying & Testing La-Minks on Coolify (Local & VPS Setup)
 
-This guide walks you through deploying the full **La-Minks** platform (Frontend & Backend) onto your own server or VPS using **[Coolify](https://coolify.io/)** — the open-source, self-hosted alternative to Vercel and Heroku.
-
----
-
-## 🌟 Why Coolify?
-- **Self-Hosted & Cost-Effective**: Run everything on a single VPS (Hetzner, DigitalOcean, AWS EC2, Linode) or local Linux server.
-- **Automatic SSL**: Free Let's Encrypt SSL certificates automatically provisioned for all custom domains.
-- **Git Push Auto-Deploy**: Automatically builds and restarts containers on every `git push origin master`.
-- **Integrated Traefik Proxy**: Built-in reverse proxy with zero-downtime rolling updates.
+Here is the exact step-by-step procedure to get **Coolify** running on your local computer, connected to your GitHub account, and hosting your full-stack applications.
 
 ---
 
-## 🛠️ Step 1: Install Coolify on Your Linux Server / VPS
+## 🏗️ Architecture Overview
 
-Connect to your Linux server (Ubuntu 22.04/24.04 or Debian recommended) via SSH and run:
+```mermaid
+graph LR
+    User([Browser: localhost:8080]) -->|Traefik Proxy / Standalone| Frontend[Next.js 15 App]
+    Frontend -->|NEXT_PUBLIC_API_URL| Backend[Express API: localhost:8081]
+    Backend -->|Mongoose Pool| MongoAtlas[(MongoDB Atlas)]
+    CoolifyUI[Coolify Dashboard: localhost:8000] -->|Manage Containers| DockerEngine[Docker Desktop Engine]
+    CoolifyUI -->|Manual Pull / Git| GitHub[GitHub: Malopex7/la-minks]
+```
 
+---
+
+## 📋 Step 1: Install Docker Desktop
+Coolify requires [Docker](https://www.docker.com/) to build and run your applications.
+1. Download and install [Docker Desktop](https://www.docker.com/products/docker-desktop/) for your specific operating system (Windows, Mac, or Linux).
+2. Open Docker Desktop and ensure the engine is fully running (the small whale icon in the corner should turn green).
+
+---
+
+## 💻 Step 2: Install Coolify via Terminal
+You will download and launch Coolify with a single terminal command:
+
+### On Windows (via WSL / Ubuntu or Git Bash):
+Open your terminal (**Ubuntu** or **Git Bash**) and run:
 ```bash
 curl -fsSL https://cdn.coolify.io/coolify/install.sh | bash
 ```
 
-> [!NOTE]
-> Ensure your VPS firewall allows the following inbound ports:
-> - **`80`** (HTTP & Let's Encrypt verification)
-> - **`443`** (HTTPS Traffic)
-> - **`8000`** (Coolify Dashboard Admin UI)
-> - **`22`** (SSH Management)
-
-Once the installer finishes, open your browser and navigate to:
+### On Mac / Linux:
+Open the Terminal app and paste:
+```bash
+curl -fsSL https://cdn.coolify.io/coolify/install.sh | bash
 ```
-http://<your-server-ip>:8000
-```
-Create your root admin account to access the dashboard.
+
+1. Wait 2 to 3 minutes for Docker to download the necessary Coolify packages.
+2. Once finished, open your web browser and navigate to: **`http://localhost:8000`**
+3. Create your initial admin account by entering an email and password.
 
 ---
 
-## 🚀 Step 2: Deploying La-Minks in Coolify
+## 🔗 Step 3: Create a GitHub App Integration
+To pull code automatically like Render and Vercel do, Coolify needs a secure connection to your GitHub profile:
 
-### Option A: 1-Click Docker Compose Deployment (Recommended)
-
-Because the repository includes a root [`docker-compose.yml`](file:///f:/cursor-dev/la-minks/docker-compose.yml), you can deploy both frontend and backend together:
-
-1. Inside Coolify, go to **Projects** &rarr; **+ Add Project**.
-2. Select your environment (e.g., `Production`).
-3. Click **+ New Resource** &rarr; **Git Repository**.
-4. Choose **Public Repository** (or connect your GitHub account) and enter:
-   ```
-   https://github.com/Malopex7/la-minks.git
-   ```
-5. Set **Branch** to `master`.
-6. Set **Build Pack** to **`Docker Compose`**.
-7. Coolify will detect [`docker-compose.yml`](file:///f:/cursor-dev/la-minks/docker-compose.yml) automatically.
+1. Inside your Coolify dashboard, navigate to **Sources** on the left menu and click **Add New Source**.
+2. Select **GitHub App**.
+3. Give your source a recognizable name (e.g., `Local-GitHub`).
+4. Click **Register GitHub App**. This will redirect you straight to GitHub.
+5. Choose your personal profile or organization, name the app, and click **Save**.
+6. GitHub will automatically redirect you back to Coolify with the connection established.
 
 ---
 
-### Option B: Deploy as 2 Separate Services (Frontend & Backend)
+## 🚀 Step 4: Deploy Your Project
 
-If you prefer managing frontend and backend independently in Coolify:
+Now that GitHub is connected, deploying the full-stack app is straightforward:
 
-#### 1. Backend Service:
-- **Resource Type**: Application (Docker)
-- **Base Directory**: `/backend`
-- **Dockerfile**: `Dockerfile`
-- **Port Exposed**: `5001`
-- **Domain**: `https://api.yourdomain.com` (or `http://<server-ip>:5001`)
-
-#### 2. Frontend Service:
-- **Resource Type**: Application (Docker)
-- **Base Directory**: `/frontend`
-- **Dockerfile**: `Dockerfile`
-- **Port Exposed**: `3000`
-- **Domain**: `https://yourdomain.com` (or `http://<server-ip>:3000`)
+1. On the Coolify dashboard home page, click **Keys & Sources** or go straight to **Projects** and click **Add New Project**.
+2. Click **+ Add Environment** (such as `production`).
+3. Click **+ Add New Resource** and select **Public/Private Repository (GitHub)**.
+4. Select your newly connected GitHub source, pick your code repository (`Malopex7/la-minks`), and select your target deployment branch (`master`).
+5. Coolify will auto-detect your project type via [`docker-compose.yml`](file:///f:/cursor-dev/la-minks/docker-compose.yml) or Dockerfiles and display a **Deploy** button.
 
 ---
 
-## 🔐 Step 3: Configure Environment Variables in Coolify
+## 🔐 Step 5: Environment Variables Reference
 
-In Coolify's **Environment Variables** panel for the project, add the following:
+In Coolify's **Environment Variables** tab for the project, add the following variables:
 
 ### Backend Variables:
 ```env
 NODE_ENV=production
 PORT=5001
 MONGO_URI=mongodb+srv://bxmalope_db_user:XBEsOAvF6R0bEgCO@laminks.8wnmsnz.mongodb.net/la-minks-db?retryWrites=true&w=majority
-JWT_SECRET=your_jwt_secret_64_character_hex_key
-JWT_REFRESH_SECRET=your_jwt_refresh_secret_64_character_hex_key
-FRONTEND_URL=https://yourdomain.com
+JWT_SECRET=79a9d3735e8ed21832ff5a3f02ce3855a0e8185266b04cd00d80f5d337785e34a71712c1
+JWT_REFRESH_SECRET=79a9d3735e8ed21832ff5a3f02ce3855a0e8185266b04cd00d80f5d337785e34a71712c1_refresh
+FRONTEND_URL=http://localhost:8080
 
-# Paystack Gateway
-PAYSTACK_PUBLIC_KEY=your_paystack_public_key
-PAYSTACK_SECRET_KEY=your_paystack_secret_key
+# Paystack Payment Gateway
+PAYSTACK_PUBLIC_KEY=pk_test_2c295861bffdb0881573eaa45bfa882bd12b9f09
+PAYSTACK_SECRET_KEY=sk_test_9cd91a43be741ac05502a32cd8a8860fae846bd5
 
 # Google Gemini AI
-GEMINI_API_KEY=your_gemini_api_key
+GEMINI_API_KEY=your_gemini_api_key_here
 
-# Email Delivery (SMTP)
+# Nodemailer / SMTP Email Delivery
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
-SMTP_USER=your_email@gmail.com
-SMTP_PASS=your_gmail_app_password
+SMTP_USER=malopex.dev@gmail.com
+SMTP_PASS=your_app_password
 EMAIL_FROM="La-Minks Cleaning Services <info@laminks.co.za>"
 ```
 
 ### Frontend Build & Runtime Variables:
 ```env
-NEXT_PUBLIC_API_URL=https://api.yourdomain.com/api
-NEXT_PUBLIC_PAYSTACK_KEY=your_paystack_public_key
+NEXT_PUBLIC_API_URL=http://localhost:8081/api
+NEXT_PUBLIC_PAYSTACK_KEY=pk_test_2c295861bffdb0881573eaa45bfa882bd12b9f09
 
 # Firebase Client Configuration
-NEXT_PUBLIC_FIREBASE_API_KEY=AIzaSy...
+NEXT_PUBLIC_FIREBASE_API_KEY=AIzaSyDWnjm6rzaX8tPLPh_mHB0TnIzkxXedS7c
 NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=la-minks.firebaseapp.com
 NEXT_PUBLIC_FIREBASE_PROJECT_ID=la-minks
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=la-minks.appspot.com
-NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=1234567890
-NEXT_PUBLIC_FIREBASE_APP_ID=1:1234567890:web:abcdef123456
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=la-minks.firebasestorage.app
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=245034365588
+NEXT_PUBLIC_FIREBASE_APP_ID=1:245034365588:web:65afc6ac082afc0e59ba81
 ```
 
 ---
 
-## 🌐 Step 4: Domain & Auto-SSL Configuration
+## 💡 Local Testing Pro-Tip: Manual Triggers
 
-1. In your DNS manager (Cloudflare, Namecheap, GoDaddy, etc.), create two **A Records**:
-   - `yourdomain.com` &rarr; `YOUR_SERVER_IP`
-   - `api.yourdomain.com` &rarr; `YOUR_SERVER_IP`
-2. In Coolify, enter the domain in the **Domains** field:
-   - For Frontend: `https://yourdomain.com`
-   - For Backend: `https://api.yourdomain.com`
-3. Click **Deploy**. Coolify will automatically request and install **Let's Encrypt SSL certificates** via Traefik.
+Because your computer sits securely behind a home router firewall, GitHub cannot send automated "webhook" network pings back to your machine when you run a `git push`.
 
----
-
-## 💳 Step 5: Update Paystack Webhooks
-
-In your [Paystack Dashboard](https://dashboard.paystack.com/#/settings/developer):
-- **Live Webhook URL**: `https://api.yourdomain.com/api/payments/paystack/webhook`
-- **Live Callback URL**: `https://yourdomain.com/pay/callback`
+To deploy your latest updates locally:
+1. Open your Coolify web browser panel at **`http://localhost:8000`**.
+2. Open your project.
+3. Click the manual **Deploy** button. It will instantly pull your fresh GitHub changes and rebuild your application.
 
 ---
 
-## 🧪 Step 6: Testing Locally with Docker Desktop
+## 🌐 Moving from Local to a Production VPS (When Ready)
 
-To test the containerized deployment locally on your machine before running on a remote VPS:
-
-```bash
-# 1. Build and run all services in background
-docker compose up -d --build
-
-# 2. View running containers and logs
-docker compose ps
-docker compose logs -f
-
-# 3. Access your local deployment
-# Frontend: http://localhost:3000
-# Backend:  http://localhost:5001/api/test
-
-# 4. Stop containers
-docker compose down
-```
+When you are ready to subscribe to a VPS (e.g., Hetzner, DigitalOcean, Linode):
+1. Run the same install command on your VPS:
+   ```bash
+   curl -fsSL https://cdn.coolify.io/coolify/install.sh | bash
+   ```
+2. Point your domain's DNS `A Record` to your VPS IP (`laminks.co.za` &rarr; `VPS_IP`).
+3. Set your domains in Coolify (`https://laminks.co.za` and `https://api.laminks.co.za`).
+4. Traefik inside Coolify will automatically generate free Let's Encrypt SSL certificates!
