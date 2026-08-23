@@ -102,6 +102,7 @@ export const googleAuth = async (req, res) => {
                 isEmailVerified: true,
                 role: 'customer',
             });
+        }
         const { accessToken, refreshToken } = generateTokens(user._id);
         setRefreshCookie(res, refreshToken);
 
