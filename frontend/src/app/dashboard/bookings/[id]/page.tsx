@@ -12,6 +12,7 @@ import {
     Camera, ShieldCheck, AlertCircle, Printer
 } from 'lucide-react';
 import { useLightbox } from '@/components/PhotoLightbox';
+import LocationNavCard from '@/components/LocationNavCard';
 
 interface BookingDetail {
     _id: string;
@@ -35,6 +36,14 @@ interface BookingDetail {
         city: string;
         province: string;
         postalCode: string;
+        formattedAddress?: string;
+        lat?: number;
+        lng?: number;
+    };
+    travelFee?: {
+        distanceKm?: number;
+        durationMinutes?: number;
+        fee?: number;
     };
     serviceDetails?: Record<string, string | number | boolean>;
     schedule: {
@@ -492,6 +501,15 @@ export default function BookingDetailsPage() {
 
                     {/* Right Column (Smaller) */}
                     <div className="space-y-6">
+                        {/* Service Location Map */}
+                        <LocationNavCard
+                            address={booking.address}
+                            travelFee={booking.travelFee}
+                            title="Service Location & Map"
+                            showDirections={true}
+                            compact={true}
+                        />
+
                         {/* Photos Preview */}
                         <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6 shadow-sm">
                             <h2 className="text-base font-bold text-zinc-900 dark:text-zinc-100 mb-4 flex items-center gap-2">

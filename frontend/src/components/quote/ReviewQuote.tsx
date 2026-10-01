@@ -11,12 +11,19 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import {
     Printer, Mail, CheckCircle2, CreditCard,
-    FileText, Loader2, ArrowRight, Sparkles, AlertCircle, RefreshCw
+    FileText, Loader2, ArrowRight, Sparkles, AlertCircle, RefreshCw, MapPin
 } from 'lucide-react';
 
 interface QuoteDetails {
     baseCost: number;
     extrasCost: number;
+    travelFee?: number;
+    travelDetails?: {
+        distanceKm: number;
+        durationMinutes: number;
+        fee: number;
+        isBeyondBaseRadius: boolean;
+    };
     subtotal?: number;
     vatRate?: number;
     vatAmount?: number;
@@ -52,6 +59,7 @@ export default function ReviewQuote() {
                     serviceDetails: data.serviceDetails,
                     extrasSelected: data.extrasSelected,
                     aiExtras: data.aiExtras,
+                    address: data.address,
                 };
 
                 const response = await fetch(`${API_URL}/quote`, {
@@ -580,7 +588,16 @@ export default function ReviewQuote() {
                                         </li>
                                         <li className="flex justify-between py-1 border-b border-slate-100 dark:border-zinc-800/60">
                                             <span className="font-medium text-slate-700 dark:text-zinc-300">Address:</span>
-                                            <span className="text-right truncate max-w-[200px]">{data.address.line1 ? `${data.address.line1}, ${data.address.suburb || data.address.city}` : 'To be confirmed'}</span>
+                                            <div className="text-right max-w-[220px]">
+                                                <span className="block truncate text-slate-800 dark:text-zinc-200">
+                                                    {data.address.formattedAddress || (data.address.line1 ? `${data.address.line1}, ${data.address.suburb || data.address.city}` : 'To be confirmed')}
+                                                </span>
+                                                {data.address.lat && data.address.lng && (
+                                                    <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-mono flex items-center justify-end gap-1 mt-0.5">
+                                                        <MapPin className="w-3 h-3" /> Pinned ({data.address.lat.toFixed(3)}, {data.address.lng.toFixed(3)})
+                                                    </span>
+                                                )}
+                                            </div>
                                         </li>
                                     </ul>
                                 </div>
@@ -607,10 +624,21 @@ export default function ReviewQuote() {
                                                         <span className="font-medium text-slate-900 dark:text-zinc-100">R{quoteDetails.extrasCost.toFixed(2)}</span>
                                                     </div>
                                                 )}
+                                                {quoteDetails.travelFee && quoteDetails.travelFee > 0 && (
+                                                    <div className="flex justify-between text-slate-600 dark:text-zinc-400">
+                                                        <span className="flex items-center gap-1.5">
+                                                            <span>Travel Surcharge</span>
+                                                            {quoteDetails.travelDetails?.distanceKm && (
+                                                                <span className="text-[11px] text-slate-400">({quoteDetails.travelDetails.distanceKm} km)</span>
+                                                            )}
+                                                        </span>
+                                                        <span className="font-medium text-slate-900 dark:text-zinc-100">R{quoteDetails.travelFee.toFixed(2)}</span>
+                                                    </div>
+                                                )}
                                                 <div className="flex justify-between text-slate-600 dark:text-zinc-400 text-xs pt-2 border-t border-slate-100 dark:border-zinc-800">
                                                     <span>Subtotal (excl. VAT)</span>
                                                     <span className="font-medium text-slate-800 dark:text-zinc-200">
-                                                        R{(quoteDetails.subtotal ?? (quoteDetails.baseCost + quoteDetails.extrasCost)).toFixed(2)}
+                                                        R{(quoteDetails.subtotal ?? (quoteDetails.baseCost + quoteDetails.extrasCost + (quoteDetails.travelFee || 0))).toFixed(2)}
                                                     </span>
                                                 </div>
                                                 <div className="flex justify-between text-slate-600 dark:text-zinc-400 text-xs">

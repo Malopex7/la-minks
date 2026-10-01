@@ -12,6 +12,7 @@ import Image from 'next/image';
 import { format } from 'date-fns';
 import { useLightbox } from '@/components/PhotoLightbox';
 import { fetchWithAuth, API_URL } from '@/lib/api';
+import LocationNavCard from '@/components/LocationNavCard';
 
 interface ChecklistItem {
     _id?: string;
@@ -23,7 +24,21 @@ interface BookingDetails {
     _id: string;
     status: string;
     schedule: { date: string; timeSlot: string; estimatedHours: number };
-    address: { line1: string; suburb: string; city: string; province: string; postalCode: string };
+    address: {
+        line1: string;
+        suburb: string;
+        city: string;
+        province: string;
+        postalCode: string;
+        formattedAddress?: string;
+        lat?: number;
+        lng?: number;
+    };
+    travelFee?: {
+        distanceKm?: number;
+        durationMinutes?: number;
+        fee?: number;
+    };
     property: { sqm: number; bedrooms: number; bathrooms: number; conditionLevel: string };
     serviceId: { name: string; description: string };
     customerId: { firstName: string; lastName: string; phone: string; email: string };
@@ -334,8 +349,16 @@ export default function StaffJobDetailsPage() {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Left Column: Details */}
+                {/* Left Column: Details & Navigation */}
                 <div className="space-y-6 lg:col-span-1">
+                    {/* Location & GPS Navigation Card */}
+                    <LocationNavCard
+                        address={booking.address}
+                        travelFee={booking.travelFee}
+                        title="Job Location & GPS Route"
+                        showDirections={true}
+                    />
+
                     <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-5 shadow-sm">
                         <h2 className="font-semibold text-lg mb-4 flex items-center gap-2 dark:text-white">
                             <House className="w-5 h-5 text-[#86a373]" /> Property details

@@ -2,11 +2,12 @@
 
 import React, { useEffect, useState } from 'react';
 import { useAdminStore } from '@/store/adminStore';
-import { Loader2, Users, Calendar, Banknote, Camera, ChevronDown, ChevronUp, Download } from 'lucide-react';
+import { Loader2, Users, Calendar, Banknote, Camera, ChevronDown, ChevronUp, Download, Map, List } from 'lucide-react';
 import Image from 'next/image';
 import PhotoLightbox from '@/components/PhotoLightbox';
 import { bookingsToCsv, downloadCsv } from '@/lib/exportCsv';
 import { fetchWithAuth, API_URL } from '@/lib/api';
+import DispatchMap from '@/components/admin/DispatchMap';
 
 const VALID_STATUSES = ['QUOTE', 'BOOKED', 'CONFIRMED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED'];
 
@@ -32,6 +33,7 @@ export default function AdminBookingsPage() {
     const [expandedId, setExpandedId] = useState<string | null>(null);
     const [lightbox, setLightbox] = useState<LightboxState | null>(null);
     const [conflictError, setConflictError] = useState<string | null>(null);
+    const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
 
     useEffect(() => {
         setMounted(true);
@@ -91,21 +93,52 @@ export default function AdminBookingsPage() {
                     <h1 className="text-3xl font-bold tracking-tight">Bookings</h1>
                     <p className="text-sm text-zinc-500 mt-1">Manage customer bookings and assign staff members to jobs.</p>
                 </div>
-                <button
-                    onClick={() => {
-                        const csv = bookingsToCsv(bookings);
-                        const date = new Date().toISOString().slice(0, 10);
-                        downloadCsv(csv, `laminks-bookings-${date}.csv`);
-                    }}
-                    disabled={bookings.length === 0}
-                    className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-medium rounded-lg transition-colors"
-                >
-                    <Download className="w-4 h-4" />
-                    Export CSV
-                </button>
+                <div className="flex items-center gap-3">
+                    <div className="inline-flex rounded-lg border border-zinc-200 dark:border-zinc-700 p-0.5 bg-zinc-100 dark:bg-zinc-800 text-xs">
+                        <button
+                            type="button"
+                            onClick={() => setViewMode('list')}
+                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md font-medium transition-colors ${
+                                viewMode === 'list'
+                                    ? 'bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 shadow-sm'
+                                    : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900'
+                            }`}
+                        >
+                            <List className="w-3.5 h-3.5" />
+                            List View
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => setViewMode('map')}
+                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md font-medium transition-colors ${
+                                viewMode === 'map'
+                                    ? 'bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 shadow-sm'
+                                    : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900'
+                            }`}
+                        >
+                            <Map className="w-3.5 h-3.5 text-[#d46b4e]" />
+                            Dispatch Map
+                        </button>
+                    </div>
+
+                    <button
+                        onClick={() => {
+                            const csv = bookingsToCsv(bookings);
+                            const date = new Date().toISOString().slice(0, 10);
+                            downloadCsv(csv, `laminks-bookings-${date}.csv`);
+                        }}
+                        disabled={bookings.length === 0}
+                        className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-medium rounded-lg transition-colors"
+                    >
+                        <Download className="w-4 h-4" />
+                        Export CSV
+                    </button>
+                </div>
             </div>
 
-            {isLoading && !bookings.length ? (
+            {viewMode === 'map' ? (
+                <DispatchMap bookings={bookings} />
+            ) : isLoading && !bookings.length ? (
                 <div className="flex items-center justify-center p-12">
                     <Loader2 className="w-8 h-8 animate-spin text-zinc-400" />
                 </div>

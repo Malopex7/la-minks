@@ -1,5 +1,6 @@
 import Service from '../models/Service.js';
 import PricingRule from '../models/PricingRule.js';
+import { calculateTravelSurcharge } from '../utils/distance.js';
 
 // Lightweight in-memory cache for fast quoting without repetitive DB roundtrips
 const pricingCache = new Map();
@@ -33,7 +34,7 @@ const setCached = (key, data) => {
 // @access  Public
 export const calculateQuote = async (req, res) => {
     try {
-        const { serviceId, serviceDetails, extrasSelected, aiExtras } = req.body;
+        const { serviceId, serviceDetails, extrasSelected, aiExtras, address } = req.body;
 
         if (!serviceId) {
             return res.status(400).json({ message: 'serviceId is required' });
@@ -99,8 +100,22 @@ export const calculateQuote = async (req, res) => {
             });
         }
 
-        // 4. Subtotal, Dynamic Service VAT, and Final Price Calculation
-        const subtotal = Math.round((baseCost + extrasCost) * 100) / 100;
+        // 4. Dynamic Travel Surcharge Calculation (Google Distance Matrix / Haversine)
+        let travelFee = 0;
+        let travelDetails = {
+            distanceKm: 0,
+            durationMinutes: 0,
+            fee: 0,
+            isBeyondBaseRadius: false,
+        };
+
+        if (address) {
+            travelDetails = await calculateTravelSurcharge(address);
+            travelFee = travelDetails.fee || 0;
+        }
+
+        // 5. Subtotal, Dynamic Service VAT, and Final Price Calculation
+        const subtotal = Math.round((baseCost + extrasCost + travelFee) * 100) / 100;
         const vatPercentage = typeof service.vatRate === 'number' ? service.vatRate : 15;
         const vatRate = vatPercentage / 100;
         const vatAmount = Math.round((subtotal * vatRate) * 100) / 100;
@@ -125,6 +140,8 @@ export const calculateQuote = async (req, res) => {
         res.status(200).json({
             baseCost,
             extrasCost,
+            travelFee,
+            travelDetails,
             subtotal,
             vatRate,
             vatAmount,

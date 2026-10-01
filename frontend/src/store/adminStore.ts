@@ -31,7 +31,22 @@ export interface Booking {
     customerId: User & Record<string, unknown>;
     serviceId: Service & Record<string, unknown>;
     schedule?: { date?: string; timeSlot?: string; estimatedHours?: number };
-    address?: { line1?: string; suburb?: string; city?: string; province?: string; postalCode?: string };
+    address?: {
+        line1?: string;
+        suburb?: string;
+        city?: string;
+        province?: string;
+        postalCode?: string;
+        formattedAddress?: string;
+        placeId?: string;
+        lat?: number;
+        lng?: number;
+    };
+    travelFee?: {
+        distanceKm?: number;
+        durationMinutes?: number;
+        fee?: number;
+    };
     date?: string;
     time?: string;
     status: 'QUOTE' | 'BOOKED' | 'CONFIRMED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED';

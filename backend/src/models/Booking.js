@@ -18,6 +18,15 @@ const bookingSchema = new mongoose.Schema(
             city: String,
             province: String,
             postalCode: String,
+            formattedAddress: String,
+            placeId: String,
+            lat: Number,
+            lng: Number,
+        },
+        travelFee: {
+            distanceKm: Number,
+            durationMinutes: Number,
+            fee: Number,
         },
         serviceDetails: {
             type: Map,

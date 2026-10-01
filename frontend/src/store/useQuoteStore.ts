@@ -18,6 +18,10 @@ export type QuoteData = {
         city: string;
         province: string;
         postalCode: string;
+        formattedAddress?: string;
+        placeId?: string;
+        lat?: number;
+        lng?: number;
     };
     schedule: {
         date?: Date;
@@ -27,6 +31,9 @@ export type QuoteData = {
         baseAmount: number;
         extrasAmount: number;
         aiExtrasAmount: number;
+        travelFeeAmount?: number;
+        distanceKm?: number;
+        durationMinutes?: number;
         subtotal: number;
         vatRate: number;
         vatAmount: number;

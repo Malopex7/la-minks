@@ -3,6 +3,7 @@ import Service from '../models/Service.js';
 import PricingRule from '../models/PricingRule.js';
 import AuditLog from '../models/AuditLog.js';
 import { sendBookingCreatedEmail, sendQuoteEmail, sendStaffAssignmentEmail, sendJobCompletionEmail, sendJobCheckInEmail } from '../utils/email.js';
+import { calculateTravelSurcharge } from '../utils/distance.js';
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -190,7 +191,16 @@ export const createBooking = async (req, res) => {
             });
         }
 
-        const subtotal = Math.round((baseCost + extrasCost) * 100) / 100;
+        // Travel Surcharge Calculation
+        let travelFee = 0;
+        let travelFeeData = undefined;
+        if (address) {
+            const travelDetails = await calculateTravelSurcharge(address);
+            travelFee = travelDetails.fee || 0;
+            travelFeeData = travelDetails;
+        }
+
+        const subtotal = Math.round((baseCost + extrasCost + travelFee) * 100) / 100;
         const vatPercentage = typeof service.vatRate === 'number' ? service.vatRate : 15;
         const vatRate = vatPercentage / 100;
         const vatAmount = Math.round((subtotal * vatRate) * 100) / 100;
@@ -216,6 +226,7 @@ export const createBooking = async (req, res) => {
             customerId: req.user._id,
             serviceId,
             address,
+            travelFee: travelFeeData,
             serviceDetails,
             extrasSelected,
             aiExtras: aiExtras || [],

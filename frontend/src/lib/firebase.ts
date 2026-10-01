@@ -12,10 +12,22 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase once
-const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+export const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 
 export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();
+
+// Safe SSR-compatible Firebase Analytics
+export let analytics: import('firebase/analytics').Analytics | null = null;
+if (typeof window !== 'undefined') {
+    import('firebase/analytics').then(({ getAnalytics, isSupported }) => {
+        isSupported().then((supported) => {
+            if (supported) {
+                analytics = getAnalytics(app);
+            }
+        });
+    });
+}
 
 // Action code settings for Passwordless Email Link sign-in
 export const getEmailLinkActionCodeSettings = () => {
@@ -25,3 +37,4 @@ export const getEmailLinkActionCodeSettings = () => {
         handleCodeInApp: true,
     };
 };
+
